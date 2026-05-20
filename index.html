@@ -142,6 +142,58 @@ button.ghost { background: transparent; border-color: var(--border); }
 .metcon-finish-btn { width: 100%; height: 52px; font-size: 15px; font-weight: 600; }
 .metcon-final { background: rgba(91, 212, 156, 0.12); border: 1px solid var(--done); color: var(--done); padding: 16px; text-align: center; border-radius: 10px; margin-bottom: 14px; font-weight: 500; }
 .metcon-final .final-time { font-size: 32px; font-weight: 700; font-variant-numeric: tabular-nums; margin: 4px 0; color: var(--text); }
+/* ===== Home view ===== */
+.view-toggle { display: flex; background: var(--surface); border: 1px solid var(--border); border-radius: 999px; padding: 4px; margin-bottom: 14px; }
+.view-toggle button { flex: 1; height: 38px; min-height: 38px; padding: 0 12px; background: transparent; border: none; border-radius: 999px; color: var(--text-muted); font-weight: 500; font-size: 14px; display: flex; align-items: center; justify-content: center; gap: 6px; }
+.view-toggle button.active { background: var(--surface-3); color: var(--text); }
+.home-section { margin-bottom: 20px; }
+.home-section-label { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.06em; margin: 0 4px 8px; font-weight: 600; }
+.today-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 18px; }
+.today-card-date { font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+.today-card-title { font-size: 20px; font-weight: 600; margin-bottom: 8px; line-height: 1.3; }
+.today-card-meta { font-size: 13px; color: var(--text-muted); margin-bottom: 14px; }
+.today-card-cta { width: 100%; height: 48px; background: var(--accent); color: #0B0F14; border: none; border-radius: 10px; font-weight: 600; font-size: 15px; cursor: pointer; }
+.today-card-cta:active { opacity: 0.8; }
+.week-grid { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
+.week-row { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-bottom: 1px solid var(--border); }
+.week-row:last-child { border-bottom: none; }
+.week-row-label { font-size: 14px; font-weight: 500; flex: 0 0 80px; }
+.week-row-dots { display: flex; gap: 6px; flex: 1; }
+.week-row-dots .wd { width: 14px; height: 14px; border-radius: 50%; background: var(--surface-3); border: 1px solid var(--border); flex-shrink: 0; }
+.week-row-dots .wd.done { background: var(--done); border-color: var(--done); }
+.week-row-dots .wd.partial { background: var(--warn); border-color: var(--warn); }
+.week-row-count { font-size: 13px; color: var(--text-muted); flex: 0 0 42px; text-align: right; font-variant-numeric: tabular-nums; }
+.week-empty { padding: 14px 16px; color: var(--text-dim); font-size: 13px; text-align: center; }
+.calendar-grid { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 12px; }
+.cal-row { display: grid; grid-template-columns: 30px repeat(7, 1fr); gap: 5px; align-items: center; margin-bottom: 5px; }
+.cal-row:last-child { margin-bottom: 0; }
+.cal-head { font-size: 10px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.05em; text-align: center; font-weight: 600; padding: 4px 0; }
+.cal-wlabel { font-size: 10px; color: var(--text-dim); text-align: center; }
+.cal-cell { aspect-ratio: 1 / 1; border-radius: 6px; background: var(--surface-2); display: flex; align-items: center; justify-content: center; position: relative; font-size: 11px; color: var(--text-muted); min-height: 36px; }
+.cal-cell.empty { opacity: 0.35; }
+.cal-cell.today { box-shadow: 0 0 0 2px var(--accent); color: var(--text); }
+.cal-cell.future { opacity: 0.5; }
+.cal-cell.has-gym { background: rgba(77, 163, 255, 0.25); color: var(--text); }
+.cal-cell.has-cond { background: rgba(91, 212, 156, 0.25); color: var(--text); }
+.cal-cell.has-home { background: rgba(232, 184, 110, 0.25); color: var(--text); }
+.cal-cell.has-multi { background: rgba(127, 119, 221, 0.25); color: var(--text); }
+.cal-cell.tappable { cursor: pointer; }
+.cal-cell.tappable:active { opacity: 0.7; }
+.cal-cell .day-num { font-weight: 500; font-variant-numeric: tabular-nums; }
+.cal-cell.completed::after { content: ''; position: absolute; bottom: 4px; width: 5px; height: 5px; border-radius: 50%; background: var(--done); }
+.cal-cell.partial::after { content: ''; position: absolute; bottom: 4px; width: 5px; height: 5px; border-radius: 50%; background: var(--warn); }
+.legend-row { display: flex; gap: 12px; flex-wrap: wrap; padding: 10px 4px 0; font-size: 11px; color: var(--text-muted); }
+.legend-row .leg { display: flex; align-items: center; gap: 5px; }
+.leg-swatch { width: 10px; height: 10px; border-radius: 2px; }
+.leg-swatch.gym { background: rgba(77, 163, 255, 0.7); }
+.leg-swatch.cond { background: rgba(91, 212, 156, 0.7); }
+.leg-swatch.home { background: rgba(232, 184, 110, 0.7); }
+.stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.stat-tile { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px; }
+.stat-tile-label { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; font-weight: 600; }
+.stat-tile-value { font-size: 26px; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--text); line-height: 1.1; }
+.stat-tile-sub { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+.home-empty-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 20px; text-align: center; color: var(--text-muted); font-size: 14px; }
 </style>
 </head>
 <body>
@@ -434,6 +486,124 @@ const SESSIONS = [
     ],
     timer: { mode: 'stopwatch' }
   },
+
+  // ============ CONDITIONING — Gym-based (Row, Air Dyne, Sled, Ruck) ============
+  // Calf-friendly. Zone-2 default, strategic HIIT, sled added in Week 3.
+  // Watch dial-back triggers: Training Readiness <50, HRV OUT_OF_RANGE_LOW, ACWR >1.3, Sleep <60.
+
+  // ---- Transition week (May 18-24) ----
+  { id: '2026-05-21-row-z2', type: 'kb-metcon', category: 'Conditioning', date: '2026-05-21', day: 'Thu', week: 0,
+    title: 'Row · Zone 2 · 25 min', duration: '25 min', metconKind: 'forCompletion',
+    intent: 'First conditioning session back. Aerobic base. Form first, pace second.',
+    protocol: '<b>Concept2 (or gym equivalent).</b> Damper 4-6 (NOT 10). Stroke rate 18-20 spm. Target HR 122-128. Should be able to talk in short sentences. If HR drifts above 133, slow down. <br><br><b>Drive:</b> Legs → back → arms. <b>Recovery:</b> Arms → back → legs. Power from the legs.',
+    counters: [ { id: 'mins', label: 'Minutes complete', target: 25, step: 5 } ],
+    timer: { mode: 'stopwatch' }
+  },
+  { id: '2026-05-23-ruck', type: 'kb-metcon', category: 'Conditioning', date: '2026-05-23', day: 'Sat', week: 0,
+    title: 'Ruck · 25 min (Active recovery, optional)', duration: '25 min', metconKind: 'forCompletion',
+    intent: 'Optional active recovery. 20 lb vest. Easy pace. Headphones + podcast.',
+    protocol: '<b>20 lb vest, easy walk, 25 minutes.</b> Target HR Zone 1 (92-122). Conversation pace. <br><br>Walking is boring; this changes the modality enough to make it tolerable. Doubles as conditioning when the gym isn\'t happening.',
+    counters: [ { id: 'mins', label: 'Minutes complete', target: 25, step: 5 } ],
+    timer: { mode: 'stopwatch' }
+  },
+
+  // ---- Week 1 (May 25-31) ----
+  { id: '2026-05-26-ab-int', type: 'kb-metcon', category: 'Conditioning', date: '2026-05-26', day: 'Tue', week: 1,
+    title: 'Air Dyne Intervals · W1 (5 rounds)', duration: '~14 min', metconKind: 'forCompletion',
+    intent: 'First HIIT session. Brutal cardio cost, zero calf impact. Garmin watch handles interval timing.',
+    protocol: '<b>5 rounds:</b> 30 sec HARD / 90 sec EASY recovery. <br><br>HARD = HR Zone 4 (144-155), or just go ALL OUT for 30s.<br>EASY = pedal slow, recover, breathe.<br><br>Total: 10 min after 2 min warmup, 2 min cooldown. Use Garmin watch native interval timer.',
+    counters: [ { id: 'rounds', label: 'Rounds complete', target: 5, step: 1 } ],
+    timer: { mode: 'stopwatch' }
+  },
+  { id: '2026-05-28-row-z2', type: 'kb-metcon', category: 'Conditioning', date: '2026-05-28', day: 'Thu', week: 1,
+    title: 'Row · Zone 2 · 30 min', duration: '30 min', metconKind: 'forCompletion',
+    intent: 'Build aerobic base. Slightly longer than last week.',
+    protocol: '<b>30 min steady.</b> Damper 4-6. Stroke rate 18-22. Target HR 122-130. <br><br>Last week was 25 min — this is your first volume bump. If HR drifts up or form degrades, drop back to 25.',
+    counters: [ { id: 'mins', label: 'Minutes complete', target: 30, step: 5 } ],
+    timer: { mode: 'stopwatch' }
+  },
+  { id: '2026-05-30-ruck', type: 'kb-metcon', category: 'Conditioning', date: '2026-05-30', day: 'Sat', week: 1,
+    title: 'Ruck · 30 min (Active recovery, optional)', duration: '30 min', metconKind: 'forCompletion',
+    intent: 'Optional. Skip if recovery is borderline (Training Readiness <50 or HRV LOW).',
+    protocol: '<b>20 lb vest, easy walk, 30 minutes.</b> Zone 1 (92-122). <br><br>Skip without guilt if the week was hard. Replace with mobility/stretching if needed.',
+    counters: [ { id: 'mins', label: 'Minutes complete', target: 30, step: 5 } ],
+    timer: { mode: 'stopwatch' }
+  },
+
+  // ---- Week 2 (Jun 1-7) — Reta 8mg titration day = Jun 3 ----
+  { id: '2026-06-02-ab-int', type: 'kb-metcon', category: 'Conditioning', date: '2026-06-02', day: 'Tue', week: 2,
+    title: 'Air Dyne Intervals · W2 (6 rounds)', duration: '~16 min', metconKind: 'forCompletion',
+    intent: 'Volume bump. Day before Reta 8mg titration — last HIIT before dose escalation.',
+    protocol: '<b>6 rounds:</b> 30s HARD / 90s EASY. <br><br>Same protocol as last week, one more round. Total 12 min interval block.',
+    counters: [ { id: 'rounds', label: 'Rounds complete', target: 6, step: 1 } ],
+    timer: { mode: 'stopwatch' }
+  },
+  { id: '2026-06-04-row-z2', type: 'kb-metcon', category: 'Conditioning', date: '2026-06-04', day: 'Thu', week: 2,
+    title: 'Row · Zone 2 · 30 min (post-titration)', duration: '30 min', metconKind: 'forCompletion',
+    intent: 'First conditioning after Reta 8mg jump. Watch how you feel. If GI side effects hit, dial back to 20 min.',
+    protocol: '<b>30 min steady, HR 122-130.</b> <br><br>Reta 8mg may bring side effects you didn\'t feel at 5mg. If you feel off, drop the duration or substitute Zone 1 ruck. Don\'t push through GI distress.',
+    counters: [ { id: 'mins', label: 'Minutes complete', target: 30, step: 5 } ],
+    timer: { mode: 'stopwatch' }
+  },
+
+  // ---- Week 3 (Jun 8-14) — Peak strength week, add sled ----
+  { id: '2026-06-09-ab-int', type: 'kb-metcon', category: 'Conditioning', date: '2026-06-09', day: 'Tue', week: 3,
+    title: 'Air Dyne Intervals · W3 (8 rounds)', duration: '~20 min', metconKind: 'forCompletion',
+    intent: 'Peak conditioning week. 8 rounds. Only push if Training Readiness ≥60.',
+    protocol: '<b>8 rounds:</b> 30s HARD / 90s EASY. <br><br>If recovery is borderline, drop to 6 rounds. ACWR should still be under 1.3.',
+    counters: [ { id: 'rounds', label: 'Rounds complete', target: 8, step: 1 } ],
+    timer: { mode: 'stopwatch' }
+  },
+  { id: '2026-06-11-row-z2', type: 'kb-metcon', category: 'Conditioning', date: '2026-06-11', day: 'Thu', week: 3,
+    title: 'Row · Zone 2 · 35 min', duration: '35 min', metconKind: 'forCompletion',
+    intent: 'Peak aerobic volume. 35 min of true Zone 2.',
+    protocol: '<b>35 min steady, HR 125-133, stroke rate 20-22.</b> <br><br>This is the volume target for Zone 2. If you hit this comfortably, week 4 deload is earned.',
+    counters: [ { id: 'mins', label: 'Minutes complete', target: 35, step: 5 } ],
+    timer: { mode: 'stopwatch' }
+  },
+  { id: '2026-06-13-sled', type: 'kb-metcon', category: 'Conditioning', date: '2026-06-13', day: 'Sat', week: 3,
+    title: 'Sled Push · 6 sets', duration: '~20 min', metconKind: 'forCompletion',
+    intent: 'New modality — strength + conditioning hybrid. No eccentric calf load. First sled session.',
+    protocol: '<b>6 sets × 20m heavy push.</b> Moderate weight first set, ramp up. Walk back as rest. <br><br><b>Cue:</b> Drive through the floor, low body angle, arms locked. Breathe between sets. <br><br>If the sled is being hogged by someone, substitute 4 × 500m row sprints.',
+    counters: [ { id: 'sets', label: 'Sets complete', target: 6, step: 1 } ],
+    timer: { mode: 'stopwatch' }
+  },
+
+  // ---- Week 4 (Jun 15-21) — Deload week ----
+  { id: '2026-06-16-ab-int', type: 'kb-metcon', category: 'Conditioning', date: '2026-06-16', day: 'Tue', week: 4,
+    title: 'Air Dyne Intervals · W4 (Tabata)', duration: '~12 min', metconKind: 'forCompletion',
+    intent: 'Deload week. Lower volume, higher intensity. Brief but brutal.',
+    protocol: '<b>Tabata: 8 rounds of 20s HARD / 10s EASY = 4 min total.</b> <br><br>2 min warmup, 4 min Tabata block, 2-3 min cooldown. Total under 12 min. <br><br>This is your hardest interval — 20s with only 10s recovery. Go as hard as you can sustain.',
+    counters: [ { id: 'rounds', label: 'Rounds complete', target: 8, step: 1 } ],
+    timer: { mode: 'stopwatch' }
+  },
+  { id: '2026-06-18-row-z2', type: 'kb-metcon', category: 'Conditioning', date: '2026-06-18', day: 'Thu', week: 4,
+    title: 'Row · Zone 2 · 25 min (deload)', duration: '25 min', metconKind: 'forCompletion',
+    intent: 'Deload week. Drop volume back to 25 min. Easy effort.',
+    protocol: '<b>25 min easy, HR 120-128.</b> <br><br>Recovery focus. Reset before the next 4-week cycle.',
+    counters: [ { id: 'mins', label: 'Minutes complete', target: 25, step: 5 } ],
+    timer: { mode: 'stopwatch' }
+  },
+
+  // ---- Ad-hoc cardio (anytime, not date-bound) — for walks, swims, anything not on the schedule ----
+  { id: 'cardio-walk', type: 'kb-metcon', category: 'Conditioning', title: 'Walk · anytime', duration: 'flexible', metconKind: 'forCompletion',
+    intent: 'Log a walk that wasn\'t on the schedule. Counts toward your weekly cardio.',
+    protocol: '<b>Just a walk.</b> Indoor, outdoor, treadmill, rucking — whatever. Log the minutes you walked. <br><br>Counter target is 30 min as a default, but adjust up or down as you go. Use Reset between walks.',
+    counters: [ { id: 'mins', label: 'Minutes walked', target: 30, step: 5 } ],
+    timer: { mode: 'stopwatch' }
+  },
+  { id: 'cardio-swim', type: 'kb-metcon', category: 'Conditioning', title: 'Swim · anytime', duration: 'flexible', metconKind: 'forCompletion',
+    intent: 'Log a swim session. Pool, open water, whatever.',
+    protocol: '<b>Swim session.</b> Log minutes in the water. Counter target 25 min as a default — adjust per session.',
+    counters: [ { id: 'mins', label: 'Minutes swimming', target: 25, step: 5 } ],
+    timer: { mode: 'stopwatch' }
+  },
+  { id: 'cardio-other', type: 'kb-metcon', category: 'Conditioning', title: 'Other cardio · anytime', duration: 'flexible', metconKind: 'forCompletion',
+    intent: 'Hike, bike, dance, kayak, anything that gets the heart rate up. Free-form cardio log.',
+    protocol: '<b>Free-form cardio.</b> What did you do? Log the minutes. <br><br>Tap the notes area to remember what activity it was (e.g., "hike 2 mi", "treadmill incline").',
+    counters: [ { id: 'mins', label: 'Minutes of cardio', target: 30, step: 5 } ],
+    timer: { mode: 'stopwatch' }
+  },
 ];
 
 const WARMUP = [
@@ -469,6 +639,7 @@ function saveState() {
 let state = loadState();
 if (!state.metcons) state.metcons = {};
 if (!state.category) state.category = 'Gym';
+if (!state.view) state.view = 'home';
 
 (function initSession() {
   if (state.sessionIdx != null && SESSIONS[state.sessionIdx] && SESSIONS[state.sessionIdx].category === state.category) return;
@@ -532,22 +703,369 @@ function switchCategory(cat) {
 }
 
 // ============================================================
+// HOME VIEW HELPERS
+// ============================================================
+function getSessionCompletion(sid) {
+  const ses = SESSIONS.find(s => s.id === sid);
+  if (!ses) return 'none';
+  if (ses.type === 'kb-metcon') {
+    const ms = state.metcons[sid];
+    if (!ms) return 'none';
+    if (ms.completed) return 'complete';
+    const anyCounter = ms.counters && Object.values(ms.counters).some(v => v > 0);
+    const anyTime = (ms.timerElapsed && ms.timerElapsed > 0) || ms.timerStart != null;
+    if (anyCounter || anyTime) return 'partial';
+    return 'none';
+  } else {
+    const ss = state.sessions[sid];
+    if (!ss || !ss.sets) return 'none';
+    let totalWork = 0, doneWork = 0;
+    ses.exercises.forEach((ex, eIdx) => {
+      ex.sets.forEach((set, sIdx) => {
+        if (set.t !== 'work') return;
+        totalWork++;
+        const key = eIdx + '_' + sIdx;
+        if (ss.sets[key] && ss.sets[key].status === 'completed') doneWork++;
+      });
+    });
+    if (doneWork === 0) return 'none';
+    if (doneWork >= totalWork) return 'complete';
+    return 'partial';
+  }
+}
+
+function getWeekStartMonday(d) {
+  const date = new Date(d);
+  const day = date.getDay();
+  const diff = day === 0 ? -6 : 1 - day;
+  date.setDate(date.getDate() + diff);
+  date.setHours(0,0,0,0);
+  return date;
+}
+
+function ymd(d) {
+  const y = d.getFullYear();
+  const m = String(d.getMonth()+1).padStart(2,'0');
+  const dd = String(d.getDate()).padStart(2,'0');
+  return `${y}-${m}-${dd}`;
+}
+
+function switchView(v) {
+  if (state.view === v) return;
+  state.view = v;
+  saveState();
+  render();
+}
+
+function goToSession(sid) {
+  const idx = SESSIONS.findIndex(s => s.id === sid);
+  if (idx < 0) return;
+  state.view = 'sessions';
+  state.sessionIdx = idx;
+  state.category = SESSIONS[idx].category;
+  saveState();
+  render();
+}
+
+// ============================================================
+// HOME VIEW
+// ============================================================
+function renderHome() {
+  const app = document.getElementById('app');
+  app.innerHTML = '';
+
+  // View toggle
+  const vtoggle = document.createElement('div');
+  vtoggle.className = 'view-toggle';
+  vtoggle.innerHTML = `
+    <button class="active" data-view="home">Home</button>
+    <button data-view="sessions">Sessions</button>
+  `;
+  app.appendChild(vtoggle);
+  vtoggle.querySelectorAll('button').forEach(b => b.addEventListener('click', () => switchView(b.dataset.view)));
+
+  const today = ymd(new Date());
+
+  // === Today / Up next card ===
+  const todaySession = SESSIONS.find(s => s.date === today);
+  const sec1 = document.createElement('div');
+  sec1.className = 'home-section';
+  if (todaySession) {
+    sec1.innerHTML = `
+      <div class="home-section-label">Today</div>
+      <div class="today-card">
+        <div class="today-card-date">${fmtDate(today)}${todaySession.week ? ` · Week ${todaySession.week}` : ''}</div>
+        <div class="today-card-title">${todaySession.title}</div>
+        <div class="today-card-meta">${todaySession.category === 'Conditioning' ? 'Cardio' : todaySession.category}${todaySession.duration ? ' · ' + todaySession.duration : ''}</div>
+        <button class="today-card-cta" id="todayCTA">Start workout →</button>
+      </div>
+    `;
+    app.appendChild(sec1);
+    sec1.querySelector('#todayCTA').addEventListener('click', () => goToSession(todaySession.id));
+  } else {
+    const upcoming = SESSIONS.filter(s => s.date && s.date > today).sort((a,b) => a.date.localeCompare(b.date))[0];
+    if (upcoming) {
+      sec1.innerHTML = `
+        <div class="home-section-label">Up next</div>
+        <div class="today-card">
+          <div class="today-card-date">${fmtDate(upcoming.date)}${upcoming.week ? ` · Week ${upcoming.week}` : ''}</div>
+          <div class="today-card-title">${upcoming.title}</div>
+          <div class="today-card-meta">${upcoming.category === 'Conditioning' ? 'Cardio' : upcoming.category}${upcoming.duration ? ' · ' + upcoming.duration : ''}</div>
+          <button class="today-card-cta" id="upcomingCTA">View workout</button>
+        </div>
+      `;
+      app.appendChild(sec1);
+      sec1.querySelector('#upcomingCTA').addEventListener('click', () => goToSession(upcoming.id));
+    } else {
+      sec1.innerHTML = `
+        <div class="home-section-label">Today</div>
+        <div class="home-empty-card">Rest day — no scheduled session.</div>
+      `;
+      app.appendChild(sec1);
+    }
+  }
+
+  // === This week ===
+  const weekStart = getWeekStartMonday(new Date());
+  const weekEnd = new Date(weekStart); weekEnd.setDate(weekEnd.getDate() + 6);
+  const wsStr = ymd(weekStart);
+  const weStr = ymd(weekEnd);
+  const thisWeekSessions = SESSIONS.filter(s => s.date && s.date >= wsStr && s.date <= weStr);
+  const byCat = { Gym: [], Conditioning: [], Home: [] };
+  thisWeekSessions.forEach(s => { if (byCat[s.category]) byCat[s.category].push(s); });
+
+  const sec2 = document.createElement('div');
+  sec2.className = 'home-section';
+  const wLabel = `${weekStart.toLocaleDateString(undefined, {month:'short', day:'numeric'})} – ${weekEnd.toLocaleDateString(undefined, {month:'short', day:'numeric'})}`;
+  sec2.innerHTML = `<div class="home-section-label">This week · ${wLabel}</div>`;
+  const wgrid = document.createElement('div');
+  wgrid.className = 'week-grid';
+  let anyRow = false;
+  ['Gym', 'Conditioning', 'Home'].forEach(cat => {
+    const items = byCat[cat].slice().sort((a,b) => a.date.localeCompare(b.date));
+    if (!items.length) return;
+    anyRow = true;
+    const completed = items.filter(s => getSessionCompletion(s.id) === 'complete').length;
+    const dotsHtml = items.map(s => {
+      const status = getSessionCompletion(s.id);
+      return `<div class="wd ${status === 'complete' ? 'done' : status === 'partial' ? 'partial' : ''}" title="${s.title}"></div>`;
+    }).join('');
+    const label = cat === 'Conditioning' ? 'Cardio' : cat === 'Home' ? 'KB Home' : 'Strength';
+    const row = document.createElement('div');
+    row.className = 'week-row';
+    row.innerHTML = `
+      <div class="week-row-label">${label}</div>
+      <div class="week-row-dots">${dotsHtml}</div>
+      <div class="week-row-count">${completed}/${items.length}</div>
+    `;
+    wgrid.appendChild(row);
+  });
+  if (!anyRow) {
+    wgrid.innerHTML = '<div class="week-empty">No scheduled sessions this week.</div>';
+  }
+  sec2.appendChild(wgrid);
+  app.appendChild(sec2);
+
+  // === 4-week calendar ===
+  const sec3 = document.createElement('div');
+  sec3.className = 'home-section';
+  sec3.innerHTML = '<div class="home-section-label">Last 4 weeks</div>';
+  const cal = document.createElement('div');
+  cal.className = 'calendar-grid';
+
+  const calStart = new Date(weekStart);
+  calStart.setDate(calStart.getDate() - 21);
+
+  const hdrRow = document.createElement('div');
+  hdrRow.className = 'cal-row';
+  hdrRow.innerHTML = '<div></div>' + ['M','T','W','T','F','S','S'].map(d => `<div class="cal-head">${d}</div>`).join('');
+  cal.appendChild(hdrRow);
+
+  for (let wk = 0; wk < 4; wk++) {
+    const rowEl = document.createElement('div');
+    rowEl.className = 'cal-row';
+    const weekDate = new Date(calStart); weekDate.setDate(weekDate.getDate() + wk*7);
+    const wlab = document.createElement('div');
+    wlab.className = 'cal-wlabel';
+    wlab.textContent = `${weekDate.getMonth()+1}/${weekDate.getDate()}`;
+    rowEl.appendChild(wlab);
+
+    for (let d = 0; d < 7; d++) {
+      const cellDate = new Date(weekDate); cellDate.setDate(cellDate.getDate() + d);
+      const cellStr = ymd(cellDate);
+      const cell = document.createElement('div');
+      cell.className = 'cal-cell';
+      const cellSessions = SESSIONS.filter(s => s.date === cellStr);
+      const isToday = cellStr === today;
+      const isFuture = cellStr > today;
+      if (cellSessions.length === 0) cell.classList.add('empty');
+      if (isToday) cell.classList.add('today');
+      if (isFuture) cell.classList.add('future');
+
+      // Category coloring
+      const cats = new Set(cellSessions.map(s => s.category));
+      let anyComplete = false, anyPartial = false;
+      cellSessions.forEach(s => {
+        const st = getSessionCompletion(s.id);
+        if (st === 'complete') anyComplete = true;
+        else if (st === 'partial') anyPartial = true;
+      });
+      if (cats.size > 1) cell.classList.add('has-multi');
+      else if (cats.has('Gym')) cell.classList.add('has-gym');
+      else if (cats.has('Conditioning')) cell.classList.add('has-cond');
+      else if (cats.has('Home')) cell.classList.add('has-home');
+      if (anyComplete) cell.classList.add('completed');
+      else if (anyPartial) cell.classList.add('partial');
+
+      cell.innerHTML = `<span class="day-num">${cellDate.getDate()}</span>`;
+      if (cellSessions.length > 0) {
+        cell.classList.add('tappable');
+        cell.addEventListener('click', () => goToSession(cellSessions[0].id));
+      }
+      rowEl.appendChild(cell);
+    }
+    cal.appendChild(rowEl);
+  }
+  sec3.appendChild(cal);
+
+  const legend = document.createElement('div');
+  legend.className = 'legend-row';
+  legend.innerHTML = `
+    <span class="leg"><span class="leg-swatch gym"></span>Strength</span>
+    <span class="leg"><span class="leg-swatch cond"></span>Cardio</span>
+    <span class="leg"><span class="leg-swatch home"></span>KB Home</span>
+    <span class="leg" style="margin-left:auto">● done · ● partial</span>
+  `;
+  sec3.appendChild(legend);
+  app.appendChild(sec3);
+
+  // === All-time stats ===
+  let totalCompleted = 0, totalTonnage = 0, totalCardioMin = 0, totalWorkSets = 0;
+  SESSIONS.forEach(s => {
+    const status = getSessionCompletion(s.id);
+    if (status === 'complete') {
+      totalCompleted++;
+      if (s.type === 'gym' || s.type === 'kb-strength') {
+        const ss = state.sessions[s.id];
+        if (ss && ss.sets) {
+          s.exercises.forEach((ex, eIdx) => {
+            ex.sets.forEach((set, sIdx) => {
+              if (set.t !== 'work') return;
+              totalWorkSets++;
+              const key = eIdx + '_' + sIdx;
+              const result = ss.sets[key];
+              if (result && result.status === 'completed') {
+                const wRaw = (result.actual && result.actual.w) || set.w;
+                const rRaw = (result.actual && result.actual.r) || set.r;
+                const wNum = parseFloat(String(wRaw).replace(/[^0-9.]/g,'')) || 0;
+                const rNum = parseInt(String(rRaw).replace(/[^0-9]/g,'')) || 0;
+                if (wNum > 0 && rNum > 0) totalTonnage += wNum * rNum;
+              }
+            });
+          });
+        }
+      }
+      if (s.category === 'Conditioning') {
+        // Prefer actual logged minutes (counter), fall back to prescribed duration
+        const ms = state.metcons[s.id];
+        const actualMins = ms && ms.counters && (ms.counters.mins || ms.counters.rounds || ms.counters.sets);
+        if (actualMins && ms.counters.mins) {
+          totalCardioMin += ms.counters.mins;
+        } else {
+          const m = (s.duration || '').match(/(\d+)/);
+          if (m) totalCardioMin += parseInt(m[1]);
+        }
+      }
+    }
+  });
+
+  // Current streak: consecutive days going back from today where any scheduled session was completed
+  // (rest days don't break streak; scheduled but not done DOES break streak)
+  let streak = 0;
+  const cd = new Date();
+  for (let i = 0; i < 90; i++) {
+    const dstr = ymd(cd);
+    const sessionsThatDay = SESSIONS.filter(s => s.date === dstr);
+    if (sessionsThatDay.length > 0) {
+      const anyComplete = sessionsThatDay.some(s => getSessionCompletion(s.id) === 'complete');
+      if (anyComplete) {
+        streak++;
+      } else if (dstr < today) {
+        break;
+      }
+    }
+    cd.setDate(cd.getDate() - 1);
+  }
+
+  const sec4 = document.createElement('div');
+  sec4.className = 'home-section';
+  const tonnageDisplay = totalTonnage >= 1000 ? Math.round(totalTonnage/1000) + 'k' : Math.round(totalTonnage);
+  sec4.innerHTML = `
+    <div class="home-section-label">All-time</div>
+    <div class="stats-grid">
+      <div class="stat-tile">
+        <div class="stat-tile-label">Sessions</div>
+        <div class="stat-tile-value">${totalCompleted}</div>
+        <div class="stat-tile-sub">completed</div>
+      </div>
+      <div class="stat-tile">
+        <div class="stat-tile-label">Tonnage</div>
+        <div class="stat-tile-value">${tonnageDisplay}</div>
+        <div class="stat-tile-sub">lb · in-app log</div>
+      </div>
+      <div class="stat-tile">
+        <div class="stat-tile-label">Cardio</div>
+        <div class="stat-tile-value">${totalCardioMin}</div>
+        <div class="stat-tile-sub">min · prescribed</div>
+      </div>
+      <div class="stat-tile">
+        <div class="stat-tile-label">Streak</div>
+        <div class="stat-tile-value">${streak}</div>
+        <div class="stat-tile-sub">days</div>
+      </div>
+    </div>
+  `;
+  app.appendChild(sec4);
+
+  const foot = document.createElement('div');
+  foot.className = 'foot';
+  foot.textContent = 'Iron Protocol · local data on this device';
+  app.appendChild(foot);
+}
+
+// ============================================================
 // RENDER ROOT
 // ============================================================
 function render() {
+  if (state.view === 'home') {
+    renderHome();
+    return;
+  }
   const ses = SESSIONS[state.sessionIdx];
   if (!ses) { document.getElementById('app').innerHTML = '<p style="padding:20px;color:var(--text-muted)">No session selected.</p>'; return; }
 
   const app = document.getElementById('app');
   app.innerHTML = '';
 
+  // View toggle (Home / Sessions)
+  const vtoggle = document.createElement('div');
+  vtoggle.className = 'view-toggle';
+  vtoggle.innerHTML = `
+    <button data-view="home">Home</button>
+    <button class="active" data-view="sessions">Sessions</button>
+  `;
+  app.appendChild(vtoggle);
+  vtoggle.querySelectorAll('button').forEach(b => b.addEventListener('click', () => switchView(b.dataset.view)));
+
   // Category toggle
   const catBar = document.createElement('div');
   catBar.className = 'cat-toggle';
   const gymCount = SESSIONS.filter(s => s.category === 'Gym').length;
   const homeCount = SESSIONS.filter(s => s.category === 'Home').length;
+  const condCount = SESSIONS.filter(s => s.category === 'Conditioning').length;
   catBar.innerHTML = `
     <button class="${state.category === 'Gym' ? 'active' : ''}" data-cat="Gym">Gym <span class="badge">${gymCount}</span></button>
+    <button class="${state.category === 'Conditioning' ? 'active' : ''}" data-cat="Conditioning">Cardio <span class="badge">${condCount}</span></button>
     <button class="${state.category === 'Home' ? 'active' : ''}" data-cat="Home">Home <span class="badge">${homeCount}</span></button>
   `;
   app.appendChild(catBar);
