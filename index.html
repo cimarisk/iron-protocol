@@ -1,0 +1,1260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Workout</title>
+<meta name="theme-color" content="#0B0F14">
+<link rel="manifest" href="manifest.json">
+<style>
+:root {
+  --bg: #0B0F14;
+  --surface: #131A22;
+  --surface-2: #1B232D;
+  --surface-3: #232D39;
+  --border: #2A3441;
+  --text: #E6ECF2;
+  --text-muted: #8896A6;
+  --text-dim: #5C6878;
+  --accent: #4DA3FF;
+  --accent-soft: #1B2C42;
+  --done: #5BD49C;
+  --warn: #E8B86E;
+  --danger: #E8736E;
+}
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body { margin: 0; padding: 0; background: var(--bg); color: var(--text); font-family: -apple-system, system-ui, sans-serif; font-size: 16px; line-height: 1.5; min-height: 100vh; overscroll-behavior: none; }
+body { padding: max(env(safe-area-inset-top), 12px) 12px max(env(safe-area-inset-bottom), 24px); }
+button, input, textarea { font-family: inherit; font-size: 16px; }
+input[type="number"], input[type="text"] { background: var(--surface-3); color: var(--text); border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; font-size: 18px; text-align: center; width: 100%; font-variant-numeric: tabular-nums; }
+input[type="number"]:focus, input[type="text"]:focus { outline: none; border-color: var(--accent); }
+button { background: var(--surface-2); color: var(--text); border: 1px solid var(--border); border-radius: 10px; padding: 12px 16px; cursor: pointer; font-weight: 500; min-height: 44px; transition: opacity 0.15s; }
+button:active { opacity: 0.7; }
+button.primary { background: var(--accent); color: #0B0F14; border-color: var(--accent); font-weight: 600; }
+button.ghost { background: transparent; border-color: var(--border); }
+.app { max-width: 480px; margin: 0 auto; }
+.cat-toggle { display: flex; background: var(--surface); border: 1px solid var(--border); border-radius: 999px; padding: 4px; margin-bottom: 14px; }
+.cat-toggle button { flex: 1; height: 38px; min-height: 38px; padding: 0 12px; background: transparent; border: none; border-radius: 999px; color: var(--text-muted); font-weight: 500; font-size: 14px; }
+.cat-toggle button.active { background: var(--surface-3); color: var(--text); }
+.cat-toggle .badge { font-size: 11px; color: var(--text-dim); margin-left: 4px; font-weight: 400; }
+.header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; padding: 0 4px; }
+.session-pill { background: var(--surface); border: 1px solid var(--border); border-radius: 999px; padding: 8px 14px; font-size: 13px; color: var(--text-muted); display: flex; align-items: center; gap: 8px; cursor: pointer; }
+.session-pill .date { color: var(--text); font-weight: 500; }
+.session-pill .arrow { color: var(--text-dim); }
+.nav-buttons { display: flex; gap: 6px; }
+.nav-buttons button { width: 40px; height: 40px; min-height: 40px; padding: 0; font-size: 18px; }
+.session-title { font-size: 22px; font-weight: 600; margin: 4px 4px 6px; }
+.session-meta { font-size: 13px; color: var(--text-muted); padding: 0 4px; margin-bottom: 14px; line-height: 1.5; }
+.warmup-block { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 12px 16px; margin-bottom: 16px; }
+.warmup-block .label { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; }
+.warmup-block ul { margin: 0; padding-left: 18px; color: var(--text); font-size: 14px; line-height: 1.65; }
+.warmup-block ul li::marker { color: var(--text-dim); }
+.ex-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; margin-bottom: 12px; overflow: hidden; }
+.ex-header { padding: 14px 16px; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.ex-header-left { flex: 1; min-width: 0; }
+.ex-num { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 2px; }
+.ex-name { font-size: 17px; font-weight: 600; line-height: 1.3; }
+.ex-progress { display: flex; gap: 4px; align-items: center; flex-shrink: 0; }
+.dot { width: 10px; height: 10px; border-radius: 50%; background: var(--surface-3); }
+.dot.done { background: var(--done); }
+.dot.dev { background: var(--warn); }
+.dot.ramp { background: var(--surface-3); opacity: 0.5; }
+.dot.ramp.done { background: var(--text-dim); opacity: 1; }
+.ex-body { padding: 0 16px 16px; display: none; }
+.ex-card.open .ex-body { display: block; }
+.ex-meta-row { display: flex; flex-wrap: wrap; gap: 8px 16px; font-size: 12px; color: var(--text-muted); margin: 4px 0 12px; }
+.ex-meta-row .label { color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.05em; margin-right: 4px; }
+.ex-meta-row .val { color: var(--text); font-variant-numeric: tabular-nums; }
+.cue { width: 100%; line-height: 1.55; margin-top: 2px; }
+.set-table { border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); margin: 0 -16px 12px; }
+.set-row { display: grid; grid-template-columns: 36px 1fr 1fr 1fr 24px; gap: 8px; align-items: center; padding: 14px 16px; border-bottom: 1px solid var(--border); font-size: 15px; min-height: 56px; }
+.set-row:last-child { border-bottom: none; }
+.set-row.head { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.05em; min-height: 32px; padding: 8px 16px; }
+.set-row.ramp { background: rgba(255,255,255,0.015); }
+.set-row.ramp .set-label, .set-row.ramp .weight-big, .set-row.ramp .set-cell { color: var(--text-muted); }
+.set-row.tappable { cursor: pointer; }
+.set-row.current { background: var(--accent-soft); }
+.set-row.current.ramp { background: rgba(77,163,255,0.08); }
+.set-row.completed { opacity: 0.55; }
+.set-row.completed.deviated { opacity: 0.75; }
+.set-label { font-weight: 600; font-variant-numeric: tabular-nums; }
+.set-cell { font-variant-numeric: tabular-nums; text-align: left; }
+.weight-big { font-size: 18px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.tap-cell { text-align: right; color: var(--text-muted); font-size: 16px; }
+.set-row.completed .tap-cell { color: var(--done); }
+.confirm-panel { padding: 14px 16px; background: var(--surface-2); border-bottom: 1px solid var(--border); }
+.confirm-head { font-size: 13px; color: var(--text-muted); margin-bottom: 12px; line-height: 1.5; }
+.confirm-head b { font-weight: 600; color: var(--text); }
+.confirm-actions { display: flex; flex-direction: column; gap: 8px; }
+.btn-done { height: 52px; font-size: 16px; font-weight: 600; }
+.confirm-secondary { display: flex; gap: 8px; }
+.confirm-secondary button { flex: 1; height: 42px; font-size: 14px; }
+.edit-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 12px 0; }
+.edit-grid label { font-size: 10px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 4px; }
+.rest-panel { background: var(--surface-2); border: 1px solid var(--accent); border-radius: 12px; padding: 18px 16px; text-align: center; margin: 0 -16px 12px; }
+.rest-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent); font-weight: 600; }
+.rest-time { font-size: 56px; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1; margin: 6px 0 4px; color: var(--text); }
+.rest-next { font-size: 13px; color: var(--text-muted); margin-bottom: 12px; font-variant-numeric: tabular-nums; }
+.rest-actions { display: flex; gap: 8px; justify-content: center; }
+.rest-actions button { height: 38px; padding: 0 18px; font-size: 13px; min-width: 90px; }
+.notes-field { margin: 6px 0 0; padding: 14px 16px; background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px; font-size: 14px; color: var(--text); cursor: text; min-height: 52px; line-height: 1.55; outline: none; font-family: inherit; width: 100%; resize: vertical; }
+.notes-field:focus { border-color: var(--accent); background: var(--surface-3); }
+.complete-banner { background: rgba(91, 212, 156, 0.12); border: 1px solid var(--done); color: var(--done); padding: 14px; text-align: center; border-radius: 10px; margin: 8px 0; font-weight: 500; font-size: 14px; }
+.session-list { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
+.session-item { padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); cursor: pointer; gap: 10px; }
+.session-item:last-child { border-bottom: none; }
+.session-item:active { background: var(--surface-2); }
+.session-item.active { background: var(--accent-soft); }
+.si-left .si-date { font-size: 12px; color: var(--text-muted); margin-bottom: 2px; text-transform: uppercase; letter-spacing: 0.04em; }
+.si-left .si-title { font-size: 15px; font-weight: 500; }
+.si-right { display: flex; align-items: center; gap: 6px; color: var(--text-dim); font-size: 13px; }
+.si-status { width: 10px; height: 10px; border-radius: 50%; background: var(--surface-3); }
+.si-status.done { background: var(--done); }
+.si-status.partial { background: var(--warn); }
+.overlay { position: fixed; inset: 0; background: rgba(11, 15, 20, 0.92); display: flex; align-items: flex-start; justify-content: center; padding: 24px 12px; z-index: 100; overflow-y: auto; }
+.overlay-content { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 16px; max-width: 480px; width: 100%; }
+.overlay-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+.overlay-header h2 { margin: 0; font-size: 18px; font-weight: 600; }
+.overlay-header button { width: 36px; height: 36px; min-height: 36px; padding: 0; font-size: 18px; }
+.hidden { display: none !important; }
+.foot { text-align: center; padding: 18px 0 8px; color: var(--text-dim); font-size: 12px; }
+.metcon-protocol { font-size: 14px; color: var(--text); line-height: 1.6; margin-bottom: 14px; padding: 14px 16px; background: var(--surface-2); border-radius: 12px; border-left: 3px solid var(--accent); }
+.metcon-protocol .label { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; font-weight: 600; }
+.metcon-timer-panel { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 20px 16px; text-align: center; margin-bottom: 14px; }
+.metcon-timer-panel.active { border-color: var(--accent); }
+.metcon-timer-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-dim); font-weight: 600; margin-bottom: 6px; }
+.metcon-timer { font-size: 64px; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1; color: var(--text); margin-bottom: 6px; }
+.emom-current { font-size: 17px; font-weight: 500; color: var(--accent); margin: 10px 0 4px; }
+.emom-minute { font-size: 12px; color: var(--text-muted); }
+.timer-controls { display: flex; gap: 8px; justify-content: center; margin-top: 14px; }
+.timer-controls button { min-width: 96px; height: 44px; padding: 0 16px; font-size: 14px; }
+.counter-grid { display: grid; gap: 10px; margin-bottom: 14px; }
+.counter-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; display: flex; align-items: center; gap: 12px; }
+.counter-info { flex: 1; min-width: 0; }
+.counter-label { font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 2px; }
+.counter-value { font-size: 24px; font-weight: 600; font-variant-numeric: tabular-nums; line-height: 1.1; }
+.counter-target { font-size: 13px; color: var(--text-dim); font-weight: 400; }
+.counter-buttons { display: flex; gap: 6px; flex-shrink: 0; }
+.counter-buttons button { width: 48px; height: 48px; min-height: 48px; padding: 0; font-size: 20px; font-weight: 600; }
+.counter-buttons .plus { background: var(--accent); color: #0B0F14; border-color: var(--accent); }
+.counter-card.complete { background: rgba(91, 212, 156, 0.08); border-color: var(--done); }
+.counter-card.complete .counter-value { color: var(--done); }
+.metcon-finish-btn { width: 100%; height: 52px; font-size: 15px; font-weight: 600; }
+.metcon-final { background: rgba(91, 212, 156, 0.12); border: 1px solid var(--done); color: var(--done); padding: 16px; text-align: center; border-radius: 10px; margin-bottom: 14px; font-weight: 500; }
+.metcon-final .final-time { font-size: 32px; font-weight: 700; font-variant-numeric: tabular-nums; margin: 4px 0; color: var(--text); }
+</style>
+</head>
+<body>
+<div class="app" id="app"></div>
+<div id="overlay" class="overlay hidden"></div>
+
+<script>
+// ============================================================
+// PROGRAM DATA — May 20 – June 15, 2026 (Gym) + KB Home
+// ============================================================
+const R = (w, r) => ({t:'ramp', w, r, rir:'—'});
+const W = (w, r, rir, perSide) => perSide ? {t:'work', w, r, rir, perSide:true} : {t:'work', w, r, rir};
+
+const SESSIONS = [
+  // ============ GYM SESSIONS — Week 1 ============
+  { id: '2026-05-20-C', type: 'gym', category: 'Gym', date: '2026-05-20', day: 'Wed', lift: 'C', week: 1, title: 'Lift C — Deadlift · W1',
+    exercises: [
+      { name: 'Conventional Deadlift', tempo: '2-0-1-0', rest: '3 min', cue: 'Bar over midfoot, hinge at hips, neutral spine. Drive the floor away. Lockout standing tall.',
+        sets: [ R(95,5), R(135,3), W(155,5,3), W(155,5,3), W(155,5,3) ] },
+      { name: 'Pull-ups (strict)', tempo: '2-0-1-0', rest: '2 min', cue: 'Full hang at bottom, chin over bar, no kipping. Sub-max — leave 1-2 RIR per set.',
+        sets: [ W('BW',3,2), W('BW',3,2), W('BW',3,2), W('BW',3,2) ] },
+      { name: 'DB Bent-Over Row', tempo: '2-0-1-1', rest: '90 sec', cue: 'Hinge to ~45°, neutral spine. Pull DBs to hips, squeeze upper back. No torso swing.',
+        sets: [ W(50,8,3), W(50,8,3), W(50,8,3) ] },
+      { name: 'DB Hip Thrust', tempo: '2-0-1-1', rest: '90 sec', cue: 'Shoulders on bench, DB across hips, drive heels, squeeze glutes hard at top. Chin tucked.',
+        sets: [ W(50,10,2), W(50,10,2), W(50,10,2) ] },
+      { name: 'DB Strict Curl', tempo: '3-0-1-0', rest: '75 sec', cue: 'Standing strict, no swing. Slow eccentric. Squeeze biceps at top.',
+        sets: [ W(25,10,2), W(25,10,2), W(25,10,2) ] },
+      { name: 'DB Rear Delt Fly', tempo: '2-0-1-1', rest: '60 sec', cue: 'Hinge to 45°. Lift DBs out to the sides, thumbs slightly up, squeeze rear delts.',
+        sets: [ W(15,15,2), W(15,15,2), W(15,15,2) ] },
+    ]
+  },
+  { id: '2026-05-22-A', type: 'gym', category: 'Gym', date: '2026-05-22', day: 'Fri', lift: 'A', week: 1, title: 'Lift A — Squat · W1',
+    exercises: [
+      { name: 'Back Squat', tempo: '3-1-1-0', rest: '3 min', cue: 'Feet shoulder-width, brace, descend to thighs parallel or below, drive up. Knees track over toes.',
+        sets: [ R(95,5), R(135,3), W(155,5,3), W(155,5,3), W(155,5,3) ] },
+      { name: 'Romanian Deadlift', tempo: '3-0-1-0', rest: '2 min', cue: 'Hips back, slight knee bend, bar close to legs. Stretch hamstrings, drive hips forward.',
+        sets: [ R(95,5), R(115,3), W(125,8,3), W(125,8,3), W(125,8,3) ] },
+      { name: 'DB Walking Lunge', tempo: 'controlled', rest: '90 sec', cue: 'Step forward, drop knee, drive through front heel. Torso tall, DBs at sides.',
+        sets: [ W(30,10,3,true), W(30,10,3,true), W(30,10,3,true) ] },
+      { name: 'Single-Leg DB RDL', tempo: '3-0-1-0', rest: '90 sec', cue: 'One DB in opposite hand. Hinge on standing leg, free leg lifts straight back. Hamstring stretch is the cue.',
+        sets: [ W(25,8,3,true), W(25,8,3,true), W(25,8,3,true) ] },
+      { name: 'DB Standing Calf Raise', tempo: '2-1-1-0', rest: '60 sec', cue: 'DBs at sides, raise on balls of feet, pause at top, slow descent.',
+        sets: [ W(35,15,2), W(35,15,2), W(35,15,2) ] },
+      { name: 'Plank', tempo: 'hold', rest: '45 sec', cue: 'Hard line shoulders to ankles. Glutes + abs locked. Breathe.',
+        sets: [ W('BW','45s','—'), W('BW','45s','—'), W('BW','45s','—') ] },
+    ]
+  },
+  { id: '2026-05-25-B', type: 'gym', category: 'Gym', date: '2026-05-25', day: 'Mon', lift: 'B', week: 1, title: 'Lift B — Press · W1',
+    exercises: [
+      { name: 'DB Bench Press', tempo: '3-1-1-0', rest: '2 min', cue: 'Elbows ~45° from torso. Brief pause at chest, no bounce. Scaps retracted, feet driven into floor.',
+        sets: [ R(30,8), R(45,5), W(60,10,3), W(60,10,3), W(60,10,3) ] },
+      { name: 'BB Standing Military Press', tempo: '3-0-X-0', rest: '2 min', cue: 'STRICT — no leg drive. Bar travels up and slightly back. Slow eccentric, explosive concentric. Glutes squeezed, ribs down.',
+        sets: [ R(45,5), R(55,3), W(60,5,3), W(60,5,3), W(60,5,3) ] },
+      { name: 'Pull-ups (strict)', tempo: '2-0-1-0', rest: '2 min', cue: 'Full hang to chin over bar, no kipping. Distribute as 5 sub-max sets — all clean reps.',
+        sets: [ W('BW',3,2), W('BW',3,2), W('BW',3,2), W('BW',3,2), W('BW',3,2) ] },
+      { name: 'DB Single-Arm Row', tempo: '2-0-1-1', rest: '60 sec / switch', cue: 'Hand + opposite knee on bench. Brace abs hard. Pull to hip, not chest. No torso rotation.',
+        sets: [ W(45,10,3,true), W(45,10,3,true), W(45,10,3,true) ] },
+      { name: 'DB Strict Curl', tempo: '3-0-1-0', rest: '75 sec', cue: 'No body swing. Slow eccentric is the priority — biceps need it. Pause briefly at top.',
+        sets: [ W(25,10,2), W(25,10,2), W(25,10,2) ] },
+      { name: 'DB Hammer Curl', tempo: '3-0-1-0', rest: '75 sec', cue: 'Neutral grip (thumbs up). Slow eccentric. Hits brachialis + forearm in addition to biceps.',
+        sets: [ W(25,10,2), W(25,10,2), W(25,10,2) ] },
+    ]
+  },
+  // ============ GYM — Week 2 ============
+  { id: '2026-05-27-C', type: 'gym', category: 'Gym', date: '2026-05-27', day: 'Wed', lift: 'C', week: 2, title: 'Lift C — Deadlift · W2',
+    exercises: [
+      { name: 'Conventional Deadlift', tempo: '2-0-1-0', rest: '3 min', cue: 'Bar over midfoot, hinge, neutral spine, drive floor away.',
+        sets: [ R(95,5), R(135,3), W(165,5,3), W(165,5,3), W(165,5,3) ] },
+      { name: 'Pull-ups (strict)', tempo: '2-0-1-0', rest: '2 min', cue: 'Sub-max, RIR 1-2, clean reps only.',
+        sets: [ W('BW',3,2), W('BW',3,2), W('BW',3,2), W('BW',3,2) ] },
+      { name: 'DB Bent-Over Row', tempo: '2-0-1-1', rest: '90 sec', cue: 'Hinge to ~45°, pull to hips, squeeze upper back.',
+        sets: [ W(55,8,3), W(55,8,3), W(55,8,3) ] },
+      { name: 'DB Hip Thrust', tempo: '2-0-1-1', rest: '90 sec', cue: 'Drive heels, squeeze glutes hard at top. Pause 1 sec at top.',
+        sets: [ W(55,10,2), W(55,10,2), W(55,10,2) ] },
+      { name: 'DB Strict Curl', tempo: '3-0-1-0', rest: '75 sec', cue: 'Standing strict, slow eccentric.',
+        sets: [ W(25,10,2), W(25,10,2), W(25,10,2) ] },
+      { name: 'DB Rear Delt Fly', tempo: '2-0-1-1', rest: '60 sec', cue: 'Hinge to 45°, lift DBs to sides, squeeze rear delts.',
+        sets: [ W(15,15,2), W(15,15,2), W(15,15,2) ] },
+    ]
+  },
+  { id: '2026-05-29-A', type: 'gym', category: 'Gym', date: '2026-05-29', day: 'Fri', lift: 'A', week: 2, title: 'Lift A — Squat · W2',
+    exercises: [
+      { name: 'Back Squat', tempo: '3-1-1-0', rest: '3 min', cue: 'Feet shoulder-width, brace, parallel or below, drive up.',
+        sets: [ R(95,5), R(135,3), W(165,5,3), W(165,5,3), W(165,5,3) ] },
+      { name: 'Romanian Deadlift', tempo: '3-0-1-0', rest: '2 min', cue: 'Hips back, hamstring stretch, hips forward.',
+        sets: [ R(95,5), R(115,3), W(135,8,3), W(135,8,3), W(135,8,3) ] },
+      { name: 'DB Walking Lunge', tempo: 'controlled', rest: '90 sec', cue: 'Tall torso, drive through front heel.',
+        sets: [ W(35,10,3,true), W(35,10,3,true), W(35,10,3,true) ] },
+      { name: 'Single-Leg DB RDL', tempo: '3-0-1-0', rest: '90 sec', cue: 'Opposite hand DB, hinge on standing leg.',
+        sets: [ W(30,8,3,true), W(30,8,3,true), W(30,8,3,true) ] },
+      { name: 'DB Standing Calf Raise', tempo: '2-1-1-0', rest: '60 sec', cue: 'Raise, pause, slow descent.',
+        sets: [ W(35,15,2), W(35,15,2), W(35,15,2) ] },
+      { name: 'Plank', tempo: 'hold', rest: '45 sec', cue: 'Hard line, glutes + abs locked, breathe.',
+        sets: [ W('BW','60s','—'), W('BW','60s','—'), W('BW','60s','—') ] },
+    ]
+  },
+  { id: '2026-06-01-B', type: 'gym', category: 'Gym', date: '2026-06-01', day: 'Mon', lift: 'B', week: 2, title: 'Lift B — Press · W2',
+    exercises: [
+      { name: 'DB Bench Press', tempo: '3-1-1-0', rest: '2 min', cue: 'Elbows ~45°, pause at chest, scaps retracted.',
+        sets: [ R(30,8), R(50,5), W(65,10,3), W(65,10,3), W(65,10,3) ] },
+      { name: 'BB Standing Military Press', tempo: '3-0-X-0', rest: '2 min', cue: 'Strict, slow eccentric, explosive concentric.',
+        sets: [ R(45,5), R(55,3), W(65,5,3), W(65,5,3), W(65,5,3) ] },
+      { name: 'Pull-ups (strict)', tempo: '2-0-1-0', rest: '2 min', cue: '5 sub-max sets, RIR 2, clean reps.',
+        sets: [ W('BW',3,2), W('BW',3,2), W('BW',3,2), W('BW',3,2), W('BW',3,2) ] },
+      { name: 'DB Single-Arm Row', tempo: '2-0-1-1', rest: '60 sec / switch', cue: 'Pull to hip, no torso rotation.',
+        sets: [ W(50,10,3,true), W(50,10,3,true), W(50,10,3,true) ] },
+      { name: 'DB Strict Curl', tempo: '3-0-1-0', rest: '75 sec', cue: 'Strict standing, slow eccentric.',
+        sets: [ W(25,10,2), W(25,10,2), W(25,10,2) ] },
+      { name: 'DB Hammer Curl', tempo: '3-0-1-0', rest: '75 sec', cue: 'Neutral grip, slow eccentric.',
+        sets: [ W(30,10,2), W(30,10,2), W(30,10,2) ] },
+    ]
+  },
+  // ============ GYM — Week 3 (peak) ============
+  { id: '2026-06-03-C', type: 'gym', category: 'Gym', date: '2026-06-03', day: 'Wed', lift: 'C', week: 3, title: 'Lift C — Deadlift · W3 (peak)',
+    exercises: [
+      { name: 'Conventional Deadlift', tempo: '2-0-1-0', rest: '3 min', cue: 'Peak loading week — focus on rock-solid setup.',
+        sets: [ R(95,5), R(135,5), W(175,5,3), W(175,5,3), W(175,5,3) ] },
+      { name: 'Pull-ups (strict)', tempo: '2-0-1-0', rest: '2 min', cue: 'Push reps per set. RIR 1-2 first 4 sets, last can grind.',
+        sets: [ W('BW',3,2), W('BW',3,2), W('BW',3,2), W('BW',3,2), W('BW',3,1) ] },
+      { name: 'DB Bent-Over Row', tempo: '2-0-1-1', rest: '90 sec', cue: 'Hinge, pull to hips, squeeze.',
+        sets: [ W(55,8,3), W(55,8,3), W(55,8,3) ] },
+      { name: 'DB Hip Thrust', tempo: '2-0-1-1', rest: '90 sec', cue: 'Drive heels, squeeze glutes, pause 1 sec at top.',
+        sets: [ W(55,10,2), W(55,10,2), W(55,10,2) ] },
+      { name: 'DB Strict Curl', tempo: '3-0-1-0', rest: '75 sec', cue: 'Slow eccentric — first weight increase on biceps.',
+        sets: [ W(30,10,2), W(30,10,2), W(30,10,2) ] },
+      { name: 'DB Rear Delt Fly', tempo: '2-0-1-1', rest: '60 sec', cue: 'Squeeze rear delts, thumbs slightly up.',
+        sets: [ W(20,15,2), W(20,15,2), W(20,15,2) ] },
+    ]
+  },
+  { id: '2026-06-05-A', type: 'gym', category: 'Gym', date: '2026-06-05', day: 'Fri', lift: 'A', week: 3, title: 'Lift A — Squat · W3 (peak)',
+    exercises: [
+      { name: 'Back Squat', tempo: '3-1-1-0', rest: '3 min', cue: 'Peak week — bracing is the key. Brace before unrack.',
+        sets: [ R(95,5), R(135,5), W(175,5,3), W(175,5,3), W(175,5,3) ] },
+      { name: 'Romanian Deadlift', tempo: '3-0-1-0', rest: '2 min', cue: 'Slow eccentric, drive hips forward.',
+        sets: [ R(95,5), R(135,3), W(145,8,3), W(145,8,3), W(145,8,3) ] },
+      { name: 'DB Walking Lunge', tempo: 'controlled', rest: '90 sec', cue: 'Tall torso, drive heel.',
+        sets: [ W(35,10,3,true), W(35,10,3,true), W(35,10,3,true) ] },
+      { name: 'Single-Leg DB RDL', tempo: '3-0-1-0', rest: '90 sec', cue: 'Hinge on standing leg, hamstring stretch.',
+        sets: [ W(30,8,3,true), W(30,8,3,true), W(30,8,3,true) ] },
+      { name: 'DB Standing Calf Raise', tempo: '2-1-1-0', rest: '60 sec', cue: 'Slow descent. Pause at bottom for stretch.',
+        sets: [ W(40,15,2), W(40,15,2), W(40,15,2) ] },
+      { name: 'Plank', tempo: 'hold', rest: '45 sec', cue: 'Hard line, breathe through nose.',
+        sets: [ W('BW','60s','—'), W('BW','60s','—'), W('BW','60s','—') ] },
+    ]
+  },
+  { id: '2026-06-08-B', type: 'gym', category: 'Gym', date: '2026-06-08', day: 'Mon', lift: 'B', week: 3, title: 'Lift B — Press · W3 (peak)',
+    exercises: [
+      { name: 'DB Bench Press', tempo: '3-1-1-0', rest: '2 min', cue: 'Peak — pause at chest fully, then explode up.',
+        sets: [ R(35,8), R(50,5), W(70,10,3), W(70,10,3), W(70,10,3) ] },
+      { name: 'BB Standing Military Press', tempo: '3-0-X-0', rest: '2 min', cue: 'Peak strict standing. Glutes squeezed, ribs down, explode through.',
+        sets: [ R(45,5), R(55,3), W(70,5,3), W(70,5,3), W(70,5,3) ] },
+      { name: 'Pull-ups (strict)', tempo: '2-0-1-0', rest: '2 min', cue: 'Target 5×4 strict. Last set can grind to failure if you have it.',
+        sets: [ W('BW',4,2), W('BW',4,2), W('BW',4,2), W('BW',4,1), W('BW',4,0) ] },
+      { name: 'DB Single-Arm Row', tempo: '2-0-1-1', rest: '60 sec / switch', cue: 'Pull to hip, no rotation.',
+        sets: [ W(50,10,3,true), W(50,10,3,true), W(50,10,3,true) ] },
+      { name: 'DB Strict Curl', tempo: '3-0-1-0', rest: '75 sec', cue: 'First weight jump on biceps — slow eccentric is non-negotiable.',
+        sets: [ W(30,10,2), W(30,10,2), W(30,10,2) ] },
+      { name: 'DB Hammer Curl', tempo: '3-0-1-0', rest: '75 sec', cue: 'Neutral grip, slow eccentric.',
+        sets: [ W(30,10,2), W(30,10,2), W(30,10,2) ] },
+    ]
+  },
+  // ============ GYM — Week 4 (deload) ============
+  { id: '2026-06-10-C', type: 'gym', category: 'Gym', date: '2026-06-10', day: 'Wed', lift: 'C', week: 4, title: 'Lift C — Deadlift · W4 (deload)',
+    exercises: [
+      { name: 'Conventional Deadlift', tempo: '2-0-1-0', rest: '3 min', cue: 'DELOAD — load is light, focus on speed and crisp setup.',
+        sets: [ R(95,5), W(125,5,5), W(125,5,5), W(125,5,5) ] },
+      { name: 'Pull-ups (strict)', tempo: '2-0-1-0', rest: '2 min', cue: 'Deload — sub-max, easy reps, recovery focus.',
+        sets: [ W('BW',2,3), W('BW',2,3), W('BW',2,3) ] },
+      { name: 'DB Bent-Over Row', tempo: '2-0-1-1', rest: '90 sec', cue: 'Light, hinge, squeeze.',
+        sets: [ W(45,8,4), W(45,8,4) ] },
+      { name: 'DB Hip Thrust', tempo: '2-0-1-1', rest: '90 sec', cue: 'Light, focus on the glute squeeze at top.',
+        sets: [ W(40,10,3), W(40,10,3) ] },
+      { name: 'DB Strict Curl', tempo: '3-0-1-0', rest: '75 sec', cue: 'Light, slow eccentric.',
+        sets: [ W(20,10,3), W(20,10,3) ] },
+      { name: 'DB Rear Delt Fly', tempo: '2-0-1-1', rest: '60 sec', cue: 'Light, full ROM.',
+        sets: [ W(10,15,3), W(10,15,3) ] },
+    ]
+  },
+  { id: '2026-06-12-A', type: 'gym', category: 'Gym', date: '2026-06-12', day: 'Fri', lift: 'A', week: 4, title: 'Lift A — Squat · W4 (deload)',
+    exercises: [
+      { name: 'Back Squat', tempo: '3-1-1-0', rest: '2 min', cue: 'DELOAD — light, crisp, full ROM.',
+        sets: [ R(95,5), W(115,5,5), W(115,5,5), W(115,5,5) ] },
+      { name: 'Romanian Deadlift', tempo: '3-0-1-0', rest: '2 min', cue: 'Light, hinge mechanics focus.',
+        sets: [ W(95,8,4), W(95,8,4) ] },
+      { name: 'DB Walking Lunge', tempo: 'controlled', rest: '90 sec', cue: 'Light, focus on balance.',
+        sets: [ W(25,10,4,true), W(25,10,4,true) ] },
+      { name: 'Single-Leg DB RDL', tempo: '3-0-1-0', rest: '90 sec', cue: 'Light, hinge mechanics.',
+        sets: [ W(20,8,4,true), W(20,8,4,true) ] },
+      { name: 'DB Standing Calf Raise', tempo: '2-1-1-0', rest: '60 sec', cue: 'Light, full ROM.',
+        sets: [ W(30,15,3), W(30,15,3) ] },
+      { name: 'Plank', tempo: 'hold', rest: '45 sec', cue: 'Hard line, breathe.',
+        sets: [ W('BW','45s','—'), W('BW','45s','—') ] },
+    ]
+  },
+  { id: '2026-06-15-B', type: 'gym', category: 'Gym', date: '2026-06-15', day: 'Mon', lift: 'B', week: 4, title: 'Lift B — Press · W4 (deload)',
+    exercises: [
+      { name: 'DB Bench Press', tempo: '3-1-1-0', rest: '2 min', cue: 'DELOAD — light, full ROM, pause at chest.',
+        sets: [ R(30,8), W(50,10,4), W(50,10,4), W(50,10,4) ] },
+      { name: 'BB Standing Military Press', tempo: '3-0-X-0', rest: '2 min', cue: 'Light, strict, tempo emphasis.',
+        sets: [ R(45,5), W(50,5,4), W(50,5,4), W(50,5,4) ] },
+      { name: 'Pull-ups (strict)', tempo: '2-0-1-0', rest: '2 min', cue: 'Deload — easy reps, RIR 3+.',
+        sets: [ W('BW',3,3), W('BW',3,3), W('BW',3,3) ] },
+      { name: 'DB Single-Arm Row', tempo: '2-0-1-1', rest: '60 sec / switch', cue: 'Light, pull to hip.',
+        sets: [ W(40,10,4,true), W(40,10,4,true) ] },
+      { name: 'DB Strict Curl', tempo: '3-0-1-0', rest: '75 sec', cue: 'Light, slow eccentric.',
+        sets: [ W(20,10,3), W(20,10,3) ] },
+      { name: 'DB Hammer Curl', tempo: '3-0-1-0', rest: '75 sec', cue: 'Light, neutral grip.',
+        sets: [ W(20,10,3), W(20,10,3) ] },
+    ]
+  },
+  // ============ HOME — KB STRENGTH SUBS ============
+  { id: 'kb-sub-a', type: 'kb-strength', category: 'Home', title: 'KB Sub A — Lower (Squat day replacement)', duration: '~40 min',
+    intent: 'Use in place of Lift A (squat day) when you can\'t make it to the gym. One 24kg bell.',
+    exercises: [
+      { name: 'KB Goblet Squat', tempo: '3-1-1-0', rest: '90 sec', cue: 'Hold KB at chest, elbows tucked. Descend deep, drive up through heels. Spine tall.',
+        sets: [ W('24kg',8,3), W('24kg',8,3), W('24kg',8,3), W('24kg',8,3) ] },
+      { name: 'KB Two-Hand RDL', tempo: '3-0-1-0', rest: '90 sec', cue: 'Both hands on handle, hinge at hips, bell brushes shins. Drive hips forward.',
+        sets: [ W('24kg',10,3), W('24kg',10,3), W('24kg',10,3), W('24kg',10,3) ] },
+      { name: 'KB Walking Lunge (chest-loaded)', tempo: 'controlled', rest: '90 sec', cue: 'KB at chest, step forward, drop rear knee, drive front heel. Torso tall.',
+        sets: [ W('24kg',10,3,true), W('24kg',10,3,true), W('24kg',10,3,true) ] },
+      { name: 'Single-Leg KB RDL', tempo: '3-0-1-0', rest: '90 sec', cue: 'KB in opposite hand. Hinge on standing leg, free leg lifts back. Hamstring stretch.',
+        sets: [ W('24kg',8,3,true), W('24kg',8,3,true), W('24kg',8,3,true) ] },
+      { name: 'Single-Leg Calf Raise (BW)', tempo: '2-1-1-0', rest: '60 sec', cue: 'Slow eccentric, pause at top, full ROM. Use a step for stretch if available.',
+        sets: [ W('BW',15,2,true), W('BW',15,2,true), W('BW',15,2,true) ] },
+      { name: 'Plank', tempo: 'hold', rest: '45 sec', cue: 'Hard line, glutes + abs locked. Breathe through nose.',
+        sets: [ W('BW','45s','—'), W('BW','45s','—'), W('BW','45s','—') ] },
+    ]
+  },
+  { id: 'kb-sub-b', type: 'kb-strength', category: 'Home', title: 'KB Sub B — Press (Press day replacement)', duration: '~45 min',
+    intent: 'Use in place of Lift B (press day) when you can\'t make it to the gym. One 24kg bell + bands.',
+    exercises: [
+      { name: 'KB Floor Press (single-arm, alternating)', tempo: '3-1-1-0', rest: '2 min', cue: 'Lie on floor (or mat). Press KB straight up, controlled descent. Elbow touches floor at bottom. Alternate sides.',
+        sets: [ W('24kg',6,3,true), W('24kg',6,3,true), W('24kg',6,3,true), W('24kg',6,3,true) ] },
+      { name: 'KB Strict Press (single-arm, standing)', tempo: '3-0-X-0', rest: '2 min', cue: 'Bell racked at shoulder, glutes squeezed. Press straight overhead, no leg drive. Explosive concentric.',
+        sets: [ W('24kg',5,3,true), W('24kg',5,3,true), W('24kg',5,3,true), W('24kg',5,3,true) ] },
+      { name: 'KB Single-Arm Row (bent-over)', tempo: '2-0-1-1', rest: '90 sec', cue: 'Hinge to 45°, brace abs. Pull KB to hip, squeeze. No torso rotation.',
+        sets: [ W('24kg',10,3,true), W('24kg',10,3,true), W('24kg',10,3,true) ] },
+      { name: 'Renegade Row', tempo: '2-0-1-1', rest: '90 sec', cue: 'Push-up position, KB in one hand. Row to ribs without rotating hips. Alternate arms.',
+        sets: [ W('24kg',6,3,true), W('24kg',6,3,true), W('24kg',6,3,true) ] },
+      { name: 'Band Curl (behind-body, supine, low anchor)', tempo: '3-0-1-0', rest: '75 sec', cue: 'Stand facing AWAY from anchor. Underhand grip, arm slightly behind. Slow eccentric to full stretch, then curl. One arm at a time.',
+        sets: [ W('Blue band',10,2,true), W('Blue band',10,2,true), W('Blue band',10,2,true) ] },
+      { name: 'Push-ups (slow eccentric)', tempo: '3-0-1-0', rest: '75 sec', cue: 'Hard line head to heels. 3-sec descent, brief pause at bottom, drive up.',
+        sets: [ W('BW','max',2), W('BW','max',2), W('BW','max',2) ] },
+    ]
+  },
+  { id: 'kb-sub-c', type: 'kb-strength', category: 'Home', title: 'KB Sub C — Posterior (Deadlift day replacement)', duration: '~40 min',
+    intent: 'Use in place of Lift C (deadlift day) when you can\'t make it to the gym. One 24kg bell + bands.',
+    exercises: [
+      { name: 'KB Two-Hand Swing', tempo: 'explosive', rest: '90 sec', cue: 'Hike bell back through legs (not down), explode hips forward. Arms are ropes. Glutes drive. Bell floats to chest height.',
+        sets: [ W('24kg',15,3), W('24kg',15,3), W('24kg',15,3), W('24kg',15,3), W('24kg',15,3) ] },
+      { name: 'KB Single-Arm Row (bent-over)', tempo: '2-0-1-1', rest: '90 sec', cue: 'Hinge to 45°, pull to hip, squeeze.',
+        sets: [ W('24kg',10,3,true), W('24kg',10,3,true), W('24kg',10,3,true) ] },
+      { name: 'KB Renegade Row', tempo: '2-0-1-1', rest: '90 sec', cue: 'Anti-rotation core + back. Don\'t let hips twist.',
+        sets: [ W('24kg',6,3,true), W('24kg',6,3,true), W('24kg',6,3,true) ] },
+      { name: 'KB Hip Thrust', tempo: '2-0-1-1', rest: '90 sec', cue: 'Shoulders elevated on bench/step, KB across hips, drive heels, squeeze glutes hard at top.',
+        sets: [ W('24kg',12,2), W('24kg',12,2), W('24kg',12,2) ] },
+      { name: 'Band Hammer Curl (behind-body, neutral grip)', tempo: '3-0-1-0', rest: '75 sec', cue: 'Same anchor setup as Sub B curl, but neutral (thumbs-up) grip. Slow eccentric to full stretch.',
+        sets: [ W('Blue band',10,2,true), W('Blue band',10,2,true), W('Blue band',10,2,true) ] },
+      { name: 'Band Pull-Apart', tempo: '2-0-1-1', rest: '60 sec', cue: 'Band held at arms-length in front, pull apart to sides, squeeze shoulder blades, slow return.',
+        sets: [ W('Red band',15,2), W('Red band',15,2), W('Red band',15,2) ] },
+    ]
+  },
+  // ============ HOME — KB METCONS ============
+  { id: 'kb-metcon-ss', type: 'kb-metcon', category: 'Home', title: 'KB MetCon — Simple & Sinister', duration: '20-30 min', metconKind: 'forCompletion',
+    intent: 'Foundational conditioning. Self-paced. Use as your easier metcon day.',
+    protocol: 'Complete 100 KB two-hand swings + 10 Turkish Get-Ups (5 per side, alternating). Break the swings however you want (10×10, 5×20, etc.). Rest as needed. Goal is completing the work, not racing the clock.',
+    counters: [
+      { id: 'swings', label: 'KB swings', target: 100, step: 5 },
+      { id: 'getups', label: 'Turkish get-ups', target: 10, step: 1 }
+    ],
+    timer: { mode: 'stopwatch' }
+  },
+  { id: 'kb-metcon-emom', type: 'kb-metcon', category: 'Home', title: 'KB MetCon — EMOM 20', duration: '20 min', metconKind: 'emom',
+    intent: 'Density work. Heart rate stays high the entire 20 min.',
+    protocol: 'Every Minute On the Minute for 20 minutes. Set the timer, follow the prompts. Total: 100 swings, 50 push-ups, 50 goblet squats.',
+    rounds: [
+      { label: '10 KB swings' },
+      { label: '5 push-ups + 5 goblet squats' }
+    ],
+    timer: { mode: 'emom', durationSec: 1200, intervalSec: 60 }
+  },
+  { id: 'kb-metcon-100s', type: 'kb-metcon', category: 'Home', title: 'KB MetCon — The 100s', duration: '30-45 min', metconKind: 'forTime',
+    intent: 'Volume grinder. Race the clock. Use when you have time and want to push.',
+    protocol: 'Complete in any order, any breakdown, fewest sets possible: 100 KB swings, 50 goblet squats, 30 push-ups, 20 Turkish get-ups (10/side). Stopwatch runs; log your time.',
+    counters: [
+      { id: 'swings', label: 'KB swings', target: 100, step: 5 },
+      { id: 'squats', label: 'Goblet squats', target: 50, step: 5 },
+      { id: 'pushups', label: 'Push-ups', target: 30, step: 5 },
+      { id: 'getups', label: 'Turkish get-ups', target: 20, step: 1 }
+    ],
+    timer: { mode: 'stopwatch' }
+  },
+];
+
+const WARMUP = [
+  '5 min treadmill, incline 2',
+  'Hip mobility — CARs',
+  'Bands — pull-aparts, Y-T-W',
+];
+
+const KB_WARMUP = [
+  'Hip mobility — CARs, 90/90s',
+  'Halos with KB — 5 each direction',
+  'Goblet squat — 8 slow, deep',
+  'KB deadlift hinges — 8 reps (pattern primer)',
+];
+
+// ============================================================
+// STATE
+// ============================================================
+const STORE_KEY = 'workoutPwaState_v2';
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORE_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch(e) {}
+  return { sessionIdx: 0, sessions: {}, notes: {}, metcons: {}, category: 'Gym' };
+}
+
+function saveState() {
+  try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch(e) {}
+}
+
+let state = loadState();
+if (!state.metcons) state.metcons = {};
+if (!state.category) state.category = 'Gym';
+
+(function initSession() {
+  if (state.sessionIdx != null && SESSIONS[state.sessionIdx] && SESSIONS[state.sessionIdx].category === state.category) return;
+  // Pick first session matching current category
+  const today = new Date().toISOString().slice(0, 10);
+  let idx = SESSIONS.findIndex(s => s.category === state.category && s.date && s.date >= today);
+  if (idx < 0) idx = SESSIONS.findIndex(s => s.category === state.category);
+  if (idx < 0) idx = 0;
+  state.sessionIdx = idx;
+})();
+
+function getSessionState(sid) {
+  if (!state.sessions[sid]) state.sessions[sid] = { sets: {}, openEx: 0, restEndTs: null };
+  return state.sessions[sid];
+}
+
+function getMetconState(sid) {
+  if (!state.metcons[sid]) state.metcons[sid] = { counters: {}, timerStart: null, timerElapsed: 0, timerRunning: false, completed: false, finalSec: null };
+  return state.metcons[sid];
+}
+
+function categorySessions(cat) {
+  return SESSIONS.map((s, i) => ({ s, i })).filter(({s}) => s.category === cat);
+}
+
+// ============================================================
+// HELPERS
+// ============================================================
+function fmtDate(iso) {
+  if (!iso) return '';
+  const d = new Date(iso + 'T12:00:00');
+  return d.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' });
+}
+
+function fmtMS(totalSec) {
+  totalSec = Math.max(0, Math.floor(totalSec));
+  const m = Math.floor(totalSec / 60);
+  const s = totalSec % 60;
+  return `${m}:${s.toString().padStart(2,'0')}`;
+}
+
+function setKey(eIdx, sIdx) { return eIdx + '_' + sIdx; }
+
+function isExComplete(sid, eIdx) {
+  const ses = SESSIONS[state.sessionIdx];
+  const ssState = getSessionState(sid);
+  const sets = ses.exercises[eIdx].sets;
+  return sets.every((_, sIdx) => ssState.sets[setKey(eIdx, sIdx)]?.status === 'completed');
+}
+
+// ============================================================
+// CATEGORY TOGGLE
+// ============================================================
+function switchCategory(cat) {
+  if (state.category === cat) return;
+  state.category = cat;
+  const first = SESSIONS.findIndex(s => s.category === cat && (!s.date || s.date >= new Date().toISOString().slice(0,10)));
+  state.sessionIdx = first >= 0 ? first : SESSIONS.findIndex(s => s.category === cat);
+  saveState();
+  render();
+}
+
+// ============================================================
+// RENDER ROOT
+// ============================================================
+function render() {
+  const ses = SESSIONS[state.sessionIdx];
+  if (!ses) { document.getElementById('app').innerHTML = '<p style="padding:20px;color:var(--text-muted)">No session selected.</p>'; return; }
+
+  const app = document.getElementById('app');
+  app.innerHTML = '';
+
+  // Category toggle
+  const catBar = document.createElement('div');
+  catBar.className = 'cat-toggle';
+  const gymCount = SESSIONS.filter(s => s.category === 'Gym').length;
+  const homeCount = SESSIONS.filter(s => s.category === 'Home').length;
+  catBar.innerHTML = `
+    <button class="${state.category === 'Gym' ? 'active' : ''}" data-cat="Gym">Gym <span class="badge">${gymCount}</span></button>
+    <button class="${state.category === 'Home' ? 'active' : ''}" data-cat="Home">Home <span class="badge">${homeCount}</span></button>
+  `;
+  app.appendChild(catBar);
+  catBar.querySelectorAll('button').forEach(b => b.addEventListener('click', () => switchCategory(b.dataset.cat)));
+
+  // Header
+  const hdr = document.createElement('div');
+  hdr.className = 'header';
+  const dateLabel = ses.date ? fmtDate(ses.date) : 'Anytime';
+  const liftLabel = ses.lift ? ` · Lift ${ses.lift} · W${ses.week}` : '';
+  hdr.innerHTML = `
+    <div class="session-pill" id="sessionPicker">
+      <span class="date">${dateLabel}</span>
+      ${liftLabel ? `<span>·</span><span>Lift ${ses.lift} · W${ses.week}</span>` : ''}
+      <span class="arrow">▾</span>
+    </div>
+    <div class="nav-buttons">
+      <button id="prevBtn" aria-label="previous session">‹</button>
+      <button id="nextBtn" aria-label="next session">›</button>
+    </div>
+  `;
+  app.appendChild(hdr);
+
+  const title = document.createElement('div');
+  title.className = 'session-title';
+  title.textContent = ses.title;
+  app.appendChild(title);
+
+  // Render by type
+  if (ses.type === 'kb-metcon') {
+    renderMetcon(ses, app);
+  } else {
+    renderStrength(ses, app);
+  }
+
+  const foot = document.createElement('div');
+  foot.className = 'foot';
+  foot.textContent = 'Workout v1 · local data on this device';
+  app.appendChild(foot);
+
+  // Wire nav
+  document.getElementById('prevBtn').addEventListener('click', () => navigateSession(-1));
+  document.getElementById('nextBtn').addEventListener('click', () => navigateSession(1));
+  document.getElementById('sessionPicker').addEventListener('click', openSessionPicker);
+}
+
+function navigateSession(dir) {
+  const cat = state.category;
+  const filtered = categorySessions(cat);
+  const currentPos = filtered.findIndex(({i}) => i === state.sessionIdx);
+  const newPos = currentPos + dir;
+  if (newPos < 0 || newPos >= filtered.length) return;
+  state.sessionIdx = filtered[newPos].i;
+  saveState();
+  render();
+}
+
+// ============================================================
+// RENDER — STRENGTH (gym + kb-strength)
+// ============================================================
+function renderStrength(ses, app) {
+  const ssState = getSessionState(ses.id);
+
+  const totalWorkingSets = ses.exercises.reduce((a,e) => a + e.sets.filter(s => s.t === 'work').length, 0);
+  const meta = document.createElement('div');
+  meta.className = 'session-meta';
+  meta.textContent = `${ses.exercises.length} exercises · ${totalWorkingSets} working sets${ses.duration ? ' · ' + ses.duration : ''}`;
+  app.appendChild(meta);
+
+  if (ses.intent) {
+    const intent = document.createElement('div');
+    intent.className = 'session-meta';
+    intent.style.marginTop = '-8px';
+    intent.style.color = 'var(--text-muted)';
+    intent.style.fontStyle = 'italic';
+    intent.textContent = ses.intent;
+    app.appendChild(intent);
+  }
+
+  const wu = document.createElement('div');
+  wu.className = 'warmup-block';
+  const wuList = ses.type === 'kb-strength' ? KB_WARMUP : WARMUP;
+  wu.innerHTML = `<div class="label">Warm-up</div><ul>${wuList.map(w => `<li>${w}</li>`).join('')}</ul>`;
+  app.appendChild(wu);
+
+  ses.exercises.forEach((ex, eIdx) => {
+    const isOpen = ssState.openEx === eIdx;
+    const complete = isExComplete(ses.id, eIdx);
+
+    const card = document.createElement('div');
+    card.className = 'ex-card' + (isOpen ? ' open' : '');
+
+    const cHdr = document.createElement('div');
+    cHdr.className = 'ex-header';
+    cHdr.innerHTML = `
+      <div class="ex-header-left">
+        <div class="ex-num">Exercise ${eIdx + 1} of ${ses.exercises.length}</div>
+        <div class="ex-name">${ex.name}</div>
+      </div>
+      <div class="ex-progress">
+        ${ex.sets.map((set, sIdx) => {
+          const s = ssState.sets[setKey(eIdx, sIdx)];
+          const isRamp = set.t === 'ramp';
+          let cls = 'dot';
+          if (isRamp) cls += ' ramp';
+          if (s?.status === 'completed') cls += s.actual ? ' dev' : ' done';
+          return `<span class="${cls}"></span>`;
+        }).join('')}
+      </div>
+    `;
+    cHdr.addEventListener('click', () => {
+      ssState.openEx = isOpen ? -1 : eIdx;
+      saveState(); render();
+    });
+    card.appendChild(cHdr);
+
+    const body = document.createElement('div');
+    body.className = 'ex-body';
+
+    const metaRow = document.createElement('div');
+    metaRow.className = 'ex-meta-row';
+    metaRow.innerHTML = `
+      <span><span class="label">Tempo</span><span class="val">${ex.tempo}</span></span>
+      <span><span class="label">Rest</span><span class="val">${ex.rest}</span></span>
+      <div class="cue"><span class="label">Cue</span> ${ex.cue}</div>
+    `;
+    body.appendChild(metaRow);
+
+    const restActive = ssState.restEx === eIdx && ssState.restEndTs && Date.now() < ssState.restEndTs;
+    if (restActive) {
+      const remaining = Math.max(0, Math.ceil((ssState.restEndTs - Date.now()) / 1000));
+      const nextSetIdx = ex.sets.findIndex((_, i) => !ssState.sets[setKey(eIdx, i)] || ssState.sets[setKey(eIdx, i)].status !== 'completed');
+      const nextSet = nextSetIdx >= 0 ? ex.sets[nextSetIdx] : null;
+      const restPanel = document.createElement('div');
+      restPanel.className = 'rest-panel';
+      restPanel.innerHTML = `
+        <div class="rest-label">Rest</div>
+        <div class="rest-time">${remaining}s</div>
+        <div class="rest-next">${nextSet ? `Next: Set ${nextSetIdx + 1} · ${nextSet.w}${typeof nextSet.w === 'number' ? ' lb' : ''} × ${nextSet.r}${nextSet.perSide ? '/side' : ''}` : 'All sets complete'}</div>
+        <div class="rest-actions">
+          <button class="ghost" data-act="restSkip">Skip</button>
+          <button class="ghost" data-act="restAdd">+30s</button>
+        </div>
+      `;
+      body.appendChild(restPanel);
+    }
+
+    const table = document.createElement('div');
+    table.className = 'set-table';
+
+    const headRow = document.createElement('div');
+    headRow.className = 'set-row head';
+    headRow.innerHTML = `<span>Set</span><span>Weight</span><span>Reps</span><span>RIR</span><span></span>`;
+    table.appendChild(headRow);
+
+    const currentSetIdx = ex.sets.findIndex((_, i) => !ssState.sets[setKey(eIdx, i)] || ssState.sets[setKey(eIdx, i)].status !== 'completed');
+    ex.sets.forEach((s, sIdx) => {
+      const k = setKey(eIdx, sIdx);
+      const ss = ssState.sets[k] || {};
+      const isRamp = s.t === 'ramp';
+      const row = document.createElement('div');
+
+      const wDisplay = (val) => {
+        if (val === 'BW') return 'BW';
+        if (typeof val === 'string') return val;
+        return val;
+      };
+
+      if (ss.mode === 'confirm') {
+        row.className = 'confirm-panel';
+        const repsStr = typeof s.r === 'string' ? s.r : `${s.r}${s.perSide ? '/side' : ''}`;
+        const rirStr = (s.rir !== '—' && s.rir != null) ? `, RIR ${s.rir}` : '';
+        const wTxt = s.w === 'BW' ? 'bodyweight' : (typeof s.w === 'number' ? `${s.w} lb` : s.w);
+        const setLabel = isRamp ? `Ramp ${sIdx + 1}` : `Set ${sIdx + 1}`;
+        row.innerHTML = `
+          <div class="confirm-head">${setLabel} · prescribed <b>${wTxt} × ${repsStr}${rirStr}</b></div>
+          <div class="confirm-actions">
+            <button class="primary btn-done" data-act="done" data-set="${k}">Done</button>
+            <div class="confirm-secondary">
+              <button class="ghost" data-act="cancel" data-set="${k}">Cancel</button>
+              <button data-act="dev" data-set="${k}">Log actuals</button>
+            </div>
+          </div>
+        `;
+      } else if (ss.mode === 'deviate') {
+        row.className = 'confirm-panel';
+        const repsStr = typeof s.r === 'string' ? s.r : `${s.r}${s.perSide ? '/side' : ''}`;
+        const rirStr = (s.rir !== '—' && s.rir != null) ? `, RIR ${s.rir}` : '';
+        const wTxt = s.w === 'BW' ? 'bodyweight' : (typeof s.w === 'number' ? `${s.w} lb` : s.w);
+        const wDisabled = (s.w === 'BW' || typeof s.w === 'string') ? 'disabled' : '';
+        const rirDisabled = (s.rir === '—' || s.rir == null) ? 'disabled' : '';
+        const setLabel = isRamp ? `Ramp ${sIdx + 1}` : `Set ${sIdx + 1}`;
+        row.innerHTML = `
+          <div class="confirm-head">${setLabel} · prescribed <b>${wTxt} × ${repsStr}${rirStr}</b></div>
+          <div class="edit-grid">
+            <div><label>Weight</label><input type="text" placeholder="—" id="edW_${k}" ${wDisabled} inputmode="numeric"></div>
+            <div><label>Reps</label><input type="text" placeholder="—" id="edR_${k}" inputmode="numeric"></div>
+            <div><label>RIR</label><input type="text" placeholder="${rirDisabled ? 'n/a' : '—'}" id="edI_${k}" ${rirDisabled} inputmode="numeric"></div>
+          </div>
+          <div class="confirm-secondary">
+            <button class="ghost" data-act="cancel" data-set="${k}">Cancel</button>
+            <button class="primary" data-act="save" data-set="${k}">Save</button>
+          </div>
+        `;
+      } else {
+        row.className = 'set-row';
+        if (isRamp) row.classList.add('ramp');
+        if (ss.status === 'completed') row.classList.add('completed');
+        if (ss.status === 'completed' && ss.actual) row.classList.add('deviated');
+        if (ss.status !== 'completed' && sIdx === currentSetIdx) {
+          row.classList.add('current');
+          row.classList.add('tappable');
+        }
+        const dispW = ss.actual ? (ss.actual.w == null ? s.w : ss.actual.w) : s.w;
+        const dispR = ss.actual ? (ss.actual.r == null ? s.r : ss.actual.r) : s.r;
+        const dispI = ss.actual ? (ss.actual.rir == null ? s.rir : ss.actual.rir) : s.rir;
+        const wText = wDisplay(dispW);
+        const rText = typeof dispR === 'string' ? dispR : (dispR + (s.perSide ? '/sd' : ''));
+        const tapMark = ss.status === 'completed' ? '✓' : (sIdx === currentSetIdx ? '›' : '');
+        const setLabel = isRamp ? `R${sIdx + 1}` : `${sIdx + 1}`;
+        row.innerHTML = `
+          <span class="set-label">${setLabel}</span>
+          <span class="set-cell weight-big">${wText}</span>
+          <span class="set-cell">${rText}</span>
+          <span class="set-cell">${dispI}</span>
+          <span class="tap-cell">${tapMark}</span>
+        `;
+        if (ss.status !== 'completed' && sIdx === currentSetIdx) {
+          row.addEventListener('click', () => {
+            ssState.sets[k] = { ...ss, mode: 'confirm' };
+            saveState(); render();
+          });
+        } else if (ss.status === 'completed') {
+          row.addEventListener('click', () => {
+            ssState.sets[k] = { ...ss, mode: 'deviate' };
+            saveState(); render();
+          });
+        }
+      }
+      table.appendChild(row);
+    });
+
+    body.appendChild(table);
+
+    if (complete) {
+      const banner = document.createElement('div');
+      banner.className = 'complete-banner';
+      banner.textContent = '✓ Exercise complete';
+      body.appendChild(banner);
+    }
+
+    const noteKey = ses.id + '_' + eIdx;
+    const noteText = state.notes[noteKey] || '';
+    const notes = document.createElement('textarea');
+    notes.className = 'notes-field';
+    notes.id = 'note_' + noteKey;
+    notes.value = noteText;
+    notes.placeholder = 'Tap to note — use your side-button voice dictation';
+    notes.rows = 2;
+    notes.addEventListener('input', (e) => {
+      state.notes[noteKey] = e.target.value;
+      saveState();
+    });
+    body.appendChild(notes);
+
+    card.appendChild(body);
+    app.appendChild(card);
+  });
+
+  // Wire action buttons
+  app.querySelectorAll('[data-act]').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      handleStrengthAction(btn.dataset.act, btn.dataset.set, btn);
+    });
+  });
+}
+
+function handleStrengthAction(act, setKeyStr) {
+  const ses = SESSIONS[state.sessionIdx];
+  const ssState = getSessionState(ses.id);
+
+  if (act === 'restSkip') {
+    ssState.restEndTs = null;
+    ssState.restEx = null;
+    saveState(); render();
+    return;
+  }
+  if (act === 'restAdd') {
+    if (ssState.restEndTs) {
+      ssState.restEndTs += 30000;
+      saveState(); render();
+    }
+    return;
+  }
+
+  if (!setKeyStr) return;
+  const [eIdxStr, sIdxStr] = setKeyStr.split('_');
+  const eIdx = parseInt(eIdxStr);
+  const sIdx = parseInt(sIdxStr);
+  const ex = ses.exercises[eIdx];
+  const s = ex.sets[sIdx];
+  if (!ssState.sets[setKeyStr]) ssState.sets[setKeyStr] = {};
+  const ss = ssState.sets[setKeyStr];
+
+  if (act === 'cancel') {
+    ss.mode = null;
+  } else if (act === 'dev') {
+    ss.mode = 'deviate';
+  } else if (act === 'done') {
+    ss.mode = null;
+    ss.status = 'completed';
+    ss.actual = null;
+    startRestForEx(eIdx, ex, s);
+  } else if (act === 'save') {
+    const wEl = document.getElementById('edW_' + setKeyStr);
+    const rEl = document.getElementById('edR_' + setKeyStr);
+    const iEl = document.getElementById('edI_' + setKeyStr);
+    const wVal = wEl && !wEl.disabled ? wEl.value.trim() : '';
+    const rVal = rEl ? rEl.value.trim() : '';
+    const iVal = iEl && !iEl.disabled ? iEl.value.trim() : '';
+    if (!wVal && !rVal && !iVal) {
+      ss.mode = null;
+    } else {
+      ss.actual = {
+        w: wVal || null,
+        r: rVal || null,
+        rir: iVal || null,
+      };
+      ss.status = 'completed';
+      ss.mode = null;
+      startRestForEx(eIdx, ex, s);
+    }
+  }
+  saveState(); render();
+}
+
+function startRestForEx(eIdx, ex, setData) {
+  const ses = SESSIONS[state.sessionIdx];
+  const ssState = getSessionState(ses.id);
+  const rest = ex.rest || '';
+  let seconds = 0;
+  const m = rest.match(/(\d+)\s*(min|sec)/i);
+  if (m) {
+    seconds = parseInt(m[1]) * (m[2].toLowerCase().startsWith('m') ? 60 : 1);
+  }
+  if (setData && setData.t === 'ramp') seconds = Math.min(seconds, 60);
+  if (seconds > 0) {
+    ssState.restEx = eIdx;
+    ssState.restEndTs = Date.now() + seconds * 1000;
+  }
+}
+
+// ============================================================
+// RENDER — METCON
+// ============================================================
+function renderMetcon(ses, app) {
+  const ms = getMetconState(ses.id);
+
+  const meta = document.createElement('div');
+  meta.className = 'session-meta';
+  meta.textContent = `${ses.duration} · ${ses.metconKind === 'forTime' ? 'For time' : ses.metconKind === 'emom' ? 'EMOM' : 'Self-paced'}`;
+  app.appendChild(meta);
+
+  if (ses.intent) {
+    const intent = document.createElement('div');
+    intent.className = 'session-meta';
+    intent.style.marginTop = '-8px';
+    intent.style.color = 'var(--text-muted)';
+    intent.style.fontStyle = 'italic';
+    intent.textContent = ses.intent;
+    app.appendChild(intent);
+  }
+
+  // Protocol
+  const proto = document.createElement('div');
+  proto.className = 'metcon-protocol';
+  proto.innerHTML = `<div class="label">Protocol</div>${ses.protocol}`;
+  app.appendChild(proto);
+
+  // Timer panel
+  const timerPanel = document.createElement('div');
+  timerPanel.className = 'metcon-timer-panel' + (ms.timerRunning ? ' active' : '');
+  const elapsed = ms.timerRunning && ms.timerStart ? Math.floor((Date.now() - ms.timerStart + ms.timerElapsed) / 1000) : Math.floor(ms.timerElapsed / 1000);
+
+  if (ses.timer.mode === 'emom') {
+    const total = ses.timer.durationSec;
+    const remaining = total - elapsed;
+    const currentMin = Math.floor(elapsed / 60) + 1;
+    const minIdx = (currentMin - 1) % ses.rounds.length;
+    const currentWork = ses.rounds[minIdx] ? ses.rounds[minIdx].label : '';
+    const display = ms.completed ? fmtMS(ms.finalSec) : (ms.timerRunning || ms.timerElapsed > 0 ? fmtMS(remaining) : fmtMS(total));
+    timerPanel.innerHTML = `
+      <div class="metcon-timer-label">${ms.timerRunning ? 'Time remaining' : ms.completed ? 'Finished' : 'EMOM 20'}</div>
+      <div class="metcon-timer">${display}</div>
+      ${ms.timerRunning && remaining > 0 ? `
+        <div class="emom-current">${currentWork}</div>
+        <div class="emom-minute">Minute ${currentMin} of ${Math.floor(total/60)}</div>
+      ` : ''}
+      ${!ms.completed ? `<div class="timer-controls">
+        ${ms.timerRunning ? '<button class="ghost" data-mc="pause">Pause</button>' : `<button class="primary" data-mc="start">${ms.timerElapsed > 0 ? 'Resume' : 'Start'}</button>`}
+        ${ms.timerElapsed > 0 ? '<button class="ghost" data-mc="reset">Reset</button>' : ''}
+      </div>` : ''}
+    `;
+  } else {
+    // Stopwatch
+    const display = ms.completed ? fmtMS(ms.finalSec) : fmtMS(elapsed);
+    timerPanel.innerHTML = `
+      <div class="metcon-timer-label">${ms.timerRunning ? 'Elapsed' : ms.completed ? 'Final time' : 'Stopwatch'}</div>
+      <div class="metcon-timer">${display}</div>
+      ${!ms.completed ? `<div class="timer-controls">
+        ${ms.timerRunning ? '<button class="ghost" data-mc="pause">Pause</button>' : `<button class="primary" data-mc="start">${ms.timerElapsed > 0 ? 'Resume' : 'Start'}</button>`}
+        ${ms.timerElapsed > 0 ? '<button class="ghost" data-mc="reset">Reset</button>' : ''}
+      </div>` : ''}
+    `;
+  }
+  app.appendChild(timerPanel);
+
+  // Counters (if present)
+  if (ses.counters && ses.counters.length) {
+    const grid = document.createElement('div');
+    grid.className = 'counter-grid';
+    ses.counters.forEach(c => {
+      const v = ms.counters[c.id] || 0;
+      const done = v >= c.target;
+      const card = document.createElement('div');
+      card.className = 'counter-card' + (done ? ' complete' : '');
+      card.innerHTML = `
+        <div class="counter-info">
+          <div class="counter-label">${c.label}</div>
+          <div class="counter-value">${v}<span class="counter-target"> / ${c.target}</span></div>
+        </div>
+        <div class="counter-buttons">
+          <button data-cnt="${c.id}" data-delta="-${c.step}">−</button>
+          <button class="plus" data-cnt="${c.id}" data-delta="${c.step}">+</button>
+        </div>
+      `;
+      grid.appendChild(card);
+    });
+    app.appendChild(grid);
+  }
+
+  // Completion / Finish button
+  if (ms.completed) {
+    const final = document.createElement('div');
+    final.className = 'metcon-final';
+    final.innerHTML = `<div>Workout complete</div><div class="final-time">${fmtMS(ms.finalSec)}</div><div>Logged. Tap Reset to start over.</div>`;
+    app.appendChild(final);
+    const resetBtn = document.createElement('button');
+    resetBtn.className = 'metcon-finish-btn ghost';
+    resetBtn.textContent = 'Reset workout';
+    resetBtn.addEventListener('click', () => resetMetcon(ses.id));
+    app.appendChild(resetBtn);
+  } else {
+    const finishBtn = document.createElement('button');
+    finishBtn.className = 'metcon-finish-btn primary';
+    finishBtn.textContent = 'Finish & log time';
+    finishBtn.addEventListener('click', () => finishMetcon(ses.id));
+    app.appendChild(finishBtn);
+  }
+
+  // Notes
+  const noteKey = ses.id + '_metcon';
+  const noteText = state.notes[noteKey] || '';
+  const notes = document.createElement('textarea');
+  notes.className = 'notes-field';
+  notes.style.marginTop = '12px';
+  notes.value = noteText;
+  notes.placeholder = 'Tap to note — use your side-button voice dictation';
+  notes.rows = 2;
+  notes.addEventListener('input', (e) => {
+    state.notes[noteKey] = e.target.value;
+    saveState();
+  });
+  app.appendChild(notes);
+
+  // Wire metcon actions
+  app.querySelectorAll('[data-mc]').forEach(b => b.addEventListener('click', (e) => {
+    e.stopPropagation();
+    handleMetconTimer(ses.id, b.dataset.mc);
+  }));
+  app.querySelectorAll('[data-cnt]').forEach(b => b.addEventListener('click', (e) => {
+    e.stopPropagation();
+    handleCounter(ses.id, b.dataset.cnt, parseInt(b.dataset.delta));
+  }));
+}
+
+function handleMetconTimer(sid, action) {
+  const ms = getMetconState(sid);
+  const ses = SESSIONS.find(s => s.id === sid);
+  if (action === 'start') {
+    ms.timerStart = Date.now();
+    ms.timerRunning = true;
+    // For EMOM, beep when starting first minute
+    if (ses.timer.mode === 'emom') speakMinute(ses, 1);
+  } else if (action === 'pause') {
+    if (ms.timerStart) {
+      ms.timerElapsed += Date.now() - ms.timerStart;
+      ms.timerStart = null;
+    }
+    ms.timerRunning = false;
+  } else if (action === 'reset') {
+    ms.timerStart = null;
+    ms.timerElapsed = 0;
+    ms.timerRunning = false;
+    ms.completed = false;
+    ms.finalSec = null;
+  }
+  saveState(); render();
+}
+
+function handleCounter(sid, cntId, delta) {
+  const ms = getMetconState(sid);
+  ms.counters[cntId] = Math.max(0, (ms.counters[cntId] || 0) + delta);
+  saveState(); render();
+}
+
+function finishMetcon(sid) {
+  const ms = getMetconState(sid);
+  let elapsed = ms.timerElapsed;
+  if (ms.timerRunning && ms.timerStart) {
+    elapsed += Date.now() - ms.timerStart;
+  }
+  ms.finalSec = Math.floor(elapsed / 1000);
+  ms.completed = true;
+  ms.timerRunning = false;
+  ms.timerStart = null;
+  saveState(); render();
+}
+
+function resetMetcon(sid) {
+  state.metcons[sid] = { counters: {}, timerStart: null, timerElapsed: 0, timerRunning: false, completed: false, finalSec: null };
+  saveState(); render();
+}
+
+// EMOM voice/beep cue
+let lastEmomMin = 0;
+function speakMinute(ses, minute) {
+  try {
+    const idx = (minute - 1) % ses.rounds.length;
+    const txt = `Minute ${minute}. ${ses.rounds[idx].label}.`;
+    if ('speechSynthesis' in window) {
+      const u = new SpeechSynthesisUtterance(txt);
+      u.rate = 1.0;
+      u.volume = 1.0;
+      window.speechSynthesis.speak(u);
+    }
+    // Simple beep
+    if (window.AudioContext || window.webkitAudioContext) {
+      const Ctx = window.AudioContext || window.webkitAudioContext;
+      const ctx = new Ctx();
+      const o = ctx.createOscillator();
+      const g = ctx.createGain();
+      o.connect(g); g.connect(ctx.destination);
+      o.frequency.value = 880;
+      g.gain.value = 0.1;
+      o.start();
+      setTimeout(() => { o.stop(); ctx.close(); }, 200);
+    }
+  } catch(e) {}
+}
+
+// ============================================================
+// SESSION PICKER
+// ============================================================
+function openSessionPicker() {
+  const overlay = document.getElementById('overlay');
+  overlay.classList.remove('hidden');
+  overlay.innerHTML = '';
+
+  const content = document.createElement('div');
+  content.className = 'overlay-content';
+
+  const oHdr = document.createElement('div');
+  oHdr.className = 'overlay-header';
+  oHdr.innerHTML = `<h2>Pick ${state.category} session</h2><button id="closeOverlay" aria-label="close">×</button>`;
+  content.appendChild(oHdr);
+
+  const list = document.createElement('div');
+  list.className = 'session-list';
+  SESSIONS.forEach((s, i) => {
+    if (s.category !== state.category) return;
+    let statusCls = '';
+    let progress = '';
+
+    if (s.type === 'kb-metcon') {
+      const ms = state.metcons[s.id];
+      if (ms && ms.completed) { statusCls = 'done'; progress = fmtMS(ms.finalSec); }
+      else if (ms && (ms.timerElapsed > 0 || Object.keys(ms.counters || {}).length > 0)) { statusCls = 'partial'; progress = 'in progress'; }
+    } else {
+      const ssState = state.sessions[s.id] || { sets: {} };
+      const workSets = s.exercises.reduce((a, e) => a + e.sets.filter(x => x.t === 'work').length, 0);
+      const doneWork = Object.entries(ssState.sets).filter(([k, x]) => {
+        if (x.status !== 'completed') return false;
+        const [ei, si] = k.split('_').map(Number);
+        return s.exercises[ei] && s.exercises[ei].sets[si] && s.exercises[ei].sets[si].t === 'work';
+      }).length;
+      if (doneWork === workSets) statusCls = 'done';
+      else if (doneWork > 0) statusCls = 'partial';
+      progress = `${doneWork}/${workSets}`;
+    }
+
+    const item = document.createElement('div');
+    item.className = 'session-item' + (i === state.sessionIdx ? ' active' : '');
+    item.innerHTML = `
+      <div class="si-left">
+        <div class="si-date">${s.date ? fmtDate(s.date) : (s.duration || 'Anytime')}</div>
+        <div class="si-title">${s.title}</div>
+      </div>
+      <div class="si-right">
+        <span>${progress}</span>
+        <span class="si-status ${statusCls}"></span>
+      </div>
+    `;
+    item.addEventListener('click', () => {
+      state.sessionIdx = i;
+      saveState();
+      closeOverlay();
+      render();
+    });
+    list.appendChild(item);
+  });
+  content.appendChild(list);
+
+  overlay.appendChild(content);
+  document.getElementById('closeOverlay').addEventListener('click', closeOverlay);
+}
+
+function closeOverlay() {
+  document.getElementById('overlay').classList.add('hidden');
+}
+
+// ============================================================
+// TICK LOOP — strength rest + metcon timer
+// ============================================================
+setInterval(() => {
+  const ses = SESSIONS[state.sessionIdx];
+  if (!ses) return;
+
+  if (ses.type === 'kb-metcon') {
+    const ms = state.metcons[ses.id];
+    if (!ms || !ms.timerRunning) return;
+    const elapsed = Math.floor((Date.now() - ms.timerStart + ms.timerElapsed) / 1000);
+
+    if (ses.timer.mode === 'emom') {
+      const currentMin = Math.floor(elapsed / 60) + 1;
+      const total = ses.timer.durationSec;
+      // Beep on minute boundary
+      if (currentMin !== lastEmomMin && currentMin > 1 && elapsed < total) {
+        lastEmomMin = currentMin;
+        speakMinute(ses, currentMin);
+      }
+      // Auto-finish at end
+      if (elapsed >= total) {
+        ms.timerElapsed = total * 1000;
+        ms.timerStart = null;
+        ms.timerRunning = false;
+        ms.completed = true;
+        ms.finalSec = total;
+        saveState(); render();
+        return;
+      }
+    }
+    // Update timer display in place
+    const t = document.querySelector('.metcon-timer');
+    if (t) {
+      if (ses.timer.mode === 'emom') {
+        const remaining = ses.timer.durationSec - elapsed;
+        t.textContent = fmtMS(remaining);
+        const minEl = document.querySelector('.emom-minute');
+        const cwEl = document.querySelector('.emom-current');
+        const min = Math.floor(elapsed / 60) + 1;
+        const idx = (min - 1) % ses.rounds.length;
+        if (minEl) minEl.textContent = `Minute ${min} of ${Math.floor(ses.timer.durationSec/60)}`;
+        if (cwEl) cwEl.textContent = ses.rounds[idx] ? ses.rounds[idx].label : '';
+      } else {
+        t.textContent = fmtMS(elapsed);
+      }
+    }
+    return;
+  }
+
+  // Strength rest timer
+  const ssState = state.sessions[ses.id];
+  if (!ssState || !ssState.restEndTs) return;
+  if (Date.now() >= ssState.restEndTs) {
+    ssState.restEndTs = null;
+    ssState.restEx = null;
+    saveState();
+    render();
+  } else {
+    const restTime = document.querySelector('.rest-time');
+    if (restTime) {
+      const remaining = Math.max(0, Math.ceil((ssState.restEndTs - Date.now()) / 1000));
+      restTime.textContent = remaining + 's';
+    }
+  }
+}, 1000);
+
+render();
+
+// Register service worker
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch((e) => console.warn('SW registration failed:', e));
+  });
+}
+</script>
+</body>
+</html>
