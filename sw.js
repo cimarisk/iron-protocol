@@ -1,5 +1,5 @@
 // Workout PWA service worker — cache-first, app-shell strategy
-const CACHE = 'workout-v6-readable';
+const CACHE = 'workout-v6.2-work-timer';
 const FILES = [
   './',
   './index.html',

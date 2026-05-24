@@ -97,6 +97,14 @@ button.ghost { background: transparent; border-color: var(--border); }
 .rest-next { font-size: 13px; color: var(--text-muted); margin-bottom: 12px; font-variant-numeric: tabular-nums; }
 .rest-actions { display: flex; gap: 8px; justify-content: center; }
 .rest-actions button { height: 38px; padding: 0 18px; font-size: 13px; min-width: 90px; }
+.work-panel { background: var(--surface-2); border: 2px solid var(--warn); border-radius: 12px; padding: 20px 16px; text-align: center; margin: 0 -16px 12px; }
+.work-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--warn); font-weight: 700; }
+.work-time { font-size: 72px; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1; margin: 6px 0 4px; color: var(--text); }
+.work-sub { font-size: 13px; color: var(--text-muted); margin-bottom: 14px; }
+.work-actions { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+.work-actions button { height: 40px; padding: 0 18px; font-size: 13px; min-width: 90px; }
+.work-actions .primary { background: var(--warn); color: #0B0F14; border-color: var(--warn); }
+.btn-start { height: 52px; font-size: 16px; font-weight: 600; background: var(--warn); color: #0B0F14; border-color: var(--warn); }
 .notes-field { margin: 6px 0 0; padding: 14px 16px; background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px; font-size: 14px; color: var(--text); cursor: text; min-height: 52px; line-height: 1.55; outline: none; font-family: inherit; width: 100%; resize: vertical; }
 .notes-field:focus { border-color: var(--accent); background: var(--surface-3); }
 .complete-banner { background: rgba(91, 212, 156, 0.12); border: 1px solid var(--done); color: var(--done); padding: 14px; text-align: center; border-radius: 10px; margin: 8px 0; font-weight: 500; font-size: 14px; }
@@ -623,6 +631,7 @@ const KB_WARMUP = [
 // STATE
 // ============================================================
 const STORE_KEY = 'workoutPwaState_v2';
+const APP_VERSION = 'Iron Protocol v6';
 
 function loadState() {
   try {
@@ -1029,7 +1038,7 @@ function renderHome() {
 
   const foot = document.createElement('div');
   foot.className = 'foot';
-  foot.textContent = 'Iron Protocol · local data on this device';
+  foot.textContent = APP_VERSION + ' · local data on this device';
   app.appendChild(foot);
 }
 
@@ -1103,7 +1112,7 @@ function render() {
 
   const foot = document.createElement('div');
   foot.className = 'foot';
-  foot.textContent = 'Workout v1 · local data on this device';
+  foot.textContent = APP_VERSION + ' · local data on this device';
   app.appendChild(foot);
 
   // Wire nav
@@ -1240,14 +1249,33 @@ function renderStrength(ses, app) {
         const rirStr = (s.rir !== '—' && s.rir != null) ? `, RIR ${s.rir}` : '';
         const wTxt = s.w === 'BW' ? 'bodyweight' : (typeof s.w === 'number' ? `${s.w} lb` : s.w);
         const setLabel = isRamp ? `Ramp ${sIdx + 1}` : `Set ${sIdx + 1}`;
+        const hSec = holdSec(ex, s);
+        const primaryLabel = hSec ? `Start ${hSec}s` : 'Done';
+        const primaryClass = hSec ? 'btn-start' : 'primary btn-done';
+        const primaryAct = hSec ? 'workStart' : 'done';
         row.innerHTML = `
           <div class="confirm-head">${setLabel} · prescribed <b>${wTxt} × ${repsStr}${rirStr}</b></div>
           <div class="confirm-actions">
-            <button class="primary btn-done" data-act="done" data-set="${k}">Done</button>
+            <button class="${primaryClass}" data-act="${primaryAct}" data-set="${k}">${primaryLabel}</button>
             <div class="confirm-secondary">
               <button class="ghost" data-act="cancel" data-set="${k}">Cancel</button>
               <button data-act="dev" data-set="${k}">Log actuals</button>
             </div>
+          </div>
+        `;
+      } else if (ss.mode === 'working') {
+        row.className = 'work-panel';
+        const hSec = holdSec(ex, s) || 0;
+        const remaining = ss.workEndTs ? Math.max(0, Math.ceil((ss.workEndTs - Date.now()) / 1000)) : hSec;
+        const setLabel = `Set ${sIdx + 1}`;
+        row.innerHTML = `
+          <div class="work-label">${ex.name} · ${setLabel}</div>
+          <div class="work-time">${remaining}s</div>
+          <div class="work-sub">Hold form. Breathe.</div>
+          <div class="work-actions">
+            <button class="ghost" data-act="workCancel" data-set="${k}">Cancel</button>
+            <button data-act="workAdd" data-set="${k}">+10s</button>
+            <button class="primary" data-act="workStop" data-set="${k}">Done early</button>
           </div>
         `;
       } else if (ss.mode === 'deviate') {
@@ -1380,6 +1408,25 @@ function handleStrengthAction(act, setKeyStr) {
     ss.status = 'completed';
     ss.actual = null;
     startRestForEx(eIdx, ex, s);
+  } else if (act === 'workStart') {
+    const hSec = holdSec(ex, s);
+    if (hSec) {
+      ss.mode = 'working';
+      ss.workEndTs = Date.now() + hSec * 1000;
+      beep(880, 150);
+    }
+  } else if (act === 'workAdd') {
+    if (ss.workEndTs) ss.workEndTs += 10000;
+  } else if (act === 'workCancel') {
+    ss.mode = null;
+    ss.workEndTs = null;
+  } else if (act === 'workStop') {
+    ss.mode = null;
+    ss.workEndTs = null;
+    ss.status = 'completed';
+    ss.actual = null;
+    beep(660, 200);
+    startRestForEx(eIdx, ex, s);
   } else if (act === 'save') {
     const wEl = document.getElementById('edW_' + setKeyStr);
     const rEl = document.getElementById('edR_' + setKeyStr);
@@ -1401,6 +1448,30 @@ function handleStrengthAction(act, setKeyStr) {
     }
   }
   saveState(); render();
+}
+
+// Returns work-timer seconds if this set is a timed hold (e.g. Plank 45s), else null.
+function holdSec(ex, setData) {
+  if (!ex || ex.tempo !== 'hold' || !setData) return null;
+  if (typeof setData.r !== 'string') return null;
+  const m = setData.r.match(/^\s*(\d+)\s*s\s*$/i);
+  return m ? parseInt(m[1], 10) : null;
+}
+
+// Short beep on timer events (work-start, work-end). Reuses Web Audio.
+function beep(freq, ms) {
+  try {
+    const Ctx = window.AudioContext || window.webkitAudioContext;
+    if (!Ctx) return;
+    const ctx = new Ctx();
+    const o = ctx.createOscillator();
+    const g = ctx.createGain();
+    o.connect(g); g.connect(ctx.destination);
+    o.frequency.value = freq || 880;
+    g.gain.value = 0.12;
+    o.start();
+    setTimeout(() => { o.stop(); ctx.close(); }, ms || 180);
+  } catch(e) {}
 }
 
 function startRestForEx(eIdx, ex, setData) {
@@ -1748,9 +1819,43 @@ setInterval(() => {
     return;
   }
 
-  // Strength rest timer
+  // Strength rest + work timers
   const ssState = state.sessions[ses.id];
-  if (!ssState || !ssState.restEndTs) return;
+  if (!ssState) return;
+
+  // Work timer (timed-hold exercises like Plank)
+  let workingKey = null, workingEntry = null;
+  for (const k in ssState.sets) {
+    if (ssState.sets[k].mode === 'working' && ssState.sets[k].workEndTs) {
+      workingKey = k; workingEntry = ssState.sets[k]; break;
+    }
+  }
+  if (workingEntry) {
+    if (Date.now() >= workingEntry.workEndTs) {
+      // Auto-complete the set, kick off rest
+      const [eIdxStr, sIdxStr] = workingKey.split('_');
+      const eIdx = parseInt(eIdxStr), sIdx = parseInt(sIdxStr);
+      const ex = ses.exercises[eIdx];
+      const s = ex.sets[sIdx];
+      workingEntry.mode = null;
+      workingEntry.workEndTs = null;
+      workingEntry.status = 'completed';
+      workingEntry.actual = null;
+      beep(660, 250);
+      startRestForEx(eIdx, ex, s);
+      saveState();
+      render();
+      return;
+    } else {
+      const workTime = document.querySelector('.work-time');
+      if (workTime) {
+        const remaining = Math.max(0, Math.ceil((workingEntry.workEndTs - Date.now()) / 1000));
+        workTime.textContent = remaining + 's';
+      }
+    }
+  }
+
+  if (!ssState.restEndTs) return;
   if (Date.now() >= ssState.restEndTs) {
     ssState.restEndTs = null;
     ssState.restEx = null;
