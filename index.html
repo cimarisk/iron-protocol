@@ -65,7 +65,12 @@ button.ghost { background: transparent; border-color: var(--border); }
 .ex-meta-row { display: flex; flex-wrap: wrap; gap: 8px 16px; font-size: 12px; color: var(--text-muted); margin: 4px 0 12px; }
 .ex-meta-row .label { color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.05em; margin-right: 4px; }
 .ex-meta-row .val { color: var(--text); font-variant-numeric: tabular-nums; }
-.cue { width: 100%; line-height: 1.55; margin-top: 2px; }
+.cue { width: 100%; line-height: 1.5; margin-top: 6px; font-size: 15px; color: var(--text); font-weight: 500; }
+.cue .label { color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.05em; font-size: 11px; display: block; margin-bottom: 4px; font-weight: 600; }
+.cue ul.bullets { margin: 0; padding-left: 18px; }
+.cue ul.bullets li { margin: 2px 0; }
+.alt-block { margin-top: 10px; padding: 8px 12px; background: var(--surface-2); border-radius: 8px; border-left: 3px solid var(--warn); font-size: 14px; color: var(--text); }
+.alt-block .label { color: var(--warn); text-transform: uppercase; letter-spacing: 0.05em; font-size: 11px; font-weight: 700; display: block; margin-bottom: 2px; }
 .set-table { border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); margin: 0 -16px 12px; }
 .set-row { display: grid; grid-template-columns: 40px 1fr 1fr 1fr 24px; gap: 8px; align-items: center; padding: 16px; border-bottom: 1px solid var(--border); font-size: 18px; min-height: 64px; font-weight: 500; }
 .set-row:last-child { border-bottom: none; }
@@ -130,8 +135,10 @@ button.ghost { background: transparent; border-color: var(--border); }
 .foot-actions button { background: transparent; border: none; color: var(--text-muted); font-size: 12px; padding: 4px 8px; min-height: 28px; text-decoration: underline; cursor: pointer; }
 .foot-actions button:hover { color: var(--text); }
 .foot-sep { color: var(--text-dim); }
-.metcon-protocol { font-size: 14px; color: var(--text); line-height: 1.6; margin-bottom: 14px; padding: 14px 16px; background: var(--surface-2); border-radius: 12px; border-left: 3px solid var(--accent); }
+.metcon-protocol { font-size: 16px; color: var(--text); line-height: 1.5; margin-bottom: 14px; padding: 14px 16px; background: var(--surface-2); border-radius: 12px; border-left: 3px solid var(--accent); font-weight: 500; }
 .metcon-protocol .label { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; font-weight: 600; }
+.metcon-protocol ul.bullets { margin: 0; padding-left: 18px; }
+.metcon-protocol ul.bullets li { margin: 4px 0; }
 .metcon-timer-panel { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 20px 16px; text-align: center; margin-bottom: 14px; }
 .metcon-timer-panel.active { border-color: var(--accent); }
 .metcon-timer-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-dim); font-weight: 600; margin-bottom: 6px; }
@@ -219,259 +226,296 @@ button.ghost { background: transparent; border-color: var(--border); }
 const R = (w, r) => ({t:'ramp', w, r, rir:'—'});
 const W = (w, r, rir, perSide) => perSide ? {t:'work', w, r, rir, perSide:true} : {t:'work', w, r, rir};
 
+// Canonical cue bullets — same lift = same cues across weeks.
+const CUES = {
+  deadlift: ['Bar over midfoot', 'Hinge at hips', 'Neutral spine', 'Drive floor away'],
+  squat: ['Brace before unrack', 'Knees track toes', 'Parallel or below', 'Drive up'],
+  benchPress: ['Elbows ~45°', 'Pause at chest', 'Scaps retracted', 'Feet driven into floor'],
+  militaryPress: ['Strict, no leg drive', 'Bar up + slightly back', 'Glutes squeezed', 'Ribs down'],
+  pullups: ['Full hang', 'Chin over bar', 'No kipping', 'RIR 1–2'],
+  bentRow: ['Hinge ~45°', 'Pull to hips', 'Squeeze upper back', 'No torso swing'],
+  hipThrust: ['Drive heels', 'Squeeze glutes hard', 'Pause at top'],
+  strictCurl: ['No swing', 'Slow eccentric', 'Squeeze at top'],
+  hammerCurl: ['Neutral grip', 'Slow eccentric'],
+  rearDeltFly: ['Hinge 45°', 'Thumbs up', 'Squeeze rear delts'],
+  rdl: ['Hips back', 'Bar close to legs', 'Hamstring stretch', 'Drive hips forward'],
+  walkingLunge: ['Tall torso', 'Drive front heel', 'DBs at sides'],
+  slRdl: ['Opposite hand DB', 'Hinge on standing leg', 'Hamstring stretch'],
+  calfRaise: ['Up on balls of feet', 'Pause at top', 'Slow descent'],
+  plank: ['Hard line', 'Glutes + abs locked', 'Breathe through nose'],
+  singleArmRow: ['Brace abs hard', 'Pull to hip', 'No torso rotation'],
+  // KB
+  kbGoblet: ['KB at chest', 'Elbows tucked', 'Descend deep', 'Drive through heels'],
+  kbRdl2H: ['Both hands on handle', 'Hinge at hips', 'Bell brushes shins', 'Drive hips forward'],
+  kbWalkingLunge: ['KB at chest', 'Drop rear knee', 'Drive front heel', 'Tall torso'],
+  kbSlRdl: ['KB in opposite hand', 'Hinge on standing leg', 'Hamstring stretch'],
+  slCalf: ['Slow eccentric', 'Pause at top', 'Full ROM'],
+  kbFloorPress: ['Press straight up', 'Elbow touches floor', 'Alternate sides'],
+  kbStrictPress: ['Bell racked at shoulder', 'No leg drive', 'Explosive concentric'],
+  kbBentRow: ['Hinge to 45°', 'Brace abs', 'Pull to hip', 'No rotation'],
+  renegadeRow: ['Push-up position', 'Row to ribs', 'No hip rotation', 'Alternate arms'],
+  bandCurl: ['Face away from anchor', 'Underhand grip', 'Slow eccentric to stretch', 'One arm at a time'],
+  pushupSlow: ['Hard line head to heels', '3-sec descent', 'Pause at bottom', 'Drive up'],
+  kbSwing: ['Hike bell back through legs', 'Explode hips forward', 'Arms are ropes', 'Glutes drive'],
+  kbHipThrust: ['Shoulders on bench/step', 'KB across hips', 'Drive heels', 'Squeeze glutes hard'],
+  bandHammer: ['Neutral grip', 'Slow eccentric to stretch'],
+  bandPullApart: ['Arms at length', 'Pull to sides', 'Squeeze shoulder blades', 'Slow return'],
+};
+
 const SESSIONS = [
   // ============ GYM SESSIONS — Week 1 ============
   { id: '2026-05-20-C', type: 'gym', category: 'Gym', date: '2026-05-20', day: 'Wed', lift: 'C', week: 1, title: 'Lift C — Deadlift · W1',
     exercises: [
-      { name: 'Conventional Deadlift', tempo: '2-0-1-0', rest: '3 min', cue: 'Bar over midfoot, hinge at hips, neutral spine. Drive the floor away. Lockout standing tall.',
+      { name: 'Conventional Deadlift', tempo: '2-0-1-0', rest: '3 min', cue: CUES.deadlift,
         sets: [ R(95,5), R(135,3), W(155,5,3), W(155,5,3), W(155,5,3) ] },
-      { name: 'Pull-ups (strict)', tempo: '2-0-1-0', rest: '2 min', cue: 'Full hang at bottom, chin over bar, no kipping. Sub-max — leave 1-2 RIR per set.',
+      { name: 'Pull-ups (strict)', tempo: '2-0-1-0', rest: '2 min', cue: CUES.pullups,
         sets: [ W('BW',3,2), W('BW',3,2), W('BW',3,2), W('BW',3,2) ] },
-      { name: 'DB Bent-Over Row', tempo: '2-0-1-1', rest: '90 sec', cue: 'Hinge to ~45°, neutral spine. Pull DBs to hips, squeeze upper back. No torso swing.',
+      { name: 'DB Bent-Over Row', tempo: '2-0-1-1', rest: '90 sec', cue: CUES.bentRow,
         sets: [ W(50,8,3), W(50,8,3), W(50,8,3) ] },
-      { name: 'DB Hip Thrust', tempo: '2-0-1-1', rest: '90 sec', cue: 'Shoulders on bench, DB across hips, drive heels, squeeze glutes hard at top. Chin tucked.',
+      { name: 'DB Hip Thrust', tempo: '2-0-1-1', rest: '90 sec', cue: CUES.hipThrust,
         sets: [ W(50,10,2), W(50,10,2), W(50,10,2) ] },
-      { name: 'DB Strict Curl', tempo: '3-0-1-0', rest: '75 sec', cue: 'Standing strict, no swing. Slow eccentric. Squeeze biceps at top.',
+      { name: 'DB Strict Curl', tempo: '3-0-1-0', rest: '75 sec', cue: CUES.strictCurl,
         sets: [ W(25,10,2), W(25,10,2), W(25,10,2) ] },
-      { name: 'DB Rear Delt Fly', tempo: '2-0-1-1', rest: '60 sec', cue: 'Hinge to 45°. Lift DBs out to the sides, thumbs slightly up, squeeze rear delts.',
+      { name: 'DB Rear Delt Fly', tempo: '2-0-1-1', rest: '60 sec', cue: CUES.rearDeltFly,
         sets: [ W(15,15,2), W(15,15,2), W(15,15,2) ] },
     ]
   },
   { id: '2026-05-22-A', type: 'gym', category: 'Gym', date: '2026-05-22', day: 'Fri', lift: 'A', week: 1, title: 'Lift A — Squat · W1',
     exercises: [
-      { name: 'Back Squat', tempo: '3-1-1-0', rest: '3 min', cue: 'Feet shoulder-width, brace, descend to thighs parallel or below, drive up. Knees track over toes.',
+      { name: 'Back Squat', tempo: '3-1-1-0', rest: '3 min', cue: CUES.squat,
         sets: [ R(95,5), R(135,3), W(155,5,3), W(155,5,3), W(155,5,3) ] },
-      { name: 'Romanian Deadlift', tempo: '3-0-1-0', rest: '2 min', cue: 'Hips back, slight knee bend, bar close to legs. Stretch hamstrings, drive hips forward.',
+      { name: 'Romanian Deadlift', tempo: '3-0-1-0', rest: '2 min', cue: CUES.rdl,
         sets: [ R(95,5), R(115,3), W(125,8,3), W(125,8,3), W(125,8,3) ] },
-      { name: 'DB Walking Lunge', tempo: 'controlled', rest: '90 sec', cue: 'Step forward, drop knee, drive through front heel. Torso tall, DBs at sides.',
+      { name: 'DB Walking Lunge', tempo: 'controlled', rest: '90 sec', cue: CUES.walkingLunge,
         sets: [ W(30,10,3,true), W(30,10,3,true), W(30,10,3,true) ] },
-      { name: 'Single-Leg DB RDL', tempo: '3-0-1-0', rest: '90 sec', cue: 'One DB in opposite hand. Hinge on standing leg, free leg lifts straight back. Hamstring stretch is the cue.',
+      { name: 'Single-Leg DB RDL', tempo: '3-0-1-0', rest: '90 sec', cue: CUES.slRdl,
         sets: [ W(25,8,3,true), W(25,8,3,true), W(25,8,3,true) ] },
-      { name: 'DB Standing Calf Raise', tempo: '2-1-1-0', rest: '60 sec', cue: 'DBs at sides, raise on balls of feet, pause at top, slow descent.',
+      { name: 'DB Standing Calf Raise', tempo: '2-1-1-0', rest: '60 sec', cue: CUES.calfRaise,
         sets: [ W(35,15,2), W(35,15,2), W(35,15,2) ] },
-      { name: 'Plank', tempo: 'hold', rest: '45 sec', cue: 'Hard line shoulders to ankles. Glutes + abs locked. Breathe.',
+      { name: 'Plank', tempo: 'hold', rest: '45 sec', cue: CUES.plank,
         sets: [ W('BW','45s','—'), W('BW','45s','—'), W('BW','45s','—') ] },
     ]
   },
   { id: '2026-05-25-B', type: 'gym', category: 'Gym', date: '2026-05-25', day: 'Mon', lift: 'B', week: 1, title: 'Lift B — Press · W1',
     exercises: [
-      { name: 'DB Bench Press', tempo: '3-1-1-0', rest: '2 min', cue: 'Elbows ~45° from torso. Brief pause at chest, no bounce. Scaps retracted, feet driven into floor.',
+      { name: 'DB Bench Press', tempo: '3-1-1-0', rest: '2 min', cue: CUES.benchPress,
         sets: [ R(30,8), R(45,5), W(60,10,3), W(60,10,3), W(60,10,3) ] },
-      { name: 'BB Standing Military Press', tempo: '3-0-X-0', rest: '2 min', cue: 'STRICT — no leg drive. Bar travels up and slightly back. Slow eccentric, explosive concentric. Glutes squeezed, ribs down.',
+      { name: 'BB Standing Military Press', tempo: '3-0-X-0', rest: '2 min', cue: CUES.militaryPress,
         sets: [ R(45,5), R(55,3), W(60,5,3), W(60,5,3), W(60,5,3) ] },
-      { name: 'Pull-ups (strict)', tempo: '2-0-1-0', rest: '2 min', cue: 'Full hang to chin over bar, no kipping. Distribute as 5 sub-max sets — all clean reps.',
+      { name: 'Pull-ups (strict)', tempo: '2-0-1-0', rest: '2 min', cue: CUES.pullups,
         sets: [ W('BW',3,2), W('BW',3,2), W('BW',3,2), W('BW',3,2), W('BW',3,2) ] },
-      { name: 'DB Single-Arm Row', tempo: '2-0-1-1', rest: '60 sec / switch', cue: 'Hand + opposite knee on bench. Brace abs hard. Pull to hip, not chest. No torso rotation.',
+      { name: 'DB Single-Arm Row', tempo: '2-0-1-1', rest: '60 sec / switch', cue: CUES.singleArmRow,
         sets: [ W(45,10,3,true), W(45,10,3,true), W(45,10,3,true) ] },
-      { name: 'DB Strict Curl', tempo: '3-0-1-0', rest: '75 sec', cue: 'No body swing. Slow eccentric is the priority — biceps need it. Pause briefly at top.',
+      { name: 'DB Strict Curl', tempo: '3-0-1-0', rest: '75 sec', cue: CUES.strictCurl,
         sets: [ W(25,10,2), W(25,10,2), W(25,10,2) ] },
-      { name: 'DB Hammer Curl', tempo: '3-0-1-0', rest: '75 sec', cue: 'Neutral grip (thumbs up). Slow eccentric. Hits brachialis + forearm in addition to biceps.',
+      { name: 'DB Hammer Curl', tempo: '3-0-1-0', rest: '75 sec', cue: CUES.hammerCurl,
         sets: [ W(25,10,2), W(25,10,2), W(25,10,2) ] },
     ]
   },
   // ============ GYM — Week 2 ============
   { id: '2026-05-27-C', type: 'gym', category: 'Gym', date: '2026-05-27', day: 'Wed', lift: 'C', week: 2, title: 'Lift C — Deadlift · W2',
     exercises: [
-      { name: 'Conventional Deadlift', tempo: '2-0-1-0', rest: '3 min', cue: 'Bar over midfoot, hinge, neutral spine, drive floor away.',
+      { name: 'Conventional Deadlift', tempo: '2-0-1-0', rest: '3 min', cue: CUES.deadlift,
         sets: [ R(95,5), R(135,3), W(165,5,3), W(165,5,3), W(165,5,3) ] },
-      { name: 'Pull-ups (strict)', tempo: '2-0-1-0', rest: '2 min', cue: 'Sub-max, RIR 1-2, clean reps only.',
+      { name: 'Pull-ups (strict)', tempo: '2-0-1-0', rest: '2 min', cue: CUES.pullups,
         sets: [ W('BW',3,2), W('BW',3,2), W('BW',3,2), W('BW',3,2) ] },
-      { name: 'DB Bent-Over Row', tempo: '2-0-1-1', rest: '90 sec', cue: 'Hinge to ~45°, pull to hips, squeeze upper back.',
+      { name: 'DB Bent-Over Row', tempo: '2-0-1-1', rest: '90 sec', cue: CUES.bentRow,
         sets: [ W(55,8,3), W(55,8,3), W(55,8,3) ] },
-      { name: 'DB Hip Thrust', tempo: '2-0-1-1', rest: '90 sec', cue: 'Drive heels, squeeze glutes hard at top. Pause 1 sec at top.',
+      { name: 'DB Hip Thrust', tempo: '2-0-1-1', rest: '90 sec', cue: CUES.hipThrust,
         sets: [ W(55,10,2), W(55,10,2), W(55,10,2) ] },
-      { name: 'DB Strict Curl', tempo: '3-0-1-0', rest: '75 sec', cue: 'Standing strict, slow eccentric.',
+      { name: 'DB Strict Curl', tempo: '3-0-1-0', rest: '75 sec', cue: CUES.strictCurl,
         sets: [ W(25,10,2), W(25,10,2), W(25,10,2) ] },
-      { name: 'DB Rear Delt Fly', tempo: '2-0-1-1', rest: '60 sec', cue: 'Hinge to 45°, lift DBs to sides, squeeze rear delts.',
+      { name: 'DB Rear Delt Fly', tempo: '2-0-1-1', rest: '60 sec', cue: CUES.rearDeltFly,
         sets: [ W(15,15,2), W(15,15,2), W(15,15,2) ] },
     ]
   },
   { id: '2026-05-29-A', type: 'gym', category: 'Gym', date: '2026-05-29', day: 'Fri', lift: 'A', week: 2, title: 'Lift A — Squat · W2',
     exercises: [
-      { name: 'Back Squat', tempo: '3-1-1-0', rest: '3 min', cue: 'Feet shoulder-width, brace, parallel or below, drive up.',
+      { name: 'Back Squat', tempo: '3-1-1-0', rest: '3 min', cue: CUES.squat,
         sets: [ R(95,5), R(135,3), W(165,5,3), W(165,5,3), W(165,5,3) ] },
-      { name: 'Romanian Deadlift', tempo: '3-0-1-0', rest: '2 min', cue: 'Hips back, hamstring stretch, hips forward.',
+      { name: 'Romanian Deadlift', tempo: '3-0-1-0', rest: '2 min', cue: CUES.rdl,
         sets: [ R(95,5), R(115,3), W(135,8,3), W(135,8,3), W(135,8,3) ] },
-      { name: 'DB Walking Lunge', tempo: 'controlled', rest: '90 sec', cue: 'Tall torso, drive through front heel.',
+      { name: 'DB Walking Lunge', tempo: 'controlled', rest: '90 sec', cue: CUES.walkingLunge,
         sets: [ W(35,10,3,true), W(35,10,3,true), W(35,10,3,true) ] },
-      { name: 'Single-Leg DB RDL', tempo: '3-0-1-0', rest: '90 sec', cue: 'Opposite hand DB, hinge on standing leg.',
+      { name: 'Single-Leg DB RDL', tempo: '3-0-1-0', rest: '90 sec', cue: CUES.slRdl,
         sets: [ W(30,8,3,true), W(30,8,3,true), W(30,8,3,true) ] },
-      { name: 'DB Standing Calf Raise', tempo: '2-1-1-0', rest: '60 sec', cue: 'Raise, pause, slow descent.',
+      { name: 'DB Standing Calf Raise', tempo: '2-1-1-0', rest: '60 sec', cue: CUES.calfRaise,
         sets: [ W(35,15,2), W(35,15,2), W(35,15,2) ] },
-      { name: 'Plank', tempo: 'hold', rest: '45 sec', cue: 'Hard line, glutes + abs locked, breathe.',
+      { name: 'Plank', tempo: 'hold', rest: '45 sec', cue: CUES.plank,
         sets: [ W('BW','60s','—'), W('BW','60s','—'), W('BW','60s','—') ] },
     ]
   },
   { id: '2026-06-01-B', type: 'gym', category: 'Gym', date: '2026-06-01', day: 'Mon', lift: 'B', week: 2, title: 'Lift B — Press · W2',
     exercises: [
-      { name: 'DB Bench Press', tempo: '3-1-1-0', rest: '2 min', cue: 'Elbows ~45°, pause at chest, scaps retracted.',
+      { name: 'DB Bench Press', tempo: '3-1-1-0', rest: '2 min', cue: CUES.benchPress,
         sets: [ R(30,8), R(50,5), W(65,10,3), W(65,10,3), W(65,10,3) ] },
-      { name: 'BB Standing Military Press', tempo: '3-0-X-0', rest: '2 min', cue: 'Strict, slow eccentric, explosive concentric.',
+      { name: 'BB Standing Military Press', tempo: '3-0-X-0', rest: '2 min', cue: CUES.militaryPress,
         sets: [ R(45,5), R(55,3), W(65,5,3), W(65,5,3), W(65,5,3) ] },
-      { name: 'Pull-ups (strict)', tempo: '2-0-1-0', rest: '2 min', cue: '5 sub-max sets, RIR 2, clean reps.',
+      { name: 'Pull-ups (strict)', tempo: '2-0-1-0', rest: '2 min', cue: CUES.pullups,
         sets: [ W('BW',3,2), W('BW',3,2), W('BW',3,2), W('BW',3,2), W('BW',3,2) ] },
-      { name: 'DB Single-Arm Row', tempo: '2-0-1-1', rest: '60 sec / switch', cue: 'Pull to hip, no torso rotation.',
+      { name: 'DB Single-Arm Row', tempo: '2-0-1-1', rest: '60 sec / switch', cue: CUES.singleArmRow,
         sets: [ W(50,10,3,true), W(50,10,3,true), W(50,10,3,true) ] },
-      { name: 'DB Strict Curl', tempo: '3-0-1-0', rest: '75 sec', cue: 'Strict standing, slow eccentric.',
+      { name: 'DB Strict Curl', tempo: '3-0-1-0', rest: '75 sec', cue: CUES.strictCurl,
         sets: [ W(25,10,2), W(25,10,2), W(25,10,2) ] },
-      { name: 'DB Hammer Curl', tempo: '3-0-1-0', rest: '75 sec', cue: 'Neutral grip, slow eccentric.',
+      { name: 'DB Hammer Curl', tempo: '3-0-1-0', rest: '75 sec', cue: CUES.hammerCurl,
         sets: [ W(30,10,2), W(30,10,2), W(30,10,2) ] },
     ]
   },
   // ============ GYM — Week 3 (peak) ============
   { id: '2026-06-03-C', type: 'gym', category: 'Gym', date: '2026-06-03', day: 'Wed', lift: 'C', week: 3, title: 'Lift C — Deadlift · W3 (peak)',
     exercises: [
-      { name: 'Conventional Deadlift', tempo: '2-0-1-0', rest: '3 min', cue: 'Peak loading week — focus on rock-solid setup.',
+      { name: 'Conventional Deadlift', tempo: '2-0-1-0', rest: '3 min', cue: CUES.deadlift,
         sets: [ R(95,5), R(135,5), W(175,5,3), W(175,5,3), W(175,5,3) ] },
-      { name: 'Pull-ups (strict)', tempo: '2-0-1-0', rest: '2 min', cue: 'Push reps per set. RIR 1-2 first 4 sets, last can grind.',
+      { name: 'Pull-ups (strict)', tempo: '2-0-1-0', rest: '2 min', cue: CUES.pullups,
         sets: [ W('BW',3,2), W('BW',3,2), W('BW',3,2), W('BW',3,2), W('BW',3,1) ] },
-      { name: 'DB Bent-Over Row', tempo: '2-0-1-1', rest: '90 sec', cue: 'Hinge, pull to hips, squeeze.',
+      { name: 'DB Bent-Over Row', tempo: '2-0-1-1', rest: '90 sec', cue: CUES.bentRow,
         sets: [ W(55,8,3), W(55,8,3), W(55,8,3) ] },
-      { name: 'DB Hip Thrust', tempo: '2-0-1-1', rest: '90 sec', cue: 'Drive heels, squeeze glutes, pause 1 sec at top.',
+      { name: 'DB Hip Thrust', tempo: '2-0-1-1', rest: '90 sec', cue: CUES.hipThrust,
         sets: [ W(55,10,2), W(55,10,2), W(55,10,2) ] },
-      { name: 'DB Strict Curl', tempo: '3-0-1-0', rest: '75 sec', cue: 'Slow eccentric — first weight increase on biceps.',
+      { name: 'DB Strict Curl', tempo: '3-0-1-0', rest: '75 sec', cue: CUES.strictCurl,
         sets: [ W(30,10,2), W(30,10,2), W(30,10,2) ] },
-      { name: 'DB Rear Delt Fly', tempo: '2-0-1-1', rest: '60 sec', cue: 'Squeeze rear delts, thumbs slightly up.',
+      { name: 'DB Rear Delt Fly', tempo: '2-0-1-1', rest: '60 sec', cue: CUES.rearDeltFly,
         sets: [ W(20,15,2), W(20,15,2), W(20,15,2) ] },
     ]
   },
   { id: '2026-06-05-A', type: 'gym', category: 'Gym', date: '2026-06-05', day: 'Fri', lift: 'A', week: 3, title: 'Lift A — Squat · W3 (peak)',
     exercises: [
-      { name: 'Back Squat', tempo: '3-1-1-0', rest: '3 min', cue: 'Peak week — bracing is the key. Brace before unrack.',
+      { name: 'Back Squat', tempo: '3-1-1-0', rest: '3 min', cue: CUES.squat,
         sets: [ R(95,5), R(135,5), W(175,5,3), W(175,5,3), W(175,5,3) ] },
-      { name: 'Romanian Deadlift', tempo: '3-0-1-0', rest: '2 min', cue: 'Slow eccentric, drive hips forward.',
+      { name: 'Romanian Deadlift', tempo: '3-0-1-0', rest: '2 min', cue: CUES.rdl,
         sets: [ R(95,5), R(135,3), W(145,8,3), W(145,8,3), W(145,8,3) ] },
-      { name: 'DB Walking Lunge', tempo: 'controlled', rest: '90 sec', cue: 'Tall torso, drive heel.',
+      { name: 'DB Walking Lunge', tempo: 'controlled', rest: '90 sec', cue: CUES.walkingLunge,
         sets: [ W(35,10,3,true), W(35,10,3,true), W(35,10,3,true) ] },
-      { name: 'Single-Leg DB RDL', tempo: '3-0-1-0', rest: '90 sec', cue: 'Hinge on standing leg, hamstring stretch.',
+      { name: 'Single-Leg DB RDL', tempo: '3-0-1-0', rest: '90 sec', cue: CUES.slRdl,
         sets: [ W(30,8,3,true), W(30,8,3,true), W(30,8,3,true) ] },
-      { name: 'DB Standing Calf Raise', tempo: '2-1-1-0', rest: '60 sec', cue: 'Slow descent. Pause at bottom for stretch.',
+      { name: 'DB Standing Calf Raise', tempo: '2-1-1-0', rest: '60 sec', cue: CUES.calfRaise,
         sets: [ W(40,15,2), W(40,15,2), W(40,15,2) ] },
-      { name: 'Plank', tempo: 'hold', rest: '45 sec', cue: 'Hard line, breathe through nose.',
+      { name: 'Plank', tempo: 'hold', rest: '45 sec', cue: CUES.plank,
         sets: [ W('BW','60s','—'), W('BW','60s','—'), W('BW','60s','—') ] },
     ]
   },
   { id: '2026-06-08-B', type: 'gym', category: 'Gym', date: '2026-06-08', day: 'Mon', lift: 'B', week: 3, title: 'Lift B — Press · W3 (peak)',
     exercises: [
-      { name: 'DB Bench Press', tempo: '3-1-1-0', rest: '2 min', cue: 'Peak — pause at chest fully, then explode up.',
+      { name: 'DB Bench Press', tempo: '3-1-1-0', rest: '2 min', cue: CUES.benchPress,
         sets: [ R(35,8), R(50,5), W(70,10,3), W(70,10,3), W(70,10,3) ] },
-      { name: 'BB Standing Military Press', tempo: '3-0-X-0', rest: '2 min', cue: 'Peak strict standing. Glutes squeezed, ribs down, explode through.',
+      { name: 'BB Standing Military Press', tempo: '3-0-X-0', rest: '2 min', cue: CUES.militaryPress,
         sets: [ R(45,5), R(55,3), W(70,5,3), W(70,5,3), W(70,5,3) ] },
-      { name: 'Pull-ups (strict)', tempo: '2-0-1-0', rest: '2 min', cue: 'Target 5×4 strict. Last set can grind to failure if you have it.',
+      { name: 'Pull-ups (strict)', tempo: '2-0-1-0', rest: '2 min', cue: CUES.pullups,
         sets: [ W('BW',4,2), W('BW',4,2), W('BW',4,2), W('BW',4,1), W('BW',4,0) ] },
-      { name: 'DB Single-Arm Row', tempo: '2-0-1-1', rest: '60 sec / switch', cue: 'Pull to hip, no rotation.',
+      { name: 'DB Single-Arm Row', tempo: '2-0-1-1', rest: '60 sec / switch', cue: CUES.singleArmRow,
         sets: [ W(50,10,3,true), W(50,10,3,true), W(50,10,3,true) ] },
-      { name: 'DB Strict Curl', tempo: '3-0-1-0', rest: '75 sec', cue: 'First weight jump on biceps — slow eccentric is non-negotiable.',
+      { name: 'DB Strict Curl', tempo: '3-0-1-0', rest: '75 sec', cue: CUES.strictCurl,
         sets: [ W(30,10,2), W(30,10,2), W(30,10,2) ] },
-      { name: 'DB Hammer Curl', tempo: '3-0-1-0', rest: '75 sec', cue: 'Neutral grip, slow eccentric.',
+      { name: 'DB Hammer Curl', tempo: '3-0-1-0', rest: '75 sec', cue: CUES.hammerCurl,
         sets: [ W(30,10,2), W(30,10,2), W(30,10,2) ] },
     ]
   },
   // ============ GYM — Week 4 (deload) ============
   { id: '2026-06-10-C', type: 'gym', category: 'Gym', date: '2026-06-10', day: 'Wed', lift: 'C', week: 4, title: 'Lift C — Deadlift · W4 (deload)',
     exercises: [
-      { name: 'Conventional Deadlift', tempo: '2-0-1-0', rest: '3 min', cue: 'DELOAD — load is light, focus on speed and crisp setup.',
+      { name: 'Conventional Deadlift', tempo: '2-0-1-0', rest: '3 min', cue: CUES.deadlift,
         sets: [ R(95,5), W(125,5,5), W(125,5,5), W(125,5,5) ] },
-      { name: 'Pull-ups (strict)', tempo: '2-0-1-0', rest: '2 min', cue: 'Deload — sub-max, easy reps, recovery focus.',
+      { name: 'Pull-ups (strict)', tempo: '2-0-1-0', rest: '2 min', cue: CUES.pullups,
         sets: [ W('BW',2,3), W('BW',2,3), W('BW',2,3) ] },
-      { name: 'DB Bent-Over Row', tempo: '2-0-1-1', rest: '90 sec', cue: 'Light, hinge, squeeze.',
+      { name: 'DB Bent-Over Row', tempo: '2-0-1-1', rest: '90 sec', cue: CUES.bentRow,
         sets: [ W(45,8,4), W(45,8,4) ] },
-      { name: 'DB Hip Thrust', tempo: '2-0-1-1', rest: '90 sec', cue: 'Light, focus on the glute squeeze at top.',
+      { name: 'DB Hip Thrust', tempo: '2-0-1-1', rest: '90 sec', cue: CUES.hipThrust,
         sets: [ W(40,10,3), W(40,10,3) ] },
-      { name: 'DB Strict Curl', tempo: '3-0-1-0', rest: '75 sec', cue: 'Light, slow eccentric.',
+      { name: 'DB Strict Curl', tempo: '3-0-1-0', rest: '75 sec', cue: CUES.strictCurl,
         sets: [ W(20,10,3), W(20,10,3) ] },
-      { name: 'DB Rear Delt Fly', tempo: '2-0-1-1', rest: '60 sec', cue: 'Light, full ROM.',
+      { name: 'DB Rear Delt Fly', tempo: '2-0-1-1', rest: '60 sec', cue: CUES.rearDeltFly,
         sets: [ W(10,15,3), W(10,15,3) ] },
     ]
   },
   { id: '2026-06-12-A', type: 'gym', category: 'Gym', date: '2026-06-12', day: 'Fri', lift: 'A', week: 4, title: 'Lift A — Squat · W4 (deload)',
     exercises: [
-      { name: 'Back Squat', tempo: '3-1-1-0', rest: '2 min', cue: 'DELOAD — light, crisp, full ROM.',
+      { name: 'Back Squat', tempo: '3-1-1-0', rest: '2 min', cue: CUES.squat,
         sets: [ R(95,5), W(115,5,5), W(115,5,5), W(115,5,5) ] },
-      { name: 'Romanian Deadlift', tempo: '3-0-1-0', rest: '2 min', cue: 'Light, hinge mechanics focus.',
+      { name: 'Romanian Deadlift', tempo: '3-0-1-0', rest: '2 min', cue: CUES.rdl,
         sets: [ W(95,8,4), W(95,8,4) ] },
-      { name: 'DB Walking Lunge', tempo: 'controlled', rest: '90 sec', cue: 'Light, focus on balance.',
+      { name: 'DB Walking Lunge', tempo: 'controlled', rest: '90 sec', cue: CUES.walkingLunge,
         sets: [ W(25,10,4,true), W(25,10,4,true) ] },
-      { name: 'Single-Leg DB RDL', tempo: '3-0-1-0', rest: '90 sec', cue: 'Light, hinge mechanics.',
+      { name: 'Single-Leg DB RDL', tempo: '3-0-1-0', rest: '90 sec', cue: CUES.slRdl,
         sets: [ W(20,8,4,true), W(20,8,4,true) ] },
-      { name: 'DB Standing Calf Raise', tempo: '2-1-1-0', rest: '60 sec', cue: 'Light, full ROM.',
+      { name: 'DB Standing Calf Raise', tempo: '2-1-1-0', rest: '60 sec', cue: CUES.calfRaise,
         sets: [ W(30,15,3), W(30,15,3) ] },
-      { name: 'Plank', tempo: 'hold', rest: '45 sec', cue: 'Hard line, breathe.',
+      { name: 'Plank', tempo: 'hold', rest: '45 sec', cue: CUES.plank,
         sets: [ W('BW','45s','—'), W('BW','45s','—') ] },
     ]
   },
   { id: '2026-06-15-B', type: 'gym', category: 'Gym', date: '2026-06-15', day: 'Mon', lift: 'B', week: 4, title: 'Lift B — Press · W4 (deload)',
     exercises: [
-      { name: 'DB Bench Press', tempo: '3-1-1-0', rest: '2 min', cue: 'DELOAD — light, full ROM, pause at chest.',
+      { name: 'DB Bench Press', tempo: '3-1-1-0', rest: '2 min', cue: CUES.benchPress,
         sets: [ R(30,8), W(50,10,4), W(50,10,4), W(50,10,4) ] },
-      { name: 'BB Standing Military Press', tempo: '3-0-X-0', rest: '2 min', cue: 'Light, strict, tempo emphasis.',
+      { name: 'BB Standing Military Press', tempo: '3-0-X-0', rest: '2 min', cue: CUES.militaryPress,
         sets: [ R(45,5), W(50,5,4), W(50,5,4), W(50,5,4) ] },
-      { name: 'Pull-ups (strict)', tempo: '2-0-1-0', rest: '2 min', cue: 'Deload — easy reps, RIR 3+.',
+      { name: 'Pull-ups (strict)', tempo: '2-0-1-0', rest: '2 min', cue: CUES.pullups,
         sets: [ W('BW',3,3), W('BW',3,3), W('BW',3,3) ] },
-      { name: 'DB Single-Arm Row', tempo: '2-0-1-1', rest: '60 sec / switch', cue: 'Light, pull to hip.',
+      { name: 'DB Single-Arm Row', tempo: '2-0-1-1', rest: '60 sec / switch', cue: CUES.singleArmRow,
         sets: [ W(40,10,4,true), W(40,10,4,true) ] },
-      { name: 'DB Strict Curl', tempo: '3-0-1-0', rest: '75 sec', cue: 'Light, slow eccentric.',
+      { name: 'DB Strict Curl', tempo: '3-0-1-0', rest: '75 sec', cue: CUES.strictCurl,
         sets: [ W(20,10,3), W(20,10,3) ] },
-      { name: 'DB Hammer Curl', tempo: '3-0-1-0', rest: '75 sec', cue: 'Light, neutral grip.',
+      { name: 'DB Hammer Curl', tempo: '3-0-1-0', rest: '75 sec', cue: CUES.hammerCurl,
         sets: [ W(20,10,3), W(20,10,3) ] },
     ]
   },
   // ============ HOME — KB STRENGTH SUBS ============
   { id: 'kb-sub-a', type: 'kb-strength', category: 'Home', title: 'KB Sub A — Lower (Squat day replacement)', duration: '~40 min',
-    intent: 'Use in place of Lift A (squat day) when you can\'t make it to the gym. One 24kg bell.',
     exercises: [
-      { name: 'KB Goblet Squat', tempo: '3-1-1-0', rest: '90 sec', cue: 'Hold KB at chest, elbows tucked. Descend deep, drive up through heels. Spine tall.',
+      { name: 'KB Goblet Squat', tempo: '3-1-1-0', rest: '90 sec', cue: CUES.kbGoblet,
         sets: [ W('24kg',8,3), W('24kg',8,3), W('24kg',8,3), W('24kg',8,3) ] },
-      { name: 'KB Two-Hand RDL', tempo: '3-0-1-0', rest: '90 sec', cue: 'Both hands on handle, hinge at hips, bell brushes shins. Drive hips forward.',
+      { name: 'KB Two-Hand RDL', tempo: '3-0-1-0', rest: '90 sec', cue: CUES.kbRdl2H,
         sets: [ W('24kg',10,3), W('24kg',10,3), W('24kg',10,3), W('24kg',10,3) ] },
-      { name: 'KB Walking Lunge (chest-loaded)', tempo: 'controlled', rest: '90 sec', cue: 'KB at chest, step forward, drop rear knee, drive front heel. Torso tall.',
+      { name: 'KB Walking Lunge (chest-loaded)', tempo: 'controlled', rest: '90 sec', cue: CUES.kbWalkingLunge,
         sets: [ W('24kg',10,3,true), W('24kg',10,3,true), W('24kg',10,3,true) ] },
-      { name: 'Single-Leg KB RDL', tempo: '3-0-1-0', rest: '90 sec', cue: 'KB in opposite hand. Hinge on standing leg, free leg lifts back. Hamstring stretch.',
+      { name: 'Single-Leg KB RDL', tempo: '3-0-1-0', rest: '90 sec', cue: CUES.kbSlRdl,
         sets: [ W('24kg',8,3,true), W('24kg',8,3,true), W('24kg',8,3,true) ] },
-      { name: 'Single-Leg Calf Raise (BW)', tempo: '2-1-1-0', rest: '60 sec', cue: 'Slow eccentric, pause at top, full ROM. Use a step for stretch if available.',
+      { name: 'Single-Leg Calf Raise (BW)', tempo: '2-1-1-0', rest: '60 sec', cue: CUES.slCalf,
         sets: [ W('BW',15,2,true), W('BW',15,2,true), W('BW',15,2,true) ] },
-      { name: 'Plank', tempo: 'hold', rest: '45 sec', cue: 'Hard line, glutes + abs locked. Breathe through nose.',
+      { name: 'Plank', tempo: 'hold', rest: '45 sec', cue: CUES.plank,
         sets: [ W('BW','45s','—'), W('BW','45s','—'), W('BW','45s','—') ] },
     ]
   },
   { id: 'kb-sub-b', type: 'kb-strength', category: 'Home', title: 'KB Sub B — Press (Press day replacement)', duration: '~45 min',
-    intent: 'Use in place of Lift B (press day) when you can\'t make it to the gym. One 24kg bell + bands.',
     exercises: [
-      { name: 'KB Floor Press (single-arm, alternating)', tempo: '3-1-1-0', rest: '2 min', cue: 'Lie on floor (or mat). Press KB straight up, controlled descent. Elbow touches floor at bottom. Alternate sides.',
+      { name: 'KB Floor Press (single-arm, alternating)', tempo: '3-1-1-0', rest: '2 min', cue: CUES.kbFloorPress,
         sets: [ W('24kg',6,3,true), W('24kg',6,3,true), W('24kg',6,3,true), W('24kg',6,3,true) ] },
-      { name: 'KB Strict Press (single-arm, standing)', tempo: '3-0-X-0', rest: '2 min', cue: 'Bell racked at shoulder, glutes squeezed. Press straight overhead, no leg drive. Explosive concentric.',
+      { name: 'KB Strict Press (single-arm, standing)', tempo: '3-0-X-0', rest: '2 min', cue: CUES.kbStrictPress,
         sets: [ W('24kg',5,3,true), W('24kg',5,3,true), W('24kg',5,3,true), W('24kg',5,3,true) ] },
-      { name: 'KB Single-Arm Row (bent-over)', tempo: '2-0-1-1', rest: '90 sec', cue: 'Hinge to 45°, brace abs. Pull KB to hip, squeeze. No torso rotation.',
+      { name: 'KB Single-Arm Row (bent-over)', tempo: '2-0-1-1', rest: '90 sec', cue: CUES.kbBentRow,
         sets: [ W('24kg',10,3,true), W('24kg',10,3,true), W('24kg',10,3,true) ] },
-      { name: 'Renegade Row', tempo: '2-0-1-1', rest: '90 sec', cue: 'Push-up position, KB in one hand. Row to ribs without rotating hips. Alternate arms.',
+      { name: 'Renegade Row', tempo: '2-0-1-1', rest: '90 sec', cue: CUES.renegadeRow,
         sets: [ W('24kg',6,3,true), W('24kg',6,3,true), W('24kg',6,3,true) ] },
-      { name: 'Band Curl (behind-body, supine, low anchor)', tempo: '3-0-1-0', rest: '75 sec', cue: 'Stand facing AWAY from anchor. Underhand grip, arm slightly behind. Slow eccentric to full stretch, then curl. One arm at a time.',
+      { name: 'Band Curl (behind-body, supine, low anchor)', tempo: '3-0-1-0', rest: '75 sec', cue: CUES.bandCurl,
         sets: [ W('Blue band',10,2,true), W('Blue band',10,2,true), W('Blue band',10,2,true) ] },
-      { name: 'Push-ups (slow eccentric)', tempo: '3-0-1-0', rest: '75 sec', cue: 'Hard line head to heels. 3-sec descent, brief pause at bottom, drive up.',
+      { name: 'Push-ups (slow eccentric)', tempo: '3-0-1-0', rest: '75 sec', cue: CUES.pushupSlow,
         sets: [ W('BW','max',2), W('BW','max',2), W('BW','max',2) ] },
     ]
   },
   { id: 'kb-sub-c', type: 'kb-strength', category: 'Home', title: 'KB Sub C — Posterior (Deadlift day replacement)', duration: '~40 min',
-    intent: 'Use in place of Lift C (deadlift day) when you can\'t make it to the gym. One 24kg bell + bands.',
     exercises: [
-      { name: 'KB Two-Hand Swing', tempo: 'explosive', rest: '90 sec', cue: 'Hike bell back through legs (not down), explode hips forward. Arms are ropes. Glutes drive. Bell floats to chest height.',
+      { name: 'KB Two-Hand Swing', tempo: 'explosive', rest: '90 sec', cue: CUES.kbSwing,
         sets: [ W('24kg',15,3), W('24kg',15,3), W('24kg',15,3), W('24kg',15,3), W('24kg',15,3) ] },
-      { name: 'KB Single-Arm Row (bent-over)', tempo: '2-0-1-1', rest: '90 sec', cue: 'Hinge to 45°, pull to hip, squeeze.',
+      { name: 'KB Single-Arm Row (bent-over)', tempo: '2-0-1-1', rest: '90 sec', cue: CUES.kbBentRow,
         sets: [ W('24kg',10,3,true), W('24kg',10,3,true), W('24kg',10,3,true) ] },
-      { name: 'KB Renegade Row', tempo: '2-0-1-1', rest: '90 sec', cue: 'Anti-rotation core + back. Don\'t let hips twist.',
+      { name: 'KB Renegade Row', tempo: '2-0-1-1', rest: '90 sec', cue: CUES.renegadeRow,
         sets: [ W('24kg',6,3,true), W('24kg',6,3,true), W('24kg',6,3,true) ] },
-      { name: 'KB Hip Thrust', tempo: '2-0-1-1', rest: '90 sec', cue: 'Shoulders elevated on bench/step, KB across hips, drive heels, squeeze glutes hard at top.',
+      { name: 'KB Hip Thrust', tempo: '2-0-1-1', rest: '90 sec', cue: CUES.kbHipThrust,
         sets: [ W('24kg',12,2), W('24kg',12,2), W('24kg',12,2) ] },
-      { name: 'Band Hammer Curl (behind-body, neutral grip)', tempo: '3-0-1-0', rest: '75 sec', cue: 'Same anchor setup as Sub B curl, but neutral (thumbs-up) grip. Slow eccentric to full stretch.',
+      { name: 'Band Hammer Curl (behind-body, neutral grip)', tempo: '3-0-1-0', rest: '75 sec', cue: CUES.bandHammer,
         sets: [ W('Blue band',10,2,true), W('Blue band',10,2,true), W('Blue band',10,2,true) ] },
-      { name: 'Band Pull-Apart', tempo: '2-0-1-1', rest: '60 sec', cue: 'Band held at arms-length in front, pull apart to sides, squeeze shoulder blades, slow return.',
+      { name: 'Band Pull-Apart', tempo: '2-0-1-1', rest: '60 sec', cue: CUES.bandPullApart,
         sets: [ W('Red band',15,2), W('Red band',15,2), W('Red band',15,2) ] },
     ]
   },
   // ============ HOME — KB METCONS ============
   { id: 'kb-metcon-ss', type: 'kb-metcon', category: 'Home', title: 'KB MetCon — Simple & Sinister', duration: '20-30 min', metconKind: 'forCompletion',
-    intent: 'Foundational conditioning. Self-paced. Use as your easier metcon day.',
-    protocol: 'Complete 100 KB two-hand swings + 10 Turkish Get-Ups (5 per side, alternating). Break the swings however you want (10×10, 5×20, etc.). Rest as needed. Goal is completing the work, not racing the clock.',
+    protocol: [
+      '100 KB two-hand swings',
+      '10 Turkish Get-Ups (5/side)',
+      'Break swings as you want',
+      'Rest as needed',
+    ],
     counters: [
       { id: 'swings', label: 'KB swings', target: 100, step: 5 },
       { id: 'getups', label: 'Turkish get-ups', target: 10, step: 1 }
@@ -479,8 +523,12 @@ const SESSIONS = [
     timer: { mode: 'stopwatch' }
   },
   { id: 'kb-metcon-emom', type: 'kb-metcon', category: 'Home', title: 'KB MetCon — EMOM 20', duration: '20 min', metconKind: 'emom',
-    intent: 'Density work. Heart rate stays high the entire 20 min.',
-    protocol: 'Every Minute On the Minute for 20 minutes. Set the timer, follow the prompts. Total: 100 swings, 50 push-ups, 50 goblet squats.',
+    protocol: [
+      'EMOM 20 minutes',
+      'Min A: 10 KB swings',
+      'Min B: 5 push-ups + 5 goblet squats',
+      'Totals: 100 swings, 50 push-ups, 50 squats',
+    ],
     rounds: [
       { label: '10 KB swings' },
       { label: '5 push-ups + 5 goblet squats' }
@@ -488,8 +536,14 @@ const SESSIONS = [
     timer: { mode: 'emom', durationSec: 1200, intervalSec: 60 }
   },
   { id: 'kb-metcon-100s', type: 'kb-metcon', category: 'Home', title: 'KB MetCon — The 100s', duration: '30-45 min', metconKind: 'forTime',
-    intent: 'Volume grinder. Race the clock. Use when you have time and want to push.',
-    protocol: 'Complete in any order, any breakdown, fewest sets possible: 100 KB swings, 50 goblet squats, 30 push-ups, 20 Turkish get-ups (10/side). Stopwatch runs; log your time.',
+    protocol: [
+      '100 KB swings',
+      '50 goblet squats',
+      '30 push-ups',
+      '20 Turkish get-ups (10/side)',
+      'Any order, fewest sets',
+      'Race the clock',
+    ],
     counters: [
       { id: 'swings', label: 'KB swings', target: 100, step: 5 },
       { id: 'squats', label: 'Goblet squats', target: 50, step: 5 },
@@ -500,119 +554,180 @@ const SESSIONS = [
   },
 
   // ============ CONDITIONING — Gym-based (Row, Air Dyne, Sled, Ruck) ============
-  // Calf-friendly. Zone-2 default, strategic HIIT, sled added in Week 3.
-  // Watch dial-back triggers: Training Readiness <50, HRV OUT_OF_RANGE_LOW, ACWR >1.3, Sleep <60.
 
   // ---- Transition week (May 18-24) ----
   { id: '2026-05-21-row-z2', type: 'kb-metcon', category: 'Conditioning', date: '2026-05-21', day: 'Thu', week: 0,
     title: 'Row · Zone 2 · 25 min', duration: '25 min', metconKind: 'forCompletion',
-    intent: 'First conditioning session back. Aerobic base. Form first, pace second.',
-    protocol: '<b>Concept2 (or gym equivalent).</b> Damper 4-6 (NOT 10). Stroke rate 18-20 spm. Target HR 122-128. Should be able to talk in short sentences. If HR drifts above 133, slow down. <br><br><b>Drive:</b> Legs → back → arms. <b>Recovery:</b> Arms → back → legs. Power from the legs.',
+    protocol: [
+      'Damper 4–6',
+      'Stroke rate 18–20 spm',
+      'HR 122–128',
+      'Talk in short sentences',
+      'Drive: legs → back → arms',
+    ],
+    alt: 'Air dyne or bike, same HR target',
     counters: [ { id: 'mins', label: 'Minutes complete', target: 25, step: 5 } ],
     timer: { mode: 'stopwatch' }
   },
   { id: '2026-05-23-ruck', type: 'kb-metcon', category: 'Conditioning', date: '2026-05-23', day: 'Sat', week: 0,
-    title: 'Ruck · 25 min (Active recovery, optional)', duration: '25 min', metconKind: 'forCompletion',
-    intent: 'Optional active recovery. 20 lb vest. Easy pace. Headphones + podcast.',
-    protocol: '<b>20 lb vest, easy walk, 25 minutes.</b> Target HR Zone 1 (92-122). Conversation pace. <br><br>Walking is boring; this changes the modality enough to make it tolerable. Doubles as conditioning when the gym isn\'t happening.',
+    title: 'Ruck · 25 min (optional)', duration: '25 min', metconKind: 'forCompletion',
+    protocol: [
+      '20 lb vest',
+      'Easy walk, 25 min',
+      'HR Zone 1 (92–122)',
+      'Conversation pace',
+    ],
     counters: [ { id: 'mins', label: 'Minutes complete', target: 25, step: 5 } ],
     timer: { mode: 'stopwatch' }
   },
 
   // ---- Week 1 (May 25-31) ----
   { id: '2026-05-26-ab-int', type: 'kb-metcon', category: 'Conditioning', date: '2026-05-26', day: 'Tue', week: 1,
-    title: 'Air Dyne Intervals · W1 (5 rounds)', duration: '~14 min', metconKind: 'forCompletion',
-    intent: 'First HIIT session. Brutal cardio cost, zero calf impact. Garmin watch handles interval timing.',
-    protocol: '<b>5 rounds:</b> 30 sec HARD / 90 sec EASY recovery. <br><br>HARD = HR Zone 4 (144-155), or just go ALL OUT for 30s.<br>EASY = pedal slow, recover, breathe.<br><br>Total: 10 min after 2 min warmup, 2 min cooldown. Use Garmin watch native interval timer.',
+    title: 'Air Dyne Intervals · W1', duration: '~14 min', metconKind: 'forCompletion',
+    protocol: [
+      '5 rounds',
+      '30s HARD / 90s EASY',
+      'HARD = HR Zone 4 (144–155)',
+      'EASY = pedal slow, breathe',
+      '2 min warmup, 2 min cooldown',
+    ],
     counters: [ { id: 'rounds', label: 'Rounds complete', target: 5, step: 1 } ],
     timer: { mode: 'stopwatch' }
   },
   { id: '2026-05-28-row-z2', type: 'kb-metcon', category: 'Conditioning', date: '2026-05-28', day: 'Thu', week: 1,
     title: 'Row · Zone 2 · 30 min', duration: '30 min', metconKind: 'forCompletion',
-    intent: 'Build aerobic base. Slightly longer than last week.',
-    protocol: '<b>30 min steady.</b> Damper 4-6. Stroke rate 18-22. Target HR 122-130. <br><br>Last week was 25 min — this is your first volume bump. If HR drifts up or form degrades, drop back to 25.',
+    protocol: [
+      '30 min steady',
+      'Damper 4–6',
+      'Stroke rate 18–22',
+      'HR 122–130',
+    ],
+    alt: 'Air dyne or bike, same HR target',
     counters: [ { id: 'mins', label: 'Minutes complete', target: 30, step: 5 } ],
     timer: { mode: 'stopwatch' }
   },
   { id: '2026-05-30-ruck', type: 'kb-metcon', category: 'Conditioning', date: '2026-05-30', day: 'Sat', week: 1,
-    title: 'Ruck · 30 min (Active recovery, optional)', duration: '30 min', metconKind: 'forCompletion',
-    intent: 'Optional. Skip if recovery is borderline (Training Readiness <50 or HRV LOW).',
-    protocol: '<b>20 lb vest, easy walk, 30 minutes.</b> Zone 1 (92-122). <br><br>Skip without guilt if the week was hard. Replace with mobility/stretching if needed.',
+    title: 'Ruck · 30 min (optional)', duration: '30 min', metconKind: 'forCompletion',
+    protocol: [
+      '20 lb vest',
+      '30 min easy walk',
+      'HR Zone 1 (92–122)',
+    ],
     counters: [ { id: 'mins', label: 'Minutes complete', target: 30, step: 5 } ],
     timer: { mode: 'stopwatch' }
   },
 
-  // ---- Week 2 (Jun 1-7) — Reta 8mg titration day = Jun 3 ----
+  // ---- Week 2 (Jun 1-7) ----
   { id: '2026-06-02-ab-int', type: 'kb-metcon', category: 'Conditioning', date: '2026-06-02', day: 'Tue', week: 2,
-    title: 'Air Dyne Intervals · W2 (6 rounds)', duration: '~16 min', metconKind: 'forCompletion',
-    intent: 'Volume bump. Day before Reta 8mg titration — last HIIT before dose escalation.',
-    protocol: '<b>6 rounds:</b> 30s HARD / 90s EASY. <br><br>Same protocol as last week, one more round. Total 12 min interval block.',
+    title: 'Air Dyne Intervals · W2', duration: '~16 min', metconKind: 'forCompletion',
+    protocol: [
+      '6 rounds',
+      '30s HARD / 90s EASY',
+      'HARD = HR Zone 4',
+      '12 min interval block',
+    ],
     counters: [ { id: 'rounds', label: 'Rounds complete', target: 6, step: 1 } ],
     timer: { mode: 'stopwatch' }
   },
   { id: '2026-06-04-row-z2', type: 'kb-metcon', category: 'Conditioning', date: '2026-06-04', day: 'Thu', week: 2,
-    title: 'Row · Zone 2 · 30 min (post-titration)', duration: '30 min', metconKind: 'forCompletion',
-    intent: 'First conditioning after Reta 8mg jump. Watch how you feel. If GI side effects hit, dial back to 20 min.',
-    protocol: '<b>30 min steady, HR 122-130.</b> <br><br>Reta 8mg may bring side effects you didn\'t feel at 5mg. If you feel off, drop the duration or substitute Zone 1 ruck. Don\'t push through GI distress.',
+    title: 'Row · Zone 2 · 30 min', duration: '30 min', metconKind: 'forCompletion',
+    protocol: [
+      '30 min steady',
+      'HR 122–130',
+      'Damper 4–6',
+      'Stroke rate 20–22',
+    ],
+    alt: 'Air dyne or bike, same HR target',
     counters: [ { id: 'mins', label: 'Minutes complete', target: 30, step: 5 } ],
     timer: { mode: 'stopwatch' }
   },
 
-  // ---- Week 3 (Jun 8-14) — Peak strength week, add sled ----
+  // ---- Week 3 (Jun 8-14) — Peak week, sled added ----
   { id: '2026-06-09-ab-int', type: 'kb-metcon', category: 'Conditioning', date: '2026-06-09', day: 'Tue', week: 3,
-    title: 'Air Dyne Intervals · W3 (8 rounds)', duration: '~20 min', metconKind: 'forCompletion',
-    intent: 'Peak conditioning week. 8 rounds. Only push if Training Readiness ≥60.',
-    protocol: '<b>8 rounds:</b> 30s HARD / 90s EASY. <br><br>If recovery is borderline, drop to 6 rounds. ACWR should still be under 1.3.',
+    title: 'Air Dyne Intervals · W3', duration: '~20 min', metconKind: 'forCompletion',
+    protocol: [
+      '8 rounds (or 6 if recovery low)',
+      '30s HARD / 90s EASY',
+      'HARD = HR Zone 4',
+    ],
     counters: [ { id: 'rounds', label: 'Rounds complete', target: 8, step: 1 } ],
     timer: { mode: 'stopwatch' }
   },
   { id: '2026-06-11-row-z2', type: 'kb-metcon', category: 'Conditioning', date: '2026-06-11', day: 'Thu', week: 3,
     title: 'Row · Zone 2 · 35 min', duration: '35 min', metconKind: 'forCompletion',
-    intent: 'Peak aerobic volume. 35 min of true Zone 2.',
-    protocol: '<b>35 min steady, HR 125-133, stroke rate 20-22.</b> <br><br>This is the volume target for Zone 2. If you hit this comfortably, week 4 deload is earned.',
+    protocol: [
+      '35 min steady',
+      'HR 125–133',
+      'Stroke rate 20–22',
+    ],
+    alt: 'Air dyne or bike, same HR target',
     counters: [ { id: 'mins', label: 'Minutes complete', target: 35, step: 5 } ],
     timer: { mode: 'stopwatch' }
   },
   { id: '2026-06-13-sled', type: 'kb-metcon', category: 'Conditioning', date: '2026-06-13', day: 'Sat', week: 3,
     title: 'Sled Push · 6 sets', duration: '~20 min', metconKind: 'forCompletion',
-    intent: 'New modality — strength + conditioning hybrid. No eccentric calf load. First sled session.',
-    protocol: '<b>6 sets × 20m heavy push.</b> Moderate weight first set, ramp up. Walk back as rest. <br><br><b>Cue:</b> Drive through the floor, low body angle, arms locked. Breathe between sets. <br><br>If the sled is being hogged by someone, substitute 4 × 500m row sprints.',
+    protocol: [
+      '6 sets × 20m heavy push',
+      'Moderate first set, ramp up',
+      'Walk back as rest',
+      'Drive through floor',
+      'Low body angle',
+      'Arms locked',
+      'Breathe between sets',
+    ],
+    alt: '4 × 500m row sprints',
     counters: [ { id: 'sets', label: 'Sets complete', target: 6, step: 1 } ],
     timer: { mode: 'stopwatch' }
   },
 
-  // ---- Week 4 (Jun 15-21) — Deload week ----
+  // ---- Week 4 (Jun 15-21) — Deload ----
   { id: '2026-06-16-ab-int', type: 'kb-metcon', category: 'Conditioning', date: '2026-06-16', day: 'Tue', week: 4,
-    title: 'Air Dyne Intervals · W4 (Tabata)', duration: '~12 min', metconKind: 'forCompletion',
-    intent: 'Deload week. Lower volume, higher intensity. Brief but brutal.',
-    protocol: '<b>Tabata: 8 rounds of 20s HARD / 10s EASY = 4 min total.</b> <br><br>2 min warmup, 4 min Tabata block, 2-3 min cooldown. Total under 12 min. <br><br>This is your hardest interval — 20s with only 10s recovery. Go as hard as you can sustain.',
+    title: 'Air Dyne · Tabata (deload)', duration: '~12 min', metconKind: 'forCompletion',
+    protocol: [
+      'Tabata: 8 rounds',
+      '20s HARD / 10s EASY',
+      '4 min total',
+      '2 min warmup, 2–3 min cooldown',
+    ],
     counters: [ { id: 'rounds', label: 'Rounds complete', target: 8, step: 1 } ],
     timer: { mode: 'stopwatch' }
   },
   { id: '2026-06-18-row-z2', type: 'kb-metcon', category: 'Conditioning', date: '2026-06-18', day: 'Thu', week: 4,
     title: 'Row · Zone 2 · 25 min (deload)', duration: '25 min', metconKind: 'forCompletion',
-    intent: 'Deload week. Drop volume back to 25 min. Easy effort.',
-    protocol: '<b>25 min easy, HR 120-128.</b> <br><br>Recovery focus. Reset before the next 4-week cycle.',
+    protocol: [
+      '25 min easy',
+      'HR 120–128',
+      'Recovery focus',
+    ],
+    alt: 'Air dyne or bike, same HR target',
     counters: [ { id: 'mins', label: 'Minutes complete', target: 25, step: 5 } ],
     timer: { mode: 'stopwatch' }
   },
 
-  // ---- Ad-hoc cardio (anytime, not date-bound) — for walks, swims, anything not on the schedule ----
+  // ---- Ad-hoc cardio (anytime) ----
   { id: 'cardio-walk', type: 'kb-metcon', category: 'Conditioning', title: 'Walk · anytime', duration: 'flexible', metconKind: 'forCompletion',
-    intent: 'Log a walk that wasn\'t on the schedule. Counts toward your weekly cardio.',
-    protocol: '<b>Just a walk.</b> Indoor, outdoor, treadmill, rucking — whatever. Log the minutes you walked. <br><br>Counter target is 30 min as a default, but adjust up or down as you go. Use Reset between walks.',
+    protocol: [
+      'Walk anywhere',
+      'Indoor, outdoor, treadmill, ruck',
+      'Log minutes',
+    ],
     counters: [ { id: 'mins', label: 'Minutes walked', target: 30, step: 5 } ],
     timer: { mode: 'stopwatch' }
   },
   { id: 'cardio-swim', type: 'kb-metcon', category: 'Conditioning', title: 'Swim · anytime', duration: 'flexible', metconKind: 'forCompletion',
-    intent: 'Log a swim session. Pool, open water, whatever.',
-    protocol: '<b>Swim session.</b> Log minutes in the water. Counter target 25 min as a default — adjust per session.',
+    protocol: [
+      'Pool or open water',
+      'Log minutes',
+    ],
     counters: [ { id: 'mins', label: 'Minutes swimming', target: 25, step: 5 } ],
     timer: { mode: 'stopwatch' }
   },
   { id: 'cardio-other', type: 'kb-metcon', category: 'Conditioning', title: 'Other cardio · anytime', duration: 'flexible', metconKind: 'forCompletion',
-    intent: 'Hike, bike, dance, kayak, anything that gets the heart rate up. Free-form cardio log.',
-    protocol: '<b>Free-form cardio.</b> What did you do? Log the minutes. <br><br>Tap the notes area to remember what activity it was (e.g., "hike 2 mi", "treadmill incline").',
+    protocol: [
+      'Hike, bike, dance, kayak',
+      'Anything that elevates HR',
+      'Note activity in notes',
+    ],
     counters: [ { id: 'mins', label: 'Minutes of cardio', target: 30, step: 5 } ],
     timer: { mode: 'stopwatch' }
   },
@@ -635,7 +750,7 @@ const KB_WARMUP = [
 // STATE
 // ============================================================
 const STORE_KEY = 'workoutPwaState_v2';
-const APP_VERSION = 'Iron Protocol v6';
+const APP_VERSION = 'Iron Protocol v6.5';
 
 function loadState() {
   try {
@@ -1238,16 +1353,6 @@ function renderStrength(ses, app) {
   meta.textContent = `${ses.exercises.length} exercises · ${totalWorkingSets} working sets${ses.duration ? ' · ' + ses.duration : ''}`;
   app.appendChild(meta);
 
-  if (ses.intent) {
-    const intent = document.createElement('div');
-    intent.className = 'session-meta';
-    intent.style.marginTop = '-8px';
-    intent.style.color = 'var(--text-muted)';
-    intent.style.fontStyle = 'italic';
-    intent.textContent = ses.intent;
-    app.appendChild(intent);
-  }
-
   const wu = document.createElement('div');
   wu.className = 'warmup-block';
   const wuList = ses.type === 'kb-strength' ? KB_WARMUP : WARMUP;
@@ -1290,10 +1395,13 @@ function renderStrength(ses, app) {
 
     const metaRow = document.createElement('div');
     metaRow.className = 'ex-meta-row';
+    const cueHtml = Array.isArray(ex.cue)
+      ? `<ul class="bullets">${ex.cue.map(b => `<li>${b}</li>`).join('')}</ul>`
+      : (ex.cue ? `<div>${ex.cue}</div>` : '');
     metaRow.innerHTML = `
       <span><span class="label">Tempo</span><span class="val">${ex.tempo}</span></span>
       <span><span class="label">Rest</span><span class="val">${ex.rest}</span></span>
-      <div class="cue"><span class="label">Cue</span> ${ex.cue}</div>
+      <div class="cue"><span class="label">Cue</span>${cueHtml}</div>
     `;
     body.appendChild(metaRow);
 
@@ -1595,21 +1703,24 @@ function renderMetcon(ses, app) {
   meta.textContent = `${ses.duration} · ${ses.metconKind === 'forTime' ? 'For time' : ses.metconKind === 'emom' ? 'EMOM' : 'Self-paced'}`;
   app.appendChild(meta);
 
-  if (ses.intent) {
-    const intent = document.createElement('div');
-    intent.className = 'session-meta';
-    intent.style.marginTop = '-8px';
-    intent.style.color = 'var(--text-muted)';
-    intent.style.fontStyle = 'italic';
-    intent.textContent = ses.intent;
-    app.appendChild(intent);
+  // Protocol — array of bullets or legacy string
+  if (ses.protocol) {
+    const proto = document.createElement('div');
+    proto.className = 'metcon-protocol';
+    const body = Array.isArray(ses.protocol)
+      ? `<ul class="bullets">${ses.protocol.map(b => `<li>${b}</li>`).join('')}</ul>`
+      : ses.protocol;
+    proto.innerHTML = `<div class="label">Protocol</div>${body}`;
+    app.appendChild(proto);
   }
 
-  // Protocol
-  const proto = document.createElement('div');
-  proto.className = 'metcon-protocol';
-  proto.innerHTML = `<div class="label">Protocol</div>${ses.protocol}`;
-  app.appendChild(proto);
+  // Alternate (if sled occupied, rower busy, etc.)
+  if (ses.alt) {
+    const alt = document.createElement('div');
+    alt.className = 'alt-block';
+    alt.innerHTML = `<span class="label">Alternate</span>${ses.alt}`;
+    app.appendChild(alt);
+  }
 
   // Timer panel
   const timerPanel = document.createElement('div');
@@ -1966,10 +2077,17 @@ setInterval(() => {
 
 render();
 
-// Register service worker
+// Register service worker + auto-reload when a new version takes over
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('./sw.js').catch((e) => console.warn('SW registration failed:', e));
+  });
+  let didReloadForSwUpdate = false;
+  navigator.serviceWorker.addEventListener('message', (e) => {
+    if (e.data && e.data.type === 'SW_UPDATED' && !didReloadForSwUpdate) {
+      didReloadForSwUpdate = true;
+      location.reload();
+    }
   });
 }
 </script>
