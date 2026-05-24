@@ -126,6 +126,10 @@ button.ghost { background: transparent; border-color: var(--border); }
 .overlay-header button { width: 36px; height: 36px; min-height: 36px; padding: 0; font-size: 18px; }
 .hidden { display: none !important; }
 .foot { text-align: center; padding: 18px 0 8px; color: var(--text-dim); font-size: 12px; }
+.foot-actions { margin-top: 8px; display: flex; gap: 12px; justify-content: center; align-items: center; }
+.foot-actions button { background: transparent; border: none; color: var(--text-muted); font-size: 12px; padding: 4px 8px; min-height: 28px; text-decoration: underline; cursor: pointer; }
+.foot-actions button:hover { color: var(--text); }
+.foot-sep { color: var(--text-dim); }
 .metcon-protocol { font-size: 14px; color: var(--text); line-height: 1.6; margin-bottom: 14px; padding: 14px 16px; background: var(--surface-2); border-radius: 12px; border-left: 3px solid var(--accent); }
 .metcon-protocol .label { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; font-weight: 600; }
 .metcon-timer-panel { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 20px 16px; text-align: center; margin-bottom: 14px; }
@@ -645,6 +649,102 @@ function saveState() {
   try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch(e) {}
 }
 
+// ============================================================
+// EXPORT / IMPORT — local data backup
+// ============================================================
+function exportData() {
+  try {
+    const payload = {
+      type: 'iron-protocol-backup',
+      version: 1,
+      exportedAt: new Date().toISOString(),
+      appVersion: APP_VERSION,
+      storeKey: STORE_KEY,
+      data: state,
+    };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const today = new Date().toISOString().slice(0, 10);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `iron-protocol-backup-${today}.json`;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 100);
+  } catch (e) {
+    alert('Export failed: ' + (e && e.message ? e.message : e));
+  }
+}
+
+function importDataFromFile(file) {
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const raw = String(e.target.result);
+      const obj = JSON.parse(raw);
+      // Accept versioned envelope OR a bare state object (for resilience).
+      let newState = null;
+      if (obj && obj.type === 'iron-protocol-backup' && obj.data) {
+        newState = obj.data;
+      } else if (obj && (obj.sessions || obj.notes || obj.metcons)) {
+        newState = obj;
+      }
+      if (!newState) {
+        alert('That file does not look like an Iron Protocol backup.');
+        return;
+      }
+      const sessionCount = newState.sessions ? Object.keys(newState.sessions).length : 0;
+      const exportedAt = (obj.exportedAt || '').slice(0, 19).replace('T', ' ');
+      const meta = exportedAt ? `\nBackup from: ${exportedAt}` : '';
+      const ok = confirm(
+        `Import will REPLACE all current workout history on this device.\n` +
+        `Sessions in backup: ${sessionCount}${meta}\n\nContinue?`
+      );
+      if (!ok) return;
+      localStorage.setItem(STORE_KEY, JSON.stringify(newState));
+      location.reload();
+    } catch (err) {
+      alert('Import failed: ' + (err && err.message ? err.message : err));
+    }
+  };
+  reader.readAsText(file);
+}
+
+function appendFooter(app) {
+  const foot = document.createElement('div');
+  foot.className = 'foot';
+  foot.innerHTML = `
+    <div>${APP_VERSION} · local data on this device</div>
+    <div class="foot-actions">
+      <button type="button" data-foot-act="export">Export</button>
+      <span class="foot-sep">·</span>
+      <button type="button" data-foot-act="import">Import</button>
+    </div>
+  `;
+  app.appendChild(foot);
+  foot.querySelector('[data-foot-act="export"]').addEventListener('click', exportData);
+  foot.querySelector('[data-foot-act="import"]').addEventListener('click', () => {
+    const inp = document.getElementById('importFileInput');
+    if (inp) { inp.value = ''; inp.click(); }
+  });
+}
+
+// Hidden file input for Import (created once, lives forever)
+(function ensureImportInput() {
+  if (document.getElementById('importFileInput')) return;
+  const inp = document.createElement('input');
+  inp.type = 'file';
+  inp.id = 'importFileInput';
+  inp.accept = '.json,application/json';
+  inp.style.display = 'none';
+  inp.addEventListener('change', (e) => {
+    const f = e.target.files && e.target.files[0];
+    if (f) importDataFromFile(f);
+  });
+  document.body.appendChild(inp);
+})();
+
 let state = loadState();
 if (!state.metcons) state.metcons = {};
 if (!state.category) state.category = 'Gym';
@@ -1036,10 +1136,7 @@ function renderHome() {
   `;
   app.appendChild(sec4);
 
-  const foot = document.createElement('div');
-  foot.className = 'foot';
-  foot.textContent = APP_VERSION + ' · local data on this device';
-  app.appendChild(foot);
+  appendFooter(app);
 }
 
 // ============================================================
@@ -1110,10 +1207,7 @@ function render() {
     renderStrength(ses, app);
   }
 
-  const foot = document.createElement('div');
-  foot.className = 'foot';
-  foot.textContent = APP_VERSION + ' · local data on this device';
-  app.appendChild(foot);
+  appendFooter(app);
 
   // Wire nav
   document.getElementById('prevBtn').addEventListener('click', () => navigateSession(-1));
