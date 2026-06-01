@@ -111,6 +111,10 @@ button.ghost { background: transparent; border-color: var(--border); }
 .work-actions .primary { background: var(--warn); color: #0B0F14; border-color: var(--warn); }
 .btn-start { height: 52px; font-size: 16px; font-weight: 600; background: var(--warn); color: #0B0F14; border-color: var(--warn); }
 .notes-field { margin: 6px 0 0; padding: 14px 16px; background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px; font-size: 14px; color: var(--text); cursor: text; min-height: 52px; line-height: 1.55; outline: none; font-family: inherit; width: 100%; resize: vertical; }
+.cardio-swap { margin: 10px 0 0; }
+.swap-chips { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+.swap-chip { background: var(--surface-2); border: 1px solid var(--border); border-radius: 20px; padding: 7px 16px; font-size: 13px; color: var(--text); cursor: pointer; font-family: inherit; }
+.swap-chip:active { opacity: 0.7; }
 .notes-field:focus { border-color: var(--accent); background: var(--surface-3); }
 .complete-banner { background: rgba(91, 212, 156, 0.12); border: 1px solid var(--done); color: var(--done); padding: 14px; text-align: center; border-radius: 10px; margin: 8px 0; font-weight: 500; font-size: 14px; }
 .session-list { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
@@ -242,6 +246,7 @@ const CUES = {
   walkingLunge: ['Tall torso', 'Drive front heel', 'DBs at sides'],
   slRdl: ['Opposite hand DB', 'Hinge on standing leg', 'Hamstring stretch'],
   calfRaise: ['Up on balls of feet', 'Pause at top', 'Slow descent'],
+  seatedCalfRaise: ['Sit on bench, feet flat on floor', 'Place DB on thigh above knee', '3-sec eccentric — slow descent is the work', 'Full stretch at bottom', 'This targets SOLEUS (deep) — not gastrocnemius'],
   plank: ['Hard line', 'Glutes + abs locked', 'Breathe through nose'],
   singleArmRow: ['Brace abs hard', 'Pull to hip', 'No torso rotation'],
   // KB
@@ -345,12 +350,12 @@ const SESSIONS = [
         sets: [ W('BW','60s','—'), W('BW','60s','—'), W('BW','60s','—') ] },
     ]
   },
-  { id: '2026-06-01-B', type: 'gym', category: 'Gym', date: '2026-06-01', day: 'Mon', lift: 'B', week: 2, title: 'Lift B — Press · W2',
+  { id: '2026-06-01-B', type: 'gym', category: 'Gym', date: '2026-06-03', day: 'Wed', lift: 'B', week: 2, title: 'Lift B — Press · W2',
     exercises: [
       { name: 'DB Bench Press', tempo: '3-1-1-0', rest: '2 min', cue: CUES.benchPress,
         sets: [ R(30,8), R(50,5), W(65,10,3), W(65,10,3), W(65,10,3) ] },
       { name: 'BB Standing Military Press', tempo: '3-0-X-0', rest: '2 min', cue: CUES.militaryPress,
-        sets: [ R(45,5), R(55,3), W(65,5,3), W(65,5,3), W(65,5,3) ] },
+        sets: [ R(45,5), R(65,3), W(95,5,3), W(95,5,3), W(95,5,3) ] },
       { name: 'Pull-ups (strict)', tempo: '2-0-1-0', rest: '2 min', cue: CUES.pullups,
         sets: [ W('BW',3,2), W('BW',3,2), W('BW',3,2), W('BW',3,2), W('BW',3,2) ] },
       { name: 'DB Single-Arm Row', tempo: '2-0-1-1', rest: '60 sec / switch', cue: CUES.singleArmRow,
@@ -362,7 +367,7 @@ const SESSIONS = [
     ]
   },
   // ============ GYM — Week 3 (peak) ============
-  { id: '2026-06-03-C', type: 'gym', category: 'Gym', date: '2026-06-03', day: 'Wed', lift: 'C', week: 3, title: 'Lift C — Deadlift · W3 (peak)',
+  { id: '2026-06-03-C', type: 'gym', category: 'Gym', date: '2026-06-05', day: 'Fri', lift: 'C', week: 3, title: 'Lift C — Deadlift · W3 (peak)',
     exercises: [
       { name: 'Conventional Deadlift', tempo: '2-0-1-0', rest: '3 min', cue: CUES.deadlift,
         sets: [ R(95,5), R(135,5), W(175,5,3), W(175,5,3), W(175,5,3) ] },
@@ -376,16 +381,18 @@ const SESSIONS = [
         sets: [ W(30,10,2), W(30,10,2), W(30,10,2) ] },
       { name: 'DB Rear Delt Fly', tempo: '2-0-1-1', rest: '60 sec', cue: CUES.rearDeltFly,
         sets: [ W(20,15,2), W(20,15,2), W(20,15,2) ] },
+      { name: 'Seated DB Calf Raise (soleus)', tempo: '1-1-3-0', rest: '60 sec', cue: CUES.seatedCalfRaise,
+        sets: [ W(25,15,3), W(25,15,3), W(25,15,3) ] },
     ]
   },
-  { id: '2026-06-05-A', type: 'gym', category: 'Gym', date: '2026-06-05', day: 'Fri', lift: 'A', week: 3, title: 'Lift A — Squat · W3 (peak)',
+  { id: '2026-06-05-A', type: 'gym', category: 'Gym', date: '2026-06-01', day: 'Mon', lift: 'A', week: 3, title: 'Lift A — Squat · W3 (peak)',
     exercises: [
       { name: 'Back Squat', tempo: '3-1-1-0', rest: '3 min', cue: CUES.squat,
         sets: [ R(95,5), R(135,5), W(175,5,3), W(175,5,3), W(175,5,3) ] },
       { name: 'Romanian Deadlift', tempo: '3-0-1-0', rest: '2 min', cue: CUES.rdl,
         sets: [ R(95,5), R(135,3), W(145,8,3), W(145,8,3), W(145,8,3) ] },
       { name: 'DB Walking Lunge', tempo: 'controlled', rest: '90 sec', cue: CUES.walkingLunge,
-        sets: [ W(35,10,3,true), W(35,10,3,true), W(35,10,3,true) ] },
+        sets: [ W(40,10,3,true), W(40,10,3,true), W(40,10,3,true) ] },
       { name: 'Single-Leg DB RDL', tempo: '3-0-1-0', rest: '90 sec', cue: CUES.slRdl,
         sets: [ W(30,8,3,true), W(30,8,3,true), W(30,8,3,true) ] },
       { name: 'DB Standing Calf Raise', tempo: '2-1-1-0', rest: '60 sec', cue: CUES.calfRaise,
@@ -394,12 +401,12 @@ const SESSIONS = [
         sets: [ W('BW','60s','—'), W('BW','60s','—'), W('BW','60s','—') ] },
     ]
   },
-  { id: '2026-06-08-B', type: 'gym', category: 'Gym', date: '2026-06-08', day: 'Mon', lift: 'B', week: 3, title: 'Lift B — Press · W3 (peak)',
+  { id: '2026-06-08-B', type: 'gym', category: 'Gym', date: '2026-06-10', day: 'Wed', lift: 'B', week: 3, title: 'Lift B — Press · W3 (peak)',
     exercises: [
       { name: 'DB Bench Press', tempo: '3-1-1-0', rest: '2 min', cue: CUES.benchPress,
         sets: [ R(35,8), R(50,5), W(70,10,3), W(70,10,3), W(70,10,3) ] },
       { name: 'BB Standing Military Press', tempo: '3-0-X-0', rest: '2 min', cue: CUES.militaryPress,
-        sets: [ R(45,5), R(55,3), W(70,5,3), W(70,5,3), W(70,5,3) ] },
+        sets: [ R(45,5), R(65,3), W(105,5,3), W(105,5,3), W(105,5,3) ] },
       { name: 'Pull-ups (strict)', tempo: '2-0-1-0', rest: '2 min', cue: CUES.pullups,
         sets: [ W('BW',4,2), W('BW',4,2), W('BW',4,2), W('BW',4,1), W('BW',4,0) ] },
       { name: 'DB Single-Arm Row', tempo: '2-0-1-1', rest: '60 sec / switch', cue: CUES.singleArmRow,
@@ -411,7 +418,7 @@ const SESSIONS = [
     ]
   },
   // ============ GYM — Week 4 (deload) ============
-  { id: '2026-06-10-C', type: 'gym', category: 'Gym', date: '2026-06-10', day: 'Wed', lift: 'C', week: 4, title: 'Lift C — Deadlift · W4 (deload)',
+  { id: '2026-06-10-C', type: 'gym', category: 'Gym', date: '2026-06-12', day: 'Fri', lift: 'C', week: 4, title: 'Lift C — Deadlift · W4 (deload)',
     exercises: [
       { name: 'Conventional Deadlift', tempo: '2-0-1-0', rest: '3 min', cue: CUES.deadlift,
         sets: [ R(95,5), W(125,5,5), W(125,5,5), W(125,5,5) ] },
@@ -425,9 +432,11 @@ const SESSIONS = [
         sets: [ W(20,10,3), W(20,10,3) ] },
       { name: 'DB Rear Delt Fly', tempo: '2-0-1-1', rest: '60 sec', cue: CUES.rearDeltFly,
         sets: [ W(10,15,3), W(10,15,3) ] },
+      { name: 'Seated DB Calf Raise (soleus)', tempo: '1-1-3-0', rest: '60 sec', cue: CUES.seatedCalfRaise,
+        sets: [ W(15,15,2), W(15,15,2) ] },
     ]
   },
-  { id: '2026-06-12-A', type: 'gym', category: 'Gym', date: '2026-06-12', day: 'Fri', lift: 'A', week: 4, title: 'Lift A — Squat · W4 (deload)',
+  { id: '2026-06-12-A', type: 'gym', category: 'Gym', date: '2026-06-08', day: 'Mon', lift: 'A', week: 4, title: 'Lift A — Squat · W4 (deload)',
     exercises: [
       { name: 'Back Squat', tempo: '3-1-1-0', rest: '2 min', cue: CUES.squat,
         sets: [ R(95,5), W(115,5,5), W(115,5,5), W(115,5,5) ] },
@@ -443,12 +452,12 @@ const SESSIONS = [
         sets: [ W('BW','45s','—'), W('BW','45s','—') ] },
     ]
   },
-  { id: '2026-06-15-B', type: 'gym', category: 'Gym', date: '2026-06-15', day: 'Mon', lift: 'B', week: 4, title: 'Lift B — Press · W4 (deload)',
+  { id: '2026-06-15-B', type: 'gym', category: 'Gym', date: '2026-06-17', day: 'Wed', lift: 'B', week: 4, title: 'Lift B — Press · W4 (deload)',
     exercises: [
       { name: 'DB Bench Press', tempo: '3-1-1-0', rest: '2 min', cue: CUES.benchPress,
         sets: [ R(30,8), W(50,10,4), W(50,10,4), W(50,10,4) ] },
       { name: 'BB Standing Military Press', tempo: '3-0-X-0', rest: '2 min', cue: CUES.militaryPress,
-        sets: [ R(45,5), W(50,5,4), W(50,5,4), W(50,5,4) ] },
+        sets: [ R(45,5), W(75,5,4), W(75,5,4), W(75,5,4) ] },
       { name: 'Pull-ups (strict)', tempo: '2-0-1-0', rest: '2 min', cue: CUES.pullups,
         sets: [ W('BW',3,3), W('BW',3,3), W('BW',3,3) ] },
       { name: 'DB Single-Arm Row', tempo: '2-0-1-1', rest: '60 sec / switch', cue: CUES.singleArmRow,
@@ -626,6 +635,11 @@ const SESSIONS = [
       'HARD = HR Zone 4',
       '12 min interval block',
     ],
+    alternates: [
+      { id: 'cardio-walk', label: 'Ruck / Walk' },
+      { id: 'cardio-swim', label: 'Swim' },
+      { id: 'cardio-other', label: 'Other' },
+    ],
     counters: [ { id: 'rounds', label: 'Rounds complete', target: 6, step: 1 } ],
     timer: { mode: 'stopwatch' }
   },
@@ -638,6 +652,11 @@ const SESSIONS = [
       'Stroke rate 20–22',
     ],
     alt: 'Air dyne or bike, same HR target',
+    alternates: [
+      { id: 'cardio-walk', label: 'Ruck / Walk' },
+      { id: 'cardio-swim', label: 'Swim' },
+      { id: 'cardio-other', label: 'Other' },
+    ],
     counters: [ { id: 'mins', label: 'Minutes complete', target: 30, step: 5 } ],
     timer: { mode: 'stopwatch' }
   },
@@ -650,6 +669,11 @@ const SESSIONS = [
       '30s HARD / 90s EASY',
       'HARD = HR Zone 4',
     ],
+    alternates: [
+      { id: 'cardio-walk', label: 'Ruck / Walk' },
+      { id: 'cardio-swim', label: 'Swim' },
+      { id: 'cardio-other', label: 'Other' },
+    ],
     counters: [ { id: 'rounds', label: 'Rounds complete', target: 8, step: 1 } ],
     timer: { mode: 'stopwatch' }
   },
@@ -661,6 +685,11 @@ const SESSIONS = [
       'Stroke rate 20–22',
     ],
     alt: 'Air dyne or bike, same HR target',
+    alternates: [
+      { id: 'cardio-walk', label: 'Ruck / Walk' },
+      { id: 'cardio-swim', label: 'Swim' },
+      { id: 'cardio-other', label: 'Other' },
+    ],
     counters: [ { id: 'mins', label: 'Minutes complete', target: 35, step: 5 } ],
     timer: { mode: 'stopwatch' }
   },
@@ -676,6 +705,11 @@ const SESSIONS = [
       'Breathe between sets',
     ],
     alt: '4 × 500m row sprints',
+    alternates: [
+      { id: 'cardio-walk', label: 'Ruck / Walk' },
+      { id: 'cardio-swim', label: 'Swim' },
+      { id: 'cardio-other', label: 'Other' },
+    ],
     counters: [ { id: 'sets', label: 'Sets complete', target: 6, step: 1 } ],
     timer: { mode: 'stopwatch' }
   },
@@ -689,6 +723,11 @@ const SESSIONS = [
       '4 min total',
       '2 min warmup, 2–3 min cooldown',
     ],
+    alternates: [
+      { id: 'cardio-walk', label: 'Ruck / Walk' },
+      { id: 'cardio-swim', label: 'Swim' },
+      { id: 'cardio-other', label: 'Other' },
+    ],
     counters: [ { id: 'rounds', label: 'Rounds complete', target: 8, step: 1 } ],
     timer: { mode: 'stopwatch' }
   },
@@ -700,6 +739,11 @@ const SESSIONS = [
       'Recovery focus',
     ],
     alt: 'Air dyne or bike, same HR target',
+    alternates: [
+      { id: 'cardio-walk', label: 'Ruck / Walk' },
+      { id: 'cardio-swim', label: 'Swim' },
+      { id: 'cardio-other', label: 'Other' },
+    ],
     counters: [ { id: 'mins', label: 'Minutes complete', target: 25, step: 5 } ],
     timer: { mode: 'stopwatch' }
   },
@@ -750,7 +794,7 @@ const KB_WARMUP = [
 // STATE
 // ============================================================
 const STORE_KEY = 'workoutPwaState_v2';
-const APP_VERSION = 'Iron Protocol v6.5';
+const APP_VERSION = 'Iron Protocol v6.8';
 
 function loadState() {
   try {
@@ -1720,6 +1764,20 @@ function renderMetcon(ses, app) {
     alt.className = 'alt-block';
     alt.innerHTML = `<span class="label">Alternate</span>${ses.alt}`;
     app.appendChild(alt);
+  }
+
+  // Cardio swap chips — tap to jump to alternate session
+  if (ses.alternates && ses.alternates.length) {
+    const swapDiv = document.createElement('div');
+    swapDiv.className = 'alt-block cardio-swap';
+    const chips = ses.alternates.map(alt =>
+      `<button class="swap-chip" data-swap="${alt.id}">${alt.label}</button>`
+    ).join('');
+    swapDiv.innerHTML = `<span class="label">Swap to:</span><div class="swap-chips">${chips}</div>`;
+    app.appendChild(swapDiv);
+    swapDiv.querySelectorAll('[data-swap]').forEach(btn => {
+      btn.addEventListener('click', () => goToSession(btn.dataset.swap));
+    });
   }
 
   // Timer panel
