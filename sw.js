@@ -1,5 +1,5 @@
 // Workout PWA service worker — network-first for HTML, cache-first for assets
-const CACHE = 'workout-v6.5-bulletized';
+const CACHE = 'workout-v7.1-kb-variety';
 const FILES = [
   './',
   './index.html',

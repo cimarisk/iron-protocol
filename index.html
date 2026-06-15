@@ -186,6 +186,14 @@ button.ghost { background: transparent; border-color: var(--border); }
 .week-row-dots .wd.done { background: var(--done); border-color: var(--done); }
 .week-row-dots .wd.partial { background: var(--warn); border-color: var(--warn); }
 .week-row-count { font-size: 13px; color: var(--text-muted); flex: 0 0 42px; text-align: right; font-variant-numeric: tabular-nums; }
+.week-row-dots .wd-chip { width: 30px; height: 30px; min-height: 30px; padding: 0; border-radius: 8px; background: var(--surface-3); border: 1px solid var(--border); color: var(--text-muted); font-size: 13px; font-weight: 700; flex-shrink: 0; cursor: pointer; }
+.week-row-dots .wd-chip.done { background: var(--done); border-color: var(--done); color: #0B0F14; }
+.week-row-dots .wd-chip.partial { background: var(--warn); border-color: var(--warn); color: #0B0F14; }
+.cardio-log { margin-top: 10px; }
+.cardio-log-label { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.05em; margin: 0 4px 6px; font-weight: 600; }
+.cardio-btns { display: flex; flex-wrap: wrap; gap: 6px; }
+.cardio-btn { padding: 8px 12px; min-height: 38px; border-radius: 999px; background: var(--surface-2); border: 1px solid var(--border); color: var(--text-muted); font-size: 13px; font-weight: 500; cursor: pointer; }
+.cardio-btn.on { background: var(--done); border-color: var(--done); color: #0B0F14; font-weight: 600; }
 .week-empty { padding: 14px 16px; color: var(--text-dim); font-size: 13px; text-align: center; }
 .calendar-grid { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 12px; }
 .cal-row { display: grid; grid-template-columns: 30px repeat(7, 1fr); gap: 5px; align-items: center; margin-bottom: 5px; }
@@ -265,6 +273,24 @@ const CUES = {
   kbHipThrust: ['Shoulders on bench/step', 'KB across hips', 'Drive heels', 'Squeeze glutes hard'],
   bandHammer: ['Neutral grip', 'Slow eccentric to stretch'],
   bandPullApart: ['Arms at length', 'Pull to sides', 'Squeeze shoulder blades', 'Slow return'],
+  // --- Home block, June 2026 (50 lb KB + 20 lb tool bag + red/blue bands + patio beam) ---
+  gobletKB: ['50 lb KB at chest', 'Elbows tucked', 'Sit deep', 'Drive through heels'],
+  rdlKBbag: ['50 lb KB + tool bag in hands', 'Hips back', 'Flat back', 'Hamstring stretch'],
+  beamPullup: ['Hang from patio beam', 'Full hang to chin', 'No kip', 'Slow down'],
+  kbStrictPressSA: ['50 lb KB, one arm', 'Strict — no leg drive', 'Ribs down', 'Switch arms'],
+  kbFloorPressSA: ['50 lb KB, one arm', 'On floor (or against picnic bench)', 'Elbow taps floor', 'Flip sides'],
+  kbDeadliftBag: ['50 lb KB + 20 lb tool bag', 'Hinge, flat back', 'Stand tall, squeeze glutes'],
+  hipThrustBench: ['50 lb KB on hips', 'Shoulders on picnic bench', 'Drive heels', 'Squeeze hard at top'],
+  farmersWalk: ['KB one hand, tool bag other', 'Tall + braced', 'Quick steps', 'Switch halfway'],
+  kbRowSA: ['50 lb KB, one arm', 'Hinge ~45°', 'Pull to hip', 'No torso twist'],
+  // --- v7.1 variety: power / flow / Filly tempo+unilateral / get-up ---
+  kbSnatch: ['Hike between legs', 'Punch through at top', 'Lock out overhead', 'One smooth arm line'],
+  cossack: ['Sink to one side', 'Far leg straight, heel down', 'Stay tall', 'Drive up through heel'],
+  suitcaseCarry: ['Tool bag in one hand', 'Brace, no side-lean', 'Switch halfway'],
+  halfKneelPress: ['Half-kneeling stance', 'Strict press, ribs down', 'No low-back arch'],
+  gorillaRow: ['Hinge over, flat back', 'Row to hip', 'No torso twist'],
+  curlPushSS: ['Back to back, no rest', 'Curl: slow stretch', 'Push-ups: full ROM'],
+  turkishGetup: ['Slow, position by position', 'Eyes on the bell', 'Own each step'],
 };
 
 const SESSIONS = [
@@ -468,53 +494,105 @@ const SESSIONS = [
         sets: [ W(20,10,3), W(20,10,3) ] },
     ]
   },
-  // ============ HOME — KB STRENGTH SUBS ============
-  { id: 'kb-sub-a', type: 'kb-strength', category: 'Home', title: 'KB Sub A — Lower (Squat day replacement)', duration: '~40 min',
+  // ============ HOME — KB STRENGTH (June 2026 block v7.1: power + flows + tempo/unilateral variety) ============
+  // One 50 lb bell + 20 lb tool bag + red/blue bands + patio beam. Fixed bell → W2 progresses reps/rounds, not load.
+  // Each day: day-specific warm-up, 5 strength moves (tap to open sets + cues), 1 flow finisher (logged separately in Garmin).
+  // ----- WEEK 1 (Jun 15-21) -----
+  { id: 'kb-w1-a', type: 'kb-strength', category: 'Home', block: 'home-jun26', week: 1, slot: 'A', wkStart: '2026-06-15', wkEnd: '2026-06-21', title: 'KB A — Lower + Power \u00b7 W1', duration: '~45 min',
+    warmup: ['Hip CARs + 90/90s', 'Leg swings \u2014 10/side', 'Goblet squat \u2014 8 slow', 'KB halos \u2014 5/side', 'KB hinge \u2014 8 (primer)'],
+    flow: 'Swing \u2192 Goblet Squat \u2192 Reverse Lunge \u2014 4 rounds',
     exercises: [
-      { name: 'KB Goblet Squat', tempo: '3-1-1-0', rest: '90 sec', cue: CUES.kbGoblet,
-        sets: [ W('24kg',8,3), W('24kg',8,3), W('24kg',8,3), W('24kg',8,3) ] },
-      { name: 'KB Two-Hand RDL', tempo: '3-0-1-0', rest: '90 sec', cue: CUES.kbRdl2H,
-        sets: [ W('24kg',10,3), W('24kg',10,3), W('24kg',10,3), W('24kg',10,3) ] },
-      { name: 'KB Walking Lunge (chest-loaded)', tempo: 'controlled', rest: '90 sec', cue: CUES.kbWalkingLunge,
-        sets: [ W('24kg',10,3,true), W('24kg',10,3,true), W('24kg',10,3,true) ] },
-      { name: 'Single-Leg KB RDL', tempo: '3-0-1-0', rest: '90 sec', cue: CUES.kbSlRdl,
-        sets: [ W('24kg',8,3,true), W('24kg',8,3,true), W('24kg',8,3,true) ] },
-      { name: 'Single-Leg Calf Raise (BW)', tempo: '2-1-1-0', rest: '60 sec', cue: CUES.slCalf,
-        sets: [ W('BW',15,2,true), W('BW',15,2,true), W('BW',15,2,true) ] },
-      { name: 'Plank', tempo: 'hold', rest: '45 sec', cue: CUES.plank,
-        sets: [ W('BW','45s','—'), W('BW','45s','—'), W('BW','45s','—') ] },
+      { name: 'Kettlebell Snatch', tempo: 'explosive', rest: '90 sec', cue: CUES.kbSnatch,
+        sets: [ W('50',5,'\u2014',true), W('50',5,'\u2014',true), W('50',5,'\u2014',true), W('50',5,'\u2014',true), W('50',5,'\u2014',true) ] },
+      { name: 'Goblet Squat (3s eccentric)', tempo: '3-1-1-0', rest: '90 sec', cue: CUES.gobletKB,
+        sets: [ W('50',8,2), W('50',8,2), W('50',8,2), W('50',8,2) ] },
+      { name: 'Cossack Squat', tempo: '2-1-1-0', rest: '75 sec', cue: CUES.cossack,
+        sets: [ W('50',8,2,true), W('50',8,2,true), W('50',8,2,true) ] },
+      { name: 'Single-Leg RDL', tempo: '3-0-1-0', rest: '75 sec', cue: CUES.kbSlRdl,
+        sets: [ W('50',8,2,true), W('50',8,2,true), W('50',8,2,true) ] },
+      { name: 'Suitcase Carry', tempo: 'steady', rest: '60 sec', cue: CUES.suitcaseCarry,
+        sets: [ W('bag','40 steps','\u2014',true), W('bag','40 steps','\u2014',true), W('bag','40 steps','\u2014',true) ] },
     ]
   },
-  { id: 'kb-sub-b', type: 'kb-strength', category: 'Home', title: 'KB Sub B — Press (Press day replacement)', duration: '~45 min',
+  { id: 'kb-w1-b', type: 'kb-strength', category: 'Home', block: 'home-jun26', week: 1, slot: 'B', wkStart: '2026-06-15', wkEnd: '2026-06-21', title: 'KB B — Push + Pull \u00b7 W1', duration: '~45 min',
+    warmup: ['Band pull-aparts \u2014 15', 'Band pass-throughs \u2014 10', 'Scap hangs on beam \u2014 8', 'KB halos \u2014 5/side', 'Push-up to down-dog \u2014 8'],
+    flow: 'Clean \u2192 Press \u2192 Windmill \u2014 4 rounds/side',
     exercises: [
-      { name: 'KB Floor Press (single-arm, alternating)', tempo: '3-1-1-0', rest: '2 min', cue: CUES.kbFloorPress,
-        sets: [ W('24kg',6,3,true), W('24kg',6,3,true), W('24kg',6,3,true), W('24kg',6,3,true) ] },
-      { name: 'KB Strict Press (single-arm, standing)', tempo: '3-0-X-0', rest: '2 min', cue: CUES.kbStrictPress,
-        sets: [ W('24kg',5,3,true), W('24kg',5,3,true), W('24kg',5,3,true), W('24kg',5,3,true) ] },
-      { name: 'KB Single-Arm Row (bent-over)', tempo: '2-0-1-1', rest: '90 sec', cue: CUES.kbBentRow,
-        sets: [ W('24kg',10,3,true), W('24kg',10,3,true), W('24kg',10,3,true) ] },
-      { name: 'Renegade Row', tempo: '2-0-1-1', rest: '90 sec', cue: CUES.renegadeRow,
-        sets: [ W('24kg',6,3,true), W('24kg',6,3,true), W('24kg',6,3,true) ] },
-      { name: 'Band Curl (behind-body, supine, low anchor)', tempo: '3-0-1-0', rest: '75 sec', cue: CUES.bandCurl,
-        sets: [ W('Blue band',10,2,true), W('Blue band',10,2,true), W('Blue band',10,2,true) ] },
-      { name: 'Push-ups (slow eccentric)', tempo: '3-0-1-0', rest: '75 sec', cue: CUES.pushupSlow,
-        sets: [ W('BW','max',2), W('BW','max',2), W('BW','max',2) ] },
+      { name: 'Single-Arm Floor Press', tempo: '3-1-1-0', rest: '90 sec', cue: CUES.kbFloorPressSA,
+        sets: [ W('50',6,2,true), W('50',6,2,true), W('50',6,2,true), W('50',6,2,true) ] },
+      { name: 'Half-Kneeling Press', tempo: '3-0-X-0', rest: '90 sec', cue: CUES.halfKneelPress,
+        sets: [ W('50',6,2,true), W('50',6,2,true), W('50',6,2,true) ] },
+      { name: 'Pull-Up', tempo: '2-0-1-0', rest: '2 min', cue: CUES.beamPullup,
+        sets: [ W('BW',4,2), W('BW',4,2), W('BW',4,2), W('BW',4,2), W('BW',4,2) ] },
+      { name: 'Gorilla Row', tempo: '2-0-1-1', rest: '75 sec', cue: CUES.gorillaRow,
+        sets: [ W('50',10,2,true), W('50',10,2,true), W('50',10,2,true) ] },
+      { name: 'Banded Curl + Push-Up', tempo: '2-0-1-0', rest: '60 sec', cue: CUES.curlPushSS,
+        sets: [ W('Blue / BW','12 / max',2), W('Blue / BW','12 / max',2), W('Blue / BW','12 / max',2) ] },
     ]
   },
-  { id: 'kb-sub-c', type: 'kb-strength', category: 'Home', title: 'KB Sub C — Posterior (Deadlift day replacement)', duration: '~40 min',
+  { id: 'kb-w1-c', type: 'kb-strength', category: 'Home', block: 'home-jun26', week: 1, slot: 'C', wkStart: '2026-06-15', wkEnd: '2026-06-21', title: 'KB C — Posterior + Skill \u00b7 W1', duration: '~45 min',
+    warmup: ['Hip CARs + 90/90s', 'Leg swings \u2014 10/side', 'Glute bridge \u2014 12', 'KB halos \u2014 5/side', 'Half get-up to elbow \u2014 3/side'],
+    flow: 'H2H Swing \u2192 Clean \u2192 Snatch \u2014 5 rounds',
     exercises: [
-      { name: 'KB Two-Hand Swing', tempo: 'explosive', rest: '90 sec', cue: CUES.kbSwing,
-        sets: [ W('24kg',15,3), W('24kg',15,3), W('24kg',15,3), W('24kg',15,3), W('24kg',15,3) ] },
-      { name: 'KB Single-Arm Row (bent-over)', tempo: '2-0-1-1', rest: '90 sec', cue: CUES.kbBentRow,
-        sets: [ W('24kg',10,3,true), W('24kg',10,3,true), W('24kg',10,3,true) ] },
-      { name: 'KB Renegade Row', tempo: '2-0-1-1', rest: '90 sec', cue: CUES.renegadeRow,
-        sets: [ W('24kg',6,3,true), W('24kg',6,3,true), W('24kg',6,3,true) ] },
-      { name: 'KB Hip Thrust', tempo: '2-0-1-1', rest: '90 sec', cue: CUES.kbHipThrust,
-        sets: [ W('24kg',12,2), W('24kg',12,2), W('24kg',12,2) ] },
-      { name: 'Band Hammer Curl (behind-body, neutral grip)', tempo: '3-0-1-0', rest: '75 sec', cue: CUES.bandHammer,
-        sets: [ W('Blue band',10,2,true), W('Blue band',10,2,true), W('Blue band',10,2,true) ] },
-      { name: 'Band Pull-Apart', tempo: '2-0-1-1', rest: '60 sec', cue: CUES.bandPullApart,
-        sets: [ W('Red band',15,2), W('Red band',15,2), W('Red band',15,2) ] },
+      { name: 'Turkish Get-Up', tempo: 'controlled', rest: '90 sec', cue: CUES.turkishGetup,
+        sets: [ W('50',2,'\u2014',true), W('50',2,'\u2014',true), W('50',2,'\u2014',true), W('50',2,'\u2014',true), W('50',2,'\u2014',true) ] },
+      { name: 'Kettlebell Deadlift', tempo: '2-0-1-0', rest: '90 sec', cue: CUES.kbDeadliftBag,
+        sets: [ W('70',8,2), W('70',8,2), W('70',8,2), W('70',8,2) ] },
+      { name: 'Hip Thrust', tempo: '2-0-1-1', rest: '75 sec', cue: CUES.hipThrustBench,
+        sets: [ W('50',12,2), W('50',12,2), W('50',12,2) ] },
+      { name: 'Pull-Up', tempo: '2-0-1-0', rest: '2 min', cue: CUES.beamPullup,
+        sets: [ W('BW',3,2), W('BW',3,2), W('BW',3,2), W('BW',3,2) ] },
+      { name: 'Band Pull-Apart', tempo: '2-0-1-1', rest: '45 sec', cue: CUES.bandPullApart,
+        sets: [ W('Red',15,1), W('Red',15,1), W('Red',15,1) ] },
+    ]
+  },
+  // ----- WEEK 2 (Jun 22-28) — +reps / +rounds -----
+  { id: 'kb-w2-a', type: 'kb-strength', category: 'Home', block: 'home-jun26', week: 2, slot: 'A', wkStart: '2026-06-22', wkEnd: '2026-06-28', title: 'KB A — Lower + Power \u00b7 W2', duration: '~45 min',
+    warmup: ['Hip CARs + 90/90s', 'Leg swings \u2014 10/side', 'Goblet squat \u2014 8 slow', 'KB halos \u2014 5/side', 'KB hinge \u2014 8 (primer)'],
+    flow: 'Swing \u2192 Goblet Squat \u2192 Reverse Lunge \u2014 5 rounds',
+    exercises: [
+      { name: 'Kettlebell Snatch', tempo: 'explosive', rest: '90 sec', cue: CUES.kbSnatch,
+        sets: [ W('50',6,'\u2014',true), W('50',6,'\u2014',true), W('50',6,'\u2014',true), W('50',6,'\u2014',true), W('50',6,'\u2014',true) ] },
+      { name: 'Goblet Squat (3s eccentric)', tempo: '3-1-1-0', rest: '90 sec', cue: CUES.gobletKB,
+        sets: [ W('50',10,1), W('50',10,1), W('50',10,1), W('50',10,1) ] },
+      { name: 'Cossack Squat', tempo: '2-1-1-0', rest: '75 sec', cue: CUES.cossack,
+        sets: [ W('50',10,1,true), W('50',10,1,true), W('50',10,1,true) ] },
+      { name: 'Single-Leg RDL', tempo: '3-0-1-0', rest: '75 sec', cue: CUES.kbSlRdl,
+        sets: [ W('50',10,1,true), W('50',10,1,true), W('50',10,1,true) ] },
+      { name: 'Suitcase Carry', tempo: 'steady', rest: '60 sec', cue: CUES.suitcaseCarry,
+        sets: [ W('bag','50 steps','\u2014',true), W('bag','50 steps','\u2014',true), W('bag','50 steps','\u2014',true) ] },
+    ]
+  },
+  { id: 'kb-w2-b', type: 'kb-strength', category: 'Home', block: 'home-jun26', week: 2, slot: 'B', wkStart: '2026-06-22', wkEnd: '2026-06-28', title: 'KB B — Push + Pull \u00b7 W2', duration: '~45 min',
+    warmup: ['Band pull-aparts \u2014 15', 'Band pass-throughs \u2014 10', 'Scap hangs on beam \u2014 8', 'KB halos \u2014 5/side', 'Push-up to down-dog \u2014 8'],
+    flow: 'Clean \u2192 Press \u2192 Windmill \u2014 5 rounds/side',
+    exercises: [
+      { name: 'Single-Arm Floor Press', tempo: '3-1-1-0', rest: '90 sec', cue: CUES.kbFloorPressSA,
+        sets: [ W('50',8,1,true), W('50',8,1,true), W('50',8,1,true), W('50',8,1,true) ] },
+      { name: 'Half-Kneeling Press', tempo: '3-0-X-0', rest: '90 sec', cue: CUES.halfKneelPress,
+        sets: [ W('50',8,1,true), W('50',8,1,true), W('50',8,1,true) ] },
+      { name: 'Pull-Up', tempo: '2-0-1-0', rest: '2 min', cue: CUES.beamPullup,
+        sets: [ W('BW',5,2), W('BW',5,2), W('BW',5,2), W('BW',5,2), W('BW',5,2) ] },
+      { name: 'Gorilla Row', tempo: '2-0-1-1', rest: '75 sec', cue: CUES.gorillaRow,
+        sets: [ W('50',12,1,true), W('50',12,1,true), W('50',12,1,true) ] },
+      { name: 'Banded Curl + Push-Up', tempo: '2-0-1-0', rest: '60 sec', cue: CUES.curlPushSS,
+        sets: [ W('Blue / BW','15 / max',1), W('Blue / BW','15 / max',1), W('Blue / BW','15 / max',1) ] },
+    ]
+  },
+  { id: 'kb-w2-c', type: 'kb-strength', category: 'Home', block: 'home-jun26', week: 2, slot: 'C', wkStart: '2026-06-22', wkEnd: '2026-06-28', title: 'KB C — Posterior + Skill \u00b7 W2', duration: '~45 min',
+    warmup: ['Hip CARs + 90/90s', 'Leg swings \u2014 10/side', 'Glute bridge \u2014 12', 'KB halos \u2014 5/side', 'Half get-up to elbow \u2014 3/side'],
+    flow: 'H2H Swing \u2192 Clean \u2192 Snatch \u2014 6 rounds',
+    exercises: [
+      { name: 'Turkish Get-Up', tempo: 'controlled', rest: '90 sec', cue: CUES.turkishGetup,
+        sets: [ W('50',3,'\u2014',true), W('50',3,'\u2014',true), W('50',3,'\u2014',true), W('50',3,'\u2014',true), W('50',3,'\u2014',true) ] },
+      { name: 'Kettlebell Deadlift', tempo: '2-0-1-0', rest: '90 sec', cue: CUES.kbDeadliftBag,
+        sets: [ W('70',10,1), W('70',10,1), W('70',10,1), W('70',10,1) ] },
+      { name: 'Hip Thrust', tempo: '2-0-1-1', rest: '75 sec', cue: CUES.hipThrustBench,
+        sets: [ W('50',15,1), W('50',15,1), W('50',15,1) ] },
+      { name: 'Pull-Up', tempo: '2-0-1-0', rest: '2 min', cue: CUES.beamPullup,
+        sets: [ W('BW',4,2), W('BW',4,2), W('BW',4,2), W('BW',4,2) ] },
+      { name: 'Band Pull-Apart', tempo: '2-0-1-1', rest: '45 sec', cue: CUES.bandPullApart,
+        sets: [ W('Red',18,1), W('Red',18,1), W('Red',18,1) ] },
     ]
   },
   // ============ HOME — KB METCONS ============
@@ -794,7 +872,7 @@ const KB_WARMUP = [
 // STATE
 // ============================================================
 const STORE_KEY = 'workoutPwaState_v2';
-const APP_VERSION = 'Iron Protocol v6.8';
+const APP_VERSION = 'Iron Protocol v7.1';
 
 function loadState() {
   try {
@@ -908,6 +986,18 @@ let state = loadState();
 if (!state.metcons) state.metcons = {};
 if (!state.category) state.category = 'Gym';
 if (!state.view) state.view = 'home';
+if (!state.cardioLog) state.cardioLog = [];   // flexible cardio: [{date, type, min}]
+
+// One-time nav reset when the app updates to a new block. Resets which screen you
+// land on — does NOT touch your logged history (state.sessions / metcons / cardioLog).
+if (state.appVersion !== APP_VERSION) {
+  state.appVersion = APP_VERSION;
+  state.category = 'Home';   // June 2026 block is home-only
+  state.view = 'home';
+  const w1a = SESSIONS.findIndex(s => s.id === 'kb-w1-a');
+  if (w1a >= 0) state.sessionIdx = w1a;
+  saveState();
+}
 
 (function initSession() {
   if (state.sessionIdx != null && SESSIONS[state.sessionIdx] && SESSIONS[state.sessionIdx].category === state.category) return;
@@ -1018,6 +1108,74 @@ function ymd(d) {
   return `${y}-${m}-${dd}`;
 }
 
+function todayStr() { return ymd(new Date()); }
+
+// ============================================================
+// FLEXIBILITY — the plan gives the rails; you log what you actually did
+// ============================================================
+const CARDIO_TARGET = 3;            // cardio sessions per week (any type counts)
+const CARDIO_TYPES = ['Walk', 'Ruck', 'Bike', 'Row', 'Other'];
+
+// Which week of the current home block are we in? (date range, not a locked day)
+function currentBlockWeek() {
+  const t = todayStr();
+  const blk = SESSIONS.filter(s => s.block === 'home-jun26' && s.wkStart);
+  if (!blk.length) return 1;
+  for (const s of blk) { if (s.wkStart <= t && t <= s.wkEnd) return s.week; }
+  const minStart = blk.reduce((a, s) => s.wkStart < a ? s.wkStart : a, blk[0].wkStart);
+  if (t < minStart) return Math.min(...blk.map(s => s.week));
+  return Math.max(...blk.map(s => s.week));   // after the block → hold on last week
+}
+
+// The 3 strength slots (A/B/C) for a given block week
+function blockWeekSessions(week) {
+  return SESSIONS.filter(s => s.block === 'home-jun26' && s.week === week)
+                 .sort((a, b) => (a.slot || '').localeCompare(b.slot || ''));
+}
+
+// Cardio entries logged within a [start,end] date range (inclusive)
+function cardioInRange(start, end) {
+  return (state.cardioLog || []).filter(c => c.date >= start && c.date <= end);
+}
+
+// What actually happened on a calendar day — drives the calendar dots (reality, not prescription)
+function dayActivity(cellStr) {
+  let completed = false, partial = false, cardio = false;
+  const kinds = new Set();
+  let tapSid = null;
+  Object.entries(state.sessions || {}).forEach(([sid, ss]) => {
+    if (!ss) return;
+    const ses = SESSIONS.find(s => s.id === sid);
+    if (!ses) return;
+    const comp = getSessionCompletion(sid);
+    // Use the day you actually trained (doneDate); fall back to the prescribed date for legacy completions.
+    const doneDay = ss.doneDate || (comp === 'complete' && ses.date ? ses.date : null);
+    const touchDay = ss.touchedDate || null;
+    if (doneDay === cellStr) { completed = true; kinds.add(ses.category); tapSid = tapSid || sid; }
+    else if (touchDay === cellStr && comp !== 'complete') { partial = true; kinds.add(ses.category); tapSid = tapSid || sid; }
+  });
+  Object.entries(state.metcons || {}).forEach(([sid, ms]) => {
+    if (!ms || !ms.completed) return;
+    const ses = SESSIONS.find(s => s.id === sid);
+    if (!ses) return;
+    const d = ms.doneDate || ses.date;
+    if (d === cellStr) { completed = true; kinds.add('Conditioning'); tapSid = tapSid || sid; }
+  });
+  if (cardioInRange(cellStr, cellStr).length) { cardio = true; completed = true; kinds.add('Conditioning'); }
+  return { completed, partial, cardio, kinds, tapSid };
+}
+
+function logCardio(type) {
+  if (!state.cardioLog) state.cardioLog = [];
+  state.cardioLog.push({ date: todayStr(), type, min: null });
+  saveState(); render();
+}
+function undoCardioToday(type) {
+  const t = todayStr();
+  const i = (state.cardioLog || []).map((c, idx) => ({ c, idx })).filter(x => x.c.date === t && x.c.type === type).map(x => x.idx).pop();
+  if (i != null) { state.cardioLog.splice(i, 1); saveState(); render(); }
+}
+
 function switchView(v) {
   if (state.view === v) return;
   state.view = v;
@@ -1054,84 +1212,97 @@ function renderHome() {
 
   const today = ymd(new Date());
 
-  // === Today / Up next card ===
-  const todaySession = SESSIONS.find(s => s.date === today);
+  // === Up next (current block week — do the 3 slots any day) ===
+  const bw = currentBlockWeek();
+  const slots = blockWeekSessions(bw);
+  const wkRef = slots[0];
+  const wkStartB = wkRef ? wkRef.wkStart : ymd(getWeekStartMonday(new Date()));
+  const wkEndB = wkRef ? wkRef.wkEnd : (() => { const e = getWeekStartMonday(new Date()); e.setDate(e.getDate() + 6); return ymd(e); })();
+  const nextSlot = slots.find(s => getSessionCompletion(s.id) !== 'complete');
+
   const sec1 = document.createElement('div');
   sec1.className = 'home-section';
-  if (todaySession) {
+  if (nextSlot) {
     sec1.innerHTML = `
-      <div class="home-section-label">Today</div>
+      <div class="home-section-label">Up next</div>
       <div class="today-card">
-        <div class="today-card-date">${fmtDate(today)}${todaySession.week ? ` · Week ${todaySession.week}` : ''}</div>
-        <div class="today-card-title">${todaySession.title}</div>
-        <div class="today-card-meta">${todaySession.category === 'Conditioning' ? 'Cardio' : todaySession.category}${todaySession.duration ? ' · ' + todaySession.duration : ''}</div>
+        <div class="today-card-date">Week ${bw}</div>
+        <div class="today-card-title">${nextSlot.title}</div>
         <button class="today-card-cta" id="todayCTA">Start workout →</button>
       </div>
     `;
     app.appendChild(sec1);
-    sec1.querySelector('#todayCTA').addEventListener('click', () => goToSession(todaySession.id));
+    sec1.querySelector('#todayCTA').addEventListener('click', () => goToSession(nextSlot.id));
   } else {
-    const upcoming = SESSIONS.filter(s => s.date && s.date > today).sort((a,b) => a.date.localeCompare(b.date))[0];
-    if (upcoming) {
-      sec1.innerHTML = `
-        <div class="home-section-label">Up next</div>
-        <div class="today-card">
-          <div class="today-card-date">${fmtDate(upcoming.date)}${upcoming.week ? ` · Week ${upcoming.week}` : ''}</div>
-          <div class="today-card-title">${upcoming.title}</div>
-          <div class="today-card-meta">${upcoming.category === 'Conditioning' ? 'Cardio' : upcoming.category}${upcoming.duration ? ' · ' + upcoming.duration : ''}</div>
-          <button class="today-card-cta" id="upcomingCTA">View workout</button>
-        </div>
-      `;
-      app.appendChild(sec1);
-      sec1.querySelector('#upcomingCTA').addEventListener('click', () => goToSession(upcoming.id));
-    } else {
-      sec1.innerHTML = `
-        <div class="home-section-label">Today</div>
-        <div class="home-empty-card">Rest day — no scheduled session.</div>
-      `;
-      app.appendChild(sec1);
-    }
+    const nextWeekSlots = blockWeekSessions(bw + 1);
+    sec1.innerHTML = `
+      <div class="home-section-label">This week done</div>
+      <div class="today-card">
+        <div class="today-card-title">Week ${bw} strength complete 💪</div>
+        <div class="today-card-meta">${nextWeekSlots.length ? 'Week ' + (bw + 1) + ' is ready when you are.' : 'Log cardio or take a rest day.'}</div>
+        ${nextWeekSlots.length ? `<button class="today-card-cta" id="todayCTA">Preview Week ${bw + 1} →</button>` : ''}
+      </div>
+    `;
+    app.appendChild(sec1);
+    const cta = sec1.querySelector('#todayCTA');
+    if (cta) cta.addEventListener('click', () => goToSession(nextWeekSlots[0].id));
   }
 
-  // === This week ===
-  const weekStart = getWeekStartMonday(new Date());
-  const weekEnd = new Date(weekStart); weekEnd.setDate(weekEnd.getDate() + 6);
-  const wsStr = ymd(weekStart);
-  const weStr = ymd(weekEnd);
-  const thisWeekSessions = SESSIONS.filter(s => s.date && s.date >= wsStr && s.date <= weStr);
-  const byCat = { Gym: [], Conditioning: [], Home: [] };
-  thisWeekSessions.forEach(s => { if (byCat[s.category]) byCat[s.category].push(s); });
-
+  // === This week — the rails (3 strength slots) + a flexible cardio quota ===
+  // Slots count as done whatever day you train them; cardio counts whatever type you log.
   const sec2 = document.createElement('div');
   sec2.className = 'home-section';
-  const wLabel = `${weekStart.toLocaleDateString(undefined, {month:'short', day:'numeric'})} – ${weekEnd.toLocaleDateString(undefined, {month:'short', day:'numeric'})}`;
-  sec2.innerHTML = `<div class="home-section-label">This week · ${wLabel}</div>`;
+  const wLabel = `${fmtDate(wkStartB).replace(/^[A-Za-z]+,\s*/, '')} – ${fmtDate(wkEndB).replace(/^[A-Za-z]+,\s*/, '')}`;
+  sec2.innerHTML = `<div class="home-section-label">This week · Week ${bw} · ${wLabel}</div>`;
   const wgrid = document.createElement('div');
   wgrid.className = 'week-grid';
-  let anyRow = false;
-  ['Gym', 'Conditioning', 'Home'].forEach(cat => {
-    const items = byCat[cat].slice().sort((a,b) => a.date.localeCompare(b.date));
-    if (!items.length) return;
-    anyRow = true;
-    const completed = items.filter(s => getSessionCompletion(s.id) === 'complete').length;
-    const dotsHtml = items.map(s => {
-      const status = getSessionCompletion(s.id);
-      return `<div class="wd ${status === 'complete' ? 'done' : status === 'partial' ? 'partial' : ''}" title="${s.title}"></div>`;
-    }).join('');
-    const label = cat === 'Conditioning' ? 'Cardio' : cat === 'Home' ? 'KB Home' : 'Strength';
-    const row = document.createElement('div');
-    row.className = 'week-row';
-    row.innerHTML = `
-      <div class="week-row-label">${label}</div>
-      <div class="week-row-dots">${dotsHtml}</div>
-      <div class="week-row-count">${completed}/${items.length}</div>
-    `;
-    wgrid.appendChild(row);
-  });
-  if (!anyRow) {
-    wgrid.innerHTML = '<div class="week-empty">No scheduled sessions this week.</div>';
-  }
+
+  // Strength row — 3 slots A/B/C, tappable, done regardless of which day
+  const strDone = slots.filter(s => getSessionCompletion(s.id) === 'complete').length;
+  const slotChips = slots.map(s => {
+    const st = getSessionCompletion(s.id);
+    const cls = st === 'complete' ? 'done' : st === 'partial' ? 'partial' : '';
+    return `<button class="wd-chip ${cls}" data-sid="${s.id}" title="${s.title}">${s.slot || '•'}</button>`;
+  }).join('');
+  const strRow = document.createElement('div');
+  strRow.className = 'week-row';
+  strRow.innerHTML = `
+    <div class="week-row-label">Strength</div>
+    <div class="week-row-dots">${slotChips}</div>
+    <div class="week-row-count">${strDone}/${slots.length}</div>
+  `;
+  wgrid.appendChild(strRow);
+  strRow.querySelectorAll('.wd-chip').forEach(b => b.addEventListener('click', () => goToSession(b.dataset.sid)));
+
+  // Cardio row — quota filled by anything logged this week
+  const cardioThisWeek = cardioInRange(wkStartB, wkEndB);
+  let cardioDots = '';
+  for (let k = 0; k < CARDIO_TARGET; k++) cardioDots += `<div class="wd ${k < cardioThisWeek.length ? 'done' : ''}"></div>`;
+  const cardioRow = document.createElement('div');
+  cardioRow.className = 'week-row';
+  cardioRow.innerHTML = `
+    <div class="week-row-label">Cardio</div>
+    <div class="week-row-dots">${cardioDots}</div>
+    <div class="week-row-count">${cardioThisWeek.length}/${CARDIO_TARGET}</div>
+  `;
+  wgrid.appendChild(cardioRow);
   sec2.appendChild(wgrid);
+
+  // Cardio quick-log — one tap stamps today (ruck walk, bike, row, whatever)
+  const loggedToday = cardioInRange(today, today);
+  const clog = document.createElement('div');
+  clog.className = 'cardio-log';
+  clog.innerHTML = `<div class="cardio-log-label">Log cardio today</div>
+    <div class="cardio-btns">${CARDIO_TYPES.map(t => {
+      const on = loggedToday.some(c => c.type === t);
+      return `<button class="cardio-btn ${on ? 'on' : ''}" data-ct="${t}">${on ? '✓ ' : ''}${t}</button>`;
+    }).join('')}</div>`;
+  sec2.appendChild(clog);
+  clog.querySelectorAll('.cardio-btn').forEach(b => b.addEventListener('click', () => {
+    const t = b.dataset.ct;
+    if (cardioInRange(today, today).some(c => c.type === t)) undoCardioToday(t); else logCardio(t);
+  }));
+
   app.appendChild(sec2);
 
   // === 4-week calendar ===
@@ -1141,6 +1312,7 @@ function renderHome() {
   const cal = document.createElement('div');
   cal.className = 'calendar-grid';
 
+  const weekStart = getWeekStartMonday(new Date());
   const calStart = new Date(weekStart);
   calStart.setDate(calStart.getDate() - 21);
 
@@ -1163,32 +1335,27 @@ function renderHome() {
       const cellStr = ymd(cellDate);
       const cell = document.createElement('div');
       cell.className = 'cal-cell';
-      const cellSessions = SESSIONS.filter(s => s.date === cellStr);
+      // Calendar shows what you ACTUALLY did that day (reality), not what was prescribed.
+      const act = dayActivity(cellStr);
       const isToday = cellStr === today;
       const isFuture = cellStr > today;
-      if (cellSessions.length === 0) cell.classList.add('empty');
+      if (!act.completed && !act.partial) cell.classList.add('empty');
       if (isToday) cell.classList.add('today');
       if (isFuture) cell.classList.add('future');
 
-      // Category coloring
-      const cats = new Set(cellSessions.map(s => s.category));
-      let anyComplete = false, anyPartial = false;
-      cellSessions.forEach(s => {
-        const st = getSessionCompletion(s.id);
-        if (st === 'complete') anyComplete = true;
-        else if (st === 'partial') anyPartial = true;
-      });
+      // Category coloring from what was actually done
+      const cats = act.kinds;
       if (cats.size > 1) cell.classList.add('has-multi');
       else if (cats.has('Gym')) cell.classList.add('has-gym');
       else if (cats.has('Conditioning')) cell.classList.add('has-cond');
       else if (cats.has('Home')) cell.classList.add('has-home');
-      if (anyComplete) cell.classList.add('completed');
-      else if (anyPartial) cell.classList.add('partial');
+      if (act.completed) cell.classList.add('completed');
+      else if (act.partial) cell.classList.add('partial');
 
       cell.innerHTML = `<span class="day-num">${cellDate.getDate()}</span>`;
-      if (cellSessions.length > 0) {
+      if (act.tapSid) {
         cell.classList.add('tappable');
-        cell.addEventListener('click', () => goToSession(cellSessions[0].id));
+        cell.addEventListener('click', () => goToSession(act.tapSid));
       }
       rowEl.appendChild(cell);
     }
@@ -1247,23 +1414,19 @@ function renderHome() {
     }
   });
 
-  // Current streak: consecutive days going back from today where any scheduled session was completed
-  // (rest days don't break streak; scheduled but not done DOES break streak)
-  let streak = 0;
-  const cd = new Date();
-  for (let i = 0; i < 90; i++) {
-    const dstr = ymd(cd);
-    const sessionsThatDay = SESSIONS.filter(s => s.date === dstr);
-    if (sessionsThatDay.length > 0) {
-      const anyComplete = sessionsThatDay.some(s => getSessionCompletion(s.id) === 'complete');
-      if (anyComplete) {
-        streak++;
-      } else if (dstr < today) {
-        break;
-      }
-    }
-    cd.setDate(cd.getDate() - 1);
+  // Reality-based: active days in the last 7, and total cardio sessions logged
+  let activeDays7 = 0;
+  for (let i = 0; i < 7; i++) {
+    const dd = new Date(); dd.setDate(dd.getDate() - i);
+    if (dayActivity(ymd(dd)).completed) activeDays7++;
   }
+  let condDone = 0;
+  Object.entries(state.metcons || {}).forEach(([sid, ms]) => {
+    const s = SESSIONS.find(x => x.id === sid);
+    if (s && s.category === 'Conditioning' && ms && ms.completed) condDone++;
+  });
+  const cardioSessions = (state.cardioLog || []).length + condDone;
+  const sessionsAll = totalCompleted + (state.cardioLog || []).length;
 
   const sec4 = document.createElement('div');
   sec4.className = 'home-section';
@@ -1273,7 +1436,7 @@ function renderHome() {
     <div class="stats-grid">
       <div class="stat-tile">
         <div class="stat-tile-label">Sessions</div>
-        <div class="stat-tile-value">${totalCompleted}</div>
+        <div class="stat-tile-value">${sessionsAll}</div>
         <div class="stat-tile-sub">completed</div>
       </div>
       <div class="stat-tile">
@@ -1283,13 +1446,13 @@ function renderHome() {
       </div>
       <div class="stat-tile">
         <div class="stat-tile-label">Cardio</div>
-        <div class="stat-tile-value">${totalCardioMin}</div>
-        <div class="stat-tile-sub">min · prescribed</div>
+        <div class="stat-tile-value">${cardioSessions}</div>
+        <div class="stat-tile-sub">sessions</div>
       </div>
       <div class="stat-tile">
-        <div class="stat-tile-label">Streak</div>
-        <div class="stat-tile-value">${streak}</div>
-        <div class="stat-tile-sub">days</div>
+        <div class="stat-tile-label">Active</div>
+        <div class="stat-tile-value">${activeDays7}</div>
+        <div class="stat-tile-sub">days · last 7</div>
       </div>
     </div>
   `;
@@ -1394,12 +1557,12 @@ function renderStrength(ses, app) {
   const totalWorkingSets = ses.exercises.reduce((a,e) => a + e.sets.filter(s => s.t === 'work').length, 0);
   const meta = document.createElement('div');
   meta.className = 'session-meta';
-  meta.textContent = `${ses.exercises.length} exercises · ${totalWorkingSets} working sets${ses.duration ? ' · ' + ses.duration : ''}`;
+  meta.textContent = `${ses.exercises.length} exercises · ${totalWorkingSets} working sets`;
   app.appendChild(meta);
 
   const wu = document.createElement('div');
   wu.className = 'warmup-block';
-  const wuList = ses.type === 'kb-strength' ? KB_WARMUP : WARMUP;
+  const wuList = ses.warmup || (ses.type === 'kb-strength' ? KB_WARMUP : WARMUP);
   wu.innerHTML = `<div class="label">Warm-up</div><ul>${wuList.map(w => `<li>${w}</li>`).join('')}</ul>`;
   app.appendChild(wu);
 
@@ -1609,6 +1772,14 @@ function renderStrength(ses, app) {
     app.appendChild(card);
   });
 
+  // Flow finisher — display-only prompt (you log it separately in Garmin); styled like the warm-up block
+  if (ses.flow) {
+    const fl = document.createElement('div');
+    fl.className = 'warmup-block';
+    fl.innerHTML = `<div class="label">Flow finisher</div><ul><li>${ses.flow}</li></ul>`;
+    app.appendChild(fl);
+  }
+
   // Wire action buttons
   app.querySelectorAll('[data-act]').forEach(btn => {
     btn.addEventListener('click', (e) => {
@@ -1692,6 +1863,12 @@ function handleStrengthAction(act, setKeyStr) {
       ss.mode = null;
       startRestForEx(eIdx, ex, s);
     }
+  }
+  // Stamp the day you actually trained, so the calendar shows reality even if you
+  // shifted the session off its prescribed day. doneDate locks once the session is complete.
+  if (['done', 'workStop', 'save'].includes(act)) {
+    ssState.touchedDate = todayStr();
+    if (getSessionCompletion(ses.id) === 'complete' && !ssState.doneDate) ssState.doneDate = todayStr();
   }
   saveState(); render();
 }
