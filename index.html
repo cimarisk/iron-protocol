@@ -919,15 +919,12 @@ const SESSIONS = [
     ]
   },
 
-  // Week 2 (Aug 10–16) — CONSOLIDATION week, not a continued escalation. Garmin's own Training
-  // Readiness read POOR (1/100) on 5 of the last 6 days with data, and Acute:Chronic Workload
-  // Ratio has been VERY_HIGH (2.1–3.3) every single day since Aug 3 — RHR drifted 66→75 bpm and
-  // sleep score bottomed at 50 before the one full rest day (Aug 9) pulled it back to 77. Heat
-  // (87–97°F on every logged session, open-air gym, no AC) plus the relocation's walking/NEAT
-  // load stacked on top of 3 hard sessions in 6 days is outrunning recovery right now. Response:
-  // small bumps on squat/leg press/bench, hip-hinge (RDL) held flat, pull-up reintroduction kept
-  // as planned (bodyweight, sub-max — doesn't add meaningfully to the load spike). Real
-  // progression resumes Week 3 — see the readiness-gate note there.
+  // Week 2 (Aug 10–16) — normal progression. The VERY_HIGH ACWR reading here is a known
+  // artifact of the ~3-week training gap in mid-July (chronic load floored at 100 with nothing
+  // logged) — not evidence of genuine overreaching. Absolute load this block (peak 648, Aug 8) is
+  // still below the well-baselined May-June peak (943, Jun 9), so these numbers progress normally
+  // from Week 1 rather than holding back. Heat (84–102°F, open-air gym, no AC) is real and worth
+  // managing with hydration/electrolyte timing around sessions, but isn't a reason to cut load.
   { id: 'lapaz-w2-a', type: 'gym', category: 'Gym', block: 'lapaz-aug26', week: 2, slot: 'A', wkStart: '2026-08-10', wkEnd: '2026-08-16', title: 'Gym A — Lower Body · La Paz W2', duration: '~55 min',
     warmup: ['Walk to gym — 10–11 min (this IS the cardio warm-up)', 'Pre-hydrate — electrolytes before you walk over, not after', 'Hip stability drill', 'Air squat — 10 slow'],
     exercises: [
@@ -972,11 +969,9 @@ const SESSIONS = [
     ]
   },
 
-  // Week 3 (Aug 17–23) — READINESS GATE: check Garmin Training Readiness Monday morning before
-  // this session. 50+ (Moderate or better) → run these numbers as written. Still POOR/LOW →
-  // repeat Week 2's loads one more week instead of jumping here, then reassess for Week 4.
-  // Chronic load (CTL) climbed fast in the first week alone (100→220) so ACWR should be
-  // compressing back toward normal by now if recovery is on track.
+  // Week 3 (Aug 17–23) — normal progression, no readiness gate. Chronic load (CTL) keeps
+  // rebuilding as training accumulates back into the 28-day window — ACWR compresses toward
+  // normal on its own from here. Run these numbers as written.
   { id: 'lapaz-w3-a', type: 'gym', category: 'Gym', block: 'lapaz-aug26', week: 3, slot: 'A', wkStart: '2026-08-17', wkEnd: '2026-08-23', title: 'Gym A — Lower Body · La Paz W3', duration: '~55 min',
     warmup: ['Walk to gym — 10–11 min (this IS the cardio warm-up)', 'Pre-hydrate — electrolytes before you walk over, not after', 'Hip stability drill', 'Air squat — 10 slow'],
     exercises: [
