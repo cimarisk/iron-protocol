@@ -296,6 +296,7 @@ const CUES = {
   legPress: ['Feet mid-platform, shoulder-width', 'Lower under control', 'Knees track toes \u2014 no cave', 'Drive through the whole foot'],
   tricepExt: ['Elbows fixed overhead', 'Full stretch at bottom', 'Squeeze at lockout'],
   farmersCarryDB: ['Tall posture, braced core', 'Quick, controlled steps', 'Shoulders back, don\u2019t round'],
+  seatedCalfMachine: ['Seated calf machine — pad on thighs, feet on platform', '3-sec eccentric — slow descent is the work', 'Full stretch at bottom, full contraction at top', 'Targets soleus — this is what carries over on foot-heavy days'],
 };
 
 const SESSIONS = [
@@ -915,6 +916,201 @@ const SESSIONS = [
         sets: [ W(45,'30-40 yd','—'), W(50,'30-40 yd','—'), W(50,'30-40 yd','—') ] },
       { name: 'DB Standing Calf Raise', tempo: '2-1-1-0', rest: '60 sec', cue: CUES.calfRaise,
         sets: [ W(25,15,2), W(30,15,2) ] },
+    ]
+  },
+
+  // Week 2 (Aug 10–16) — CONSOLIDATION week, not a continued escalation. Garmin's own Training
+  // Readiness read POOR (1/100) on 5 of the last 6 days with data, and Acute:Chronic Workload
+  // Ratio has been VERY_HIGH (2.1–3.3) every single day since Aug 3 — RHR drifted 66→75 bpm and
+  // sleep score bottomed at 50 before the one full rest day (Aug 9) pulled it back to 77. Heat
+  // (87–97°F on every logged session, open-air gym, no AC) plus the relocation's walking/NEAT
+  // load stacked on top of 3 hard sessions in 6 days is outrunning recovery right now. Response:
+  // small bumps on squat/leg press/bench, hip-hinge (RDL) held flat, pull-up reintroduction kept
+  // as planned (bodyweight, sub-max — doesn't add meaningfully to the load spike). Real
+  // progression resumes Week 3 — see the readiness-gate note there.
+  { id: 'lapaz-w2-a', type: 'gym', category: 'Gym', block: 'lapaz-aug26', week: 2, slot: 'A', wkStart: '2026-08-10', wkEnd: '2026-08-16', title: 'Gym A — Lower Body · La Paz W2', duration: '~55 min',
+    warmup: ['Walk to gym — 10–11 min (this IS the cardio warm-up)', 'Pre-hydrate — electrolytes before you walk over, not after', 'Hip stability drill', 'Air squat — 10 slow'],
+    exercises: [
+      { name: 'Back Squat', tempo: '3-1-1-0', rest: '2 min', cue: [...CUES.squat, 'Right hip is king — stop the set on any pinch, ache, or asymmetry'],
+        sets: [ R(45,8), R(95,5), W(110,6,3), W(120,'6-8',2), W(120,'6-8',2) ] },
+      { name: 'Leg Press', tempo: 'controlled', rest: '90 sec', cue: CUES.legPress,
+        sets: [ R(150,10), W(175,'10-12',3), W(190,'8-10',2), W(190,'8-10',2) ] },
+      { name: 'DB Romanian Deadlift', tempo: '3-0-1-0', rest: '90 sec', cue: CUES.rdl,
+        sets: [ R(30,8), W(60,8,3), W(65,8,2) ] },
+      { name: 'Pull-ups (strict)', tempo: '2-0-1-0', rest: '90 sec', cue: [...CUES.pullups, 'First session back on these — sub-max, full ROM, no bands or negatives-only'],
+        sets: [ W('BW',4,2), W('BW',4,2), W('BW','3-4',2), W('BW',3,2) ] },
+    ]
+  },
+  { id: 'lapaz-w2-b', type: 'gym', category: 'Gym', block: 'lapaz-aug26', week: 2, slot: 'B', wkStart: '2026-08-10', wkEnd: '2026-08-16', title: 'Gym B — Upper Body · La Paz W2', duration: '~55 min',
+    warmup: ['Walk to gym — 10–11 min', 'Pre-hydrate — electrolytes before you walk over, not after', 'Arm circles — 10 each direction', 'Wall slides or scapular push-ups — 10', 'Push-ups — 8 slow'],
+    exercises: [
+      { name: 'DB Bench Press', tempo: '3-1-1-0', rest: '2 min', cue: CUES.benchPress,
+        sets: [ R(20,8), W(45,8,3), W(55,8,3), W(60,'6-8',2) ] },
+      { name: 'Standing DB Shoulder Press', tempo: '2-0-1-0', rest: '90 sec', cue: CUES.militaryPress,
+        sets: [ R(15,8), W(30,8,3), W(35,8,3), W(37.5,'6-8',2) ] },
+      { name: 'DB Bent-Over Row', tempo: '2-0-1-1', rest: '90 sec', cue: CUES.bentRow,
+        sets: [ W(40,10,3), W(45,10,3), W(45,10,2) ] },
+      { name: 'DB Rear Delt Fly', tempo: '2-0-1-1', rest: '60 sec', cue: CUES.rearDeltFly,
+        sets: [ W(15,15,2), W(17.5,15,2) ] },
+      { name: 'DB Curl + DB Overhead Triceps Extension', tempo: '2-0-1-0', rest: '60 sec', cue: [...CUES.strictCurl, ...CUES.tricepExt],
+        sets: [ W('25 curl / 20 tri','10 + 10',2), W('27.5 curl / 20 tri','10 + 10',2) ] },
+    ]
+  },
+  { id: 'lapaz-w2-c', type: 'gym', category: 'Gym', block: 'lapaz-aug26', week: 2, slot: 'C', wkStart: '2026-08-10', wkEnd: '2026-08-16', title: 'Gym C — Full Body · La Paz W2', duration: '~50 min',
+    warmup: ['Walk to gym — 10–11 min', 'Pre-hydrate — electrolytes before you walk over, not after', 'Bodyweight squat — 8', 'Arm circles — 10', 'Glute bridge — 10'],
+    exercises: [
+      { name: 'Leg Press', tempo: 'controlled', rest: '90 sec', cue: CUES.legPress,
+        sets: [ W(175,10,3), W(195,'8-10',3), W(195,'8-10',2) ] },
+      { name: 'Barbell Bench Press', tempo: '3-1-1-0', rest: '2 min', cue: [...CUES.benchPress, 'Barbell was free Aug 8 — use it when open, DB bench press if not'],
+        sets: [ R(45,8), R(95,5), W(115,8,3), W(135,'6-8',2) ] },
+      { name: 'DB Bent-Over Row', tempo: '2-0-1-1', rest: '90 sec', cue: CUES.bentRow,
+        sets: [ W(40,10,3), W(45,10,3), W(45,10,2) ] },
+      { name: 'Farmer’s Carry', tempo: 'steady', rest: '60 sec', cue: CUES.farmersCarryDB,
+        sets: [ W(50,'30-40 yd','—'), W(55,'30-40 yd','—'), W(55,'30-40 yd','—') ] },
+      { name: 'Seated Calf Raise (machine)', tempo: '2-1-3-0', rest: '60 sec', cue: CUES.seatedCalfMachine,
+        sets: [ W(90,15,2), W(95,15,2) ] },
+    ]
+  },
+
+  // Week 3 (Aug 17–23) — READINESS GATE: check Garmin Training Readiness Monday morning before
+  // this session. 50+ (Moderate or better) → run these numbers as written. Still POOR/LOW →
+  // repeat Week 2's loads one more week instead of jumping here, then reassess for Week 4.
+  // Chronic load (CTL) climbed fast in the first week alone (100→220) so ACWR should be
+  // compressing back toward normal by now if recovery is on track.
+  { id: 'lapaz-w3-a', type: 'gym', category: 'Gym', block: 'lapaz-aug26', week: 3, slot: 'A', wkStart: '2026-08-17', wkEnd: '2026-08-23', title: 'Gym A — Lower Body · La Paz W3', duration: '~55 min',
+    warmup: ['Walk to gym — 10–11 min (this IS the cardio warm-up)', 'Pre-hydrate — electrolytes before you walk over, not after', 'Hip stability drill', 'Air squat — 10 slow'],
+    exercises: [
+      { name: 'Back Squat', tempo: '3-1-1-0', rest: '2 min', cue: [...CUES.squat, 'Right hip is king — stop the set on any pinch, ache, or asymmetry'],
+        sets: [ R(45,8), R(95,5), W(115,6,3), W(130,6,3), W(130,'6-8',2) ] },
+      { name: 'Leg Press', tempo: 'controlled', rest: '90 sec', cue: CUES.legPress,
+        sets: [ R(150,10), W(190,'8-10',3), W(205,'8-10',2), W(205,'8-10',2) ] },
+      { name: 'DB Romanian Deadlift', tempo: '3-0-1-0', rest: '90 sec', cue: CUES.rdl,
+        sets: [ R(30,8), W(60,8,3), W(70,8,2) ] },
+      { name: 'Pull-ups (strict)', tempo: '2-0-1-0', rest: '90 sec', cue: CUES.pullups,
+        sets: [ W('BW',5,2), W('BW',4,2), W('BW',4,2), W('BW',3,2) ] },
+    ]
+  },
+  { id: 'lapaz-w3-b', type: 'gym', category: 'Gym', block: 'lapaz-aug26', week: 3, slot: 'B', wkStart: '2026-08-17', wkEnd: '2026-08-23', title: 'Gym B — Upper Body · La Paz W3', duration: '~55 min',
+    warmup: ['Walk to gym — 10–11 min', 'Pre-hydrate — electrolytes before you walk over, not after', 'Arm circles — 10 each direction', 'Wall slides or scapular push-ups — 10', 'Push-ups — 8 slow'],
+    exercises: [
+      { name: 'DB Bench Press', tempo: '3-1-1-0', rest: '2 min', cue: CUES.benchPress,
+        sets: [ R(20,8), W(50,8,3), W(60,8,3), W(65,'6-8',2) ] },
+      { name: 'Standing DB Shoulder Press', tempo: '2-0-1-0', rest: '90 sec', cue: CUES.militaryPress,
+        sets: [ R(15,8), W(32.5,8,3), W(37.5,8,3), W(40,'6-8',2) ] },
+      { name: 'DB Bent-Over Row', tempo: '2-0-1-1', rest: '90 sec', cue: CUES.bentRow,
+        sets: [ W(45,10,3), W(50,10,3), W(50,10,2) ] },
+      { name: 'DB Rear Delt Fly', tempo: '2-0-1-1', rest: '60 sec', cue: CUES.rearDeltFly,
+        sets: [ W(17.5,15,2), W(17.5,15,2) ] },
+      { name: 'DB Curl + DB Overhead Triceps Extension', tempo: '2-0-1-0', rest: '60 sec', cue: [...CUES.strictCurl, ...CUES.tricepExt],
+        sets: [ W('27.5 curl / 20 tri','10 + 10',2), W('30 curl / 22.5 tri','10 + 10',2) ] },
+    ]
+  },
+  { id: 'lapaz-w3-c', type: 'gym', category: 'Gym', block: 'lapaz-aug26', week: 3, slot: 'C', wkStart: '2026-08-17', wkEnd: '2026-08-23', title: 'Gym C — Full Body · La Paz W3', duration: '~50 min',
+    warmup: ['Walk to gym — 10–11 min', 'Pre-hydrate — electrolytes before you walk over, not after', 'Bodyweight squat — 8', 'Arm circles — 10', 'Glute bridge — 10'],
+    exercises: [
+      { name: 'Leg Press', tempo: 'controlled', rest: '90 sec', cue: CUES.legPress,
+        sets: [ W(190,10,3), W(210,'8-10',3), W(210,'8-10',2) ] },
+      { name: 'Barbell Bench Press', tempo: '3-1-1-0', rest: '2 min', cue: CUES.benchPress,
+        sets: [ R(45,8), R(95,5), W(125,8,3), W(145,'6-8',2) ] },
+      { name: 'DB Bent-Over Row', tempo: '2-0-1-1', rest: '90 sec', cue: CUES.bentRow,
+        sets: [ W(45,10,3), W(50,10,3), W(50,10,2) ] },
+      { name: 'Farmer’s Carry', tempo: 'steady', rest: '60 sec', cue: CUES.farmersCarryDB,
+        sets: [ W(55,'30-40 yd','—'), W(60,'30-40 yd','—'), W(60,'30-40 yd','—') ] },
+      { name: 'Seated Calf Raise (machine)', tempo: '2-1-3-0', rest: '60 sec', cue: CUES.seatedCalfMachine,
+        sets: [ W(100,15,2), W(100,15,2) ] },
+    ]
+  },
+
+  // Week 4 (Aug 24–30) — continued progression, assuming Week 3 confirmed readiness had
+  // normalized. Hip-hinge (RDL) still the most conservative lift in the block, on purpose.
+  { id: 'lapaz-w4-a', type: 'gym', category: 'Gym', block: 'lapaz-aug26', week: 4, slot: 'A', wkStart: '2026-08-24', wkEnd: '2026-08-30', title: 'Gym A — Lower Body · La Paz W4', duration: '~55 min',
+    warmup: ['Walk to gym — 10–11 min (this IS the cardio warm-up)', 'Pre-hydrate — electrolytes before you walk over, not after', 'Hip stability drill', 'Air squat — 10 slow'],
+    exercises: [
+      { name: 'Back Squat', tempo: '3-1-1-0', rest: '2 min', cue: [...CUES.squat, 'Right hip is king — stop the set on any pinch, ache, or asymmetry'],
+        sets: [ R(45,8), R(95,5), W(120,5,3), W(140,'5-6',3), W(140,'5-6',2) ] },
+      { name: 'Leg Press', tempo: 'controlled', rest: '90 sec', cue: CUES.legPress,
+        sets: [ R(150,10), W(200,'8-10',3), W(215,'8-10',2), W(215,'8-10',2) ] },
+      { name: 'DB Romanian Deadlift', tempo: '3-0-1-0', rest: '90 sec', cue: CUES.rdl,
+        sets: [ R(30,8), W(65,8,3), W(75,8,2) ] },
+      { name: 'Pull-ups (strict)', tempo: '2-0-1-0', rest: '90 sec', cue: CUES.pullups,
+        sets: [ W('BW',5,2), W('BW',5,2), W('BW',4,2), W('BW',4,2) ] },
+    ]
+  },
+  { id: 'lapaz-w4-b', type: 'gym', category: 'Gym', block: 'lapaz-aug26', week: 4, slot: 'B', wkStart: '2026-08-24', wkEnd: '2026-08-30', title: 'Gym B — Upper Body · La Paz W4', duration: '~55 min',
+    warmup: ['Walk to gym — 10–11 min', 'Pre-hydrate — electrolytes before you walk over, not after', 'Arm circles — 10 each direction', 'Wall slides or scapular push-ups — 10', 'Push-ups — 8 slow'],
+    exercises: [
+      { name: 'DB Bench Press', tempo: '3-1-1-0', rest: '2 min', cue: CUES.benchPress,
+        sets: [ R(20,8), W(55,8,3), W(65,'6-8',3), W(70,'6-8',2) ] },
+      { name: 'Standing DB Shoulder Press', tempo: '2-0-1-0', rest: '90 sec', cue: CUES.militaryPress,
+        sets: [ R(15,8), W(35,8,3), W(40,8,3), W(42.5,'6-8',2) ] },
+      { name: 'DB Bent-Over Row', tempo: '2-0-1-1', rest: '90 sec', cue: CUES.bentRow,
+        sets: [ W(50,10,3), W(55,10,3), W(55,10,2) ] },
+      { name: 'DB Rear Delt Fly', tempo: '2-0-1-1', rest: '60 sec', cue: CUES.rearDeltFly,
+        sets: [ W(20,15,2), W(20,15,2) ] },
+      { name: 'DB Curl + DB Overhead Triceps Extension', tempo: '2-0-1-0', rest: '60 sec', cue: [...CUES.strictCurl, ...CUES.tricepExt],
+        sets: [ W('30 curl / 22.5 tri','10 + 10',2), W('30 curl / 25 tri','10 + 10',2) ] },
+    ]
+  },
+  { id: 'lapaz-w4-c', type: 'gym', category: 'Gym', block: 'lapaz-aug26', week: 4, slot: 'C', wkStart: '2026-08-24', wkEnd: '2026-08-30', title: 'Gym C — Full Body · La Paz W4', duration: '~50 min',
+    warmup: ['Walk to gym — 10–11 min', 'Pre-hydrate — electrolytes before you walk over, not after', 'Bodyweight squat — 8', 'Arm circles — 10', 'Glute bridge — 10'],
+    exercises: [
+      { name: 'Leg Press', tempo: 'controlled', rest: '90 sec', cue: CUES.legPress,
+        sets: [ W(200,10,3), W(220,'8-10',3), W(220,'8-10',2) ] },
+      { name: 'Barbell Bench Press', tempo: '3-1-1-0', rest: '2 min', cue: CUES.benchPress,
+        sets: [ R(45,8), R(95,5), W(130,8,3), W(150,'6-8',2) ] },
+      { name: 'DB Bent-Over Row', tempo: '2-0-1-1', rest: '90 sec', cue: CUES.bentRow,
+        sets: [ W(50,10,3), W(55,10,3), W(55,10,2) ] },
+      { name: 'Farmer’s Carry', tempo: 'steady', rest: '60 sec', cue: CUES.farmersCarryDB,
+        sets: [ W(60,'30-40 yd','—'), W(60,'30-40 yd','—'), W(65,'30-40 yd','—') ] },
+      { name: 'Seated Calf Raise (machine)', tempo: '2-1-3-0', rest: '60 sec', cue: CUES.seatedCalfMachine,
+        sets: [ W(105,15,2), W(105,15,2) ] },
+    ]
+  },
+
+  // Week 5 (Aug 31–Sep 6) — heaviest top sets of this block. After this week: reassess
+  // (readiness trend + how the top sets actually felt) before writing a Week 6 — don't
+  // extrapolate this progression blindly past what the data supports.
+  { id: 'lapaz-w5-a', type: 'gym', category: 'Gym', block: 'lapaz-aug26', week: 5, slot: 'A', wkStart: '2026-08-31', wkEnd: '2026-09-06', title: 'Gym A — Lower Body · La Paz W5', duration: '~55 min',
+    warmup: ['Walk to gym — 10–11 min (this IS the cardio warm-up)', 'Pre-hydrate — electrolytes before you walk over, not after', 'Hip stability drill', 'Air squat — 10 slow'],
+    exercises: [
+      { name: 'Back Squat', tempo: '3-1-1-0', rest: '2 min', cue: [...CUES.squat, 'Right hip is king — stop the set on any pinch, ache, or asymmetry'],
+        sets: [ R(45,8), R(95,5), W(125,5,3), W(150,'5-6',3), W(150,'5-6',2) ] },
+      { name: 'Leg Press', tempo: 'controlled', rest: '90 sec', cue: CUES.legPress,
+        sets: [ R(150,10), W(210,'8-10',3), W(225,'8-10',2), W(225,'8-10',2) ] },
+      { name: 'DB Romanian Deadlift', tempo: '3-0-1-0', rest: '90 sec', cue: CUES.rdl,
+        sets: [ R(30,8), W(70,8,3), W(80,'6-8',2) ] },
+      { name: 'Pull-ups (strict)', tempo: '2-0-1-0', rest: '90 sec', cue: CUES.pullups,
+        sets: [ W('BW',6,2), W('BW',5,2), W('BW',5,2), W('BW',4,2) ] },
+    ]
+  },
+  { id: 'lapaz-w5-b', type: 'gym', category: 'Gym', block: 'lapaz-aug26', week: 5, slot: 'B', wkStart: '2026-08-31', wkEnd: '2026-09-06', title: 'Gym B — Upper Body · La Paz W5', duration: '~55 min',
+    warmup: ['Walk to gym — 10–11 min', 'Pre-hydrate — electrolytes before you walk over, not after', 'Arm circles — 10 each direction', 'Wall slides or scapular push-ups — 10', 'Push-ups — 8 slow'],
+    exercises: [
+      { name: 'DB Bench Press', tempo: '3-1-1-0', rest: '2 min', cue: CUES.benchPress,
+        sets: [ R(20,8), W(60,8,3), W(70,'6-8',3), W(75,'6-8',2) ] },
+      { name: 'Standing DB Shoulder Press', tempo: '2-0-1-0', rest: '90 sec', cue: CUES.militaryPress,
+        sets: [ R(15,8), W(37.5,8,3), W(42.5,'6-8',3), W(45,'6-8',2) ] },
+      { name: 'DB Bent-Over Row', tempo: '2-0-1-1', rest: '90 sec', cue: CUES.bentRow,
+        sets: [ W(50,10,3), W(55,10,3), W(55,10,2) ] },
+      { name: 'DB Rear Delt Fly', tempo: '2-0-1-1', rest: '60 sec', cue: CUES.rearDeltFly,
+        sets: [ W(20,15,2), W(20,15,2) ] },
+      { name: 'DB Curl + DB Overhead Triceps Extension', tempo: '2-0-1-0', rest: '60 sec', cue: [...CUES.strictCurl, ...CUES.tricepExt],
+        sets: [ W('30 curl / 25 tri','10 + 10',2), W('32.5 curl / 25 tri','10 + 10',2) ] },
+    ]
+  },
+  { id: 'lapaz-w5-c', type: 'gym', category: 'Gym', block: 'lapaz-aug26', week: 5, slot: 'C', wkStart: '2026-08-31', wkEnd: '2026-09-06', title: 'Gym C — Full Body · La Paz W5', duration: '~50 min',
+    warmup: ['Walk to gym — 10–11 min', 'Pre-hydrate — electrolytes before you walk over, not after', 'Bodyweight squat — 8', 'Arm circles — 10', 'Glute bridge — 10'],
+    exercises: [
+      { name: 'Leg Press', tempo: 'controlled', rest: '90 sec', cue: CUES.legPress,
+        sets: [ W(210,10,3), W(230,'8-10',3), W(230,'8-10',2) ] },
+      { name: 'Barbell Bench Press', tempo: '3-1-1-0', rest: '2 min', cue: CUES.benchPress,
+        sets: [ R(45,8), R(95,5), W(135,8,3), W(155,'6-8',2) ] },
+      { name: 'DB Bent-Over Row', tempo: '2-0-1-1', rest: '90 sec', cue: CUES.bentRow,
+        sets: [ W(50,10,3), W(55,10,3), W(55,10,2) ] },
+      { name: 'Farmer’s Carry', tempo: 'steady', rest: '60 sec', cue: CUES.farmersCarryDB,
+        sets: [ W(60,'30-40 yd','—'), W(65,'30-40 yd','—'), W(65,'30-40 yd','—') ] },
+      { name: 'Seated Calf Raise (machine)', tempo: '2-1-3-0', rest: '60 sec', cue: CUES.seatedCalfMachine,
+        sets: [ W(110,15,2), W(110,15,2) ] },
     ]
   },
 ];
