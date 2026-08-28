@@ -297,6 +297,13 @@ const CUES = {
   tricepExt: ['Elbows fixed overhead', 'Full stretch at bottom', 'Squeeze at lockout'],
   farmersCarryDB: ['Tall posture, braced core', 'Quick, controlled steps', 'Shoulders back, don\u2019t round'],
   seatedCalfMachine: ['Seated calf machine — pad on thighs, feet on platform', '3-sec eccentric — slow descent is the work', 'Full stretch at bottom, full contraction at top', 'Targets soleus — this is what carries over on foot-heavy days'],
+  landminePress: ['Landmine sleeve in the corner', 'Press up and slightly forward', 'Ribs down, glutes tight', 'Strict — no leg drive'],
+  landmineLunge: ['Hold the sleeve at chest height', 'Step back, trailing knee to just off the ground', 'Front shin vertical', 'Drive through the front heel'],
+  hackSquat: ['Sled is ~125 lb empty — the number shown INCLUDES the sled', 'Feet mid-platform, shoulder-width', 'Full depth, control the descent', 'Do not bounce out of the bottom'],
+  tbarRow: ['Hinge hard, chest proud', 'Pull to the belly, elbows tight to the ribs', 'Squeeze, then lower under control'],
+  pecFly: ['Seated fly machine — log it as Cable Crossover in Garmin', 'This station is shaded — use it when the sun is worst', 'Slow return, let the chest do the work'],
+  preacherCurl: ['Chest against the pad, upper arms dead still', 'Full extension at the bottom', 'No swinging off the pad'],
+  heatRule: ['Rest cap: 2:30 compounds / 1:30 accessories', 'Wet-wrap the NEXT implement while you rest', 'Need 3:00+ twice in a row? End the session and log it'],
 };
 
 const SESSIONS = [
@@ -1134,6 +1141,215 @@ const SESSIONS = [
         sets: [ W(130,15,2), W(130,15,2) ] },
     ]
   },
+
+  // ---------- SEP 2026 LA PAZ BLOCK · WEEK 1 ----------
+  { id: 'sep-w1-a', type: 'gym', category: 'Gym', block: 'lapaz-sep26', week: 1, slot: 'A', wkStart: '2026-09-01', wkEnd: '2026-09-07', title: 'Gym A — Lower · Sep W1', duration: '~50 min',
+    warmup: ['Arrive 08:30 — 500 ml electrolytes before the first set', 'Walk to gym — 10–11 min (this IS the cardio warm-up)', 'Wet-wrap the bar BEFORE you touch it — and wrap the next one while you rest', 'Bodyweight squat — 10 slow', 'Glute bridge — 15', 'Leg swings front-back + side-side — 10/side'],
+    exercises: [
+      { name: 'Back Squat', tempo: '3-1-1-0', rest: '2:30', cue: [...CUES.squat, ...CUES.heatRule],
+        sets: [ R(135,8), R(165,6), W(185,6,3), W(200,6,2), W(175,10,2) ] },
+      { name: 'Romanian Deadlift', tempo: '3-0-1-0', rest: '2:00', cue: [...CUES.rdl, 'Same bar as the squat — stay at the rack, do not cool a second bar'],
+        sets: [ W(155,8,3), W(175,8,2), W(185,6,2) ] },
+      { name: 'Leg Press', tempo: 'controlled', rest: '2:00', cue: CUES.legPress,
+        sets: [ R(225,12), W(315,12,3), W(360,10,2), W(385,8,2) ] },
+      { name: 'A1 · Landmine Reverse Lunge', tempo: 'controlled', rest: 'straight into A2', cue: [...CUES.landmineLunge, 'Superset with A2 — no rest between; rest 1:30 after the calf raise'],
+        sets: [ W(45,8,2,true), W(45,8,2,true), W(45,8,2,true) ] },
+      { name: 'A2 · Weighted Seated Calf Raise', tempo: '3-sec eccentric', rest: '1:30', cue: [...CUES.seatedCalfMachine, 'REHAB WORK — never skip, never drop below 3 sets'],
+        sets: [ W(90,15,2), W(90,15,2), W(90,15,2) ] },
+    ]
+  },
+  { id: 'sep-w1-b', type: 'gym', category: 'Gym', block: 'lapaz-sep26', week: 1, slot: 'B', wkStart: '2026-09-01', wkEnd: '2026-09-07', title: 'Gym B — Upper · Sep W1', duration: '~55 min',
+    warmup: ['Arrive 08:30 — 500 ml electrolytes before the first set', 'Walk to gym — 10–11 min (this IS the cardio warm-up)', 'Wet-wrap the bar BEFORE you touch it — and wrap the next one while you rest', 'Arm circles — 10 each way', 'Scapular push-ups — 10', 'Push-ups — 8 slow'],
+    exercises: [
+      { name: 'Barbell Bench Press', tempo: '3-1-1-0', rest: '2:30', cue: [...CUES.benchPress, ...CUES.heatRule],
+        sets: [ R(135,8), R(155,6), W(170,6,3), W(180,5,2), W(160,10,2) ] },
+      { name: 'B1 · T-Bar Row', tempo: '2-0-1-1', rest: 'straight into B2', cue: [...CUES.tbarRow, 'Superset with B2 — rest 2:00 after the landmine press'],
+        sets: [ W(180,12,3), W(195,10,2), W(210,10,2) ] },
+      { name: 'B2 · Standing Landmine Press', tempo: '2-0-1-0', rest: '2:00', cue: CUES.landminePress,
+        sets: [ W(45,12,2), W(45,12,2), W(45,12,2) ] },
+      { name: 'Pull-up', tempo: 'controlled', rest: '2:00', cue: CUES.pullups,
+        sets: [ W('Body',4,2), W('Body',4,2), W('Body','AMRAP',0) ] },
+      { name: 'C1 · Pec Fly (log as Cable Crossover)', tempo: '2-0-1-1', rest: 'straight into C2', cue: [...CUES.pecFly, 'Superset with C2 — rest 1:30 after the reverse fly'],
+        sets: [ W(75,15,2), W(75,15,2), W(75,15,2) ] },
+      { name: 'C2 · Incline Reverse Fly', tempo: '2-0-1-1', rest: '1:30', cue: CUES.rearDeltFly,
+        sets: [ W(25,12,2), W(25,12,2), W(25,12,2) ] },
+      { name: 'Preacher Curl', tempo: '2-0-1-0', rest: '1:15', cue: [...CUES.preacherCurl, 'Past 10:00? This is the set you cut — not the reverse flies'],
+        sets: [ W(55,10,2), W(55,10,2), W(55,'AMRAP',0) ] },
+    ]
+  },
+  { id: 'sep-w1-c', type: 'gym', category: 'Gym', block: 'lapaz-sep26', week: 1, slot: 'C', wkStart: '2026-09-01', wkEnd: '2026-09-07', title: 'Gym C — Full Body · Sep W1', duration: '~50 min',
+    warmup: ['Arrive 08:30 — 500 ml electrolytes before the first set', 'Walk to gym — 10–11 min (this IS the cardio warm-up)', 'Wet-wrap the bar BEFORE you touch it — and wrap the next one while you rest', 'Hip hinge drill — 10', 'Band pull-apart — 15', 'Bodyweight good morning — 10'],
+    exercises: [
+      { name: 'Barbell Deadlift', tempo: '2-0-1-0', rest: '2:30', cue: [...CUES.deadlift, ...CUES.heatRule],
+        sets: [ R(155,6), W(185,5,3), W(205,5,2), W(185,8,2) ] },
+      { name: 'Barbell Overhead Press', tempo: '2-0-1-0', rest: '2:00', cue: [...CUES.militaryPress, 'Same bar as the deadlift — stay put'],
+        sets: [ R(75,10), W(95,8,3), W(105,6,2), W(95,'AMRAP',0) ] },
+      { name: 'Barbell Hack Squat', tempo: 'controlled', rest: '2:00', cue: CUES.hackSquat,
+        sets: [ R(175,10), W(215,10,2), W(215,8,2) ] },
+      { name: 'D1 · Farmer’s Carry', tempo: 'brisk', rest: 'straight into D2', cue: [...CUES.farmersCarryDB, 'Superset with D2 — same dumbbells, rest 1:30 after the curls'],
+        sets: [ W(55,'40 steps',2), W(55,'40 steps',2), W(55,'40 steps',2) ] },
+      { name: 'D2 · Hammer Curl', tempo: '2-0-1-0', rest: '1:30', cue: CUES.hammerCurl,
+        sets: [ W(25,12,2), W(25,12,2), W(25,12,2) ] },
+      { name: 'Dumbbell Biceps Curl', tempo: '2-0-1-0', rest: '1:15', cue: [...CUES.strictCurl, 'Weakest link — which is why it gets its own slot on the shortest day'],
+        sets: [ W(25,12,2), W(25,12,2), W(25,'AMRAP',0) ] },
+    ]
+  },
+  // ---------- SEP 2026 LA PAZ BLOCK · WEEK 2 ----------
+  { id: 'sep-w2-a', type: 'gym', category: 'Gym', block: 'lapaz-sep26', week: 2, slot: 'A', wkStart: '2026-09-08', wkEnd: '2026-09-14', title: 'Gym A — Lower · Sep W2', duration: '~50 min',
+    warmup: ['Arrive 08:30 — 500 ml electrolytes before the first set', 'Walk to gym — 10–11 min (this IS the cardio warm-up)', 'Wet-wrap the bar BEFORE you touch it — and wrap the next one while you rest', 'Bodyweight squat — 10 slow', 'Glute bridge — 15', 'Leg swings front-back + side-side — 10/side'],
+    exercises: [
+      { name: 'Back Squat', tempo: '3-1-1-0', rest: '2:30', cue: [...CUES.squat, ...CUES.heatRule],
+        sets: [ R(135,8), R(165,6), W(190,6,3), W(205,6,2), W(180,10,2) ] },
+      { name: 'Romanian Deadlift', tempo: '3-0-1-0', rest: '2:00', cue: [...CUES.rdl, 'Same bar as the squat — stay at the rack, do not cool a second bar'],
+        sets: [ W(160,8,3), W(180,8,2), W(190,6,2) ] },
+      { name: 'Leg Press', tempo: 'controlled', rest: '2:00', cue: CUES.legPress,
+        sets: [ R(225,12), W(325,12,3), W(370,10,2), W(395,8,2) ] },
+      { name: 'A1 · Landmine Reverse Lunge', tempo: 'controlled', rest: 'straight into A2', cue: [...CUES.landmineLunge, 'Superset with A2 — no rest between; rest 1:30 after the calf raise'],
+        sets: [ W(45,8,2,true), W(45,8,2,true), W(45,8,2,true) ] },
+      { name: 'A2 · Weighted Seated Calf Raise', tempo: '3-sec eccentric', rest: '1:30', cue: [...CUES.seatedCalfMachine, 'REHAB WORK — never skip, never drop below 3 sets'],
+        sets: [ W(90,15,2), W(90,15,2), W(90,15,2) ] },
+    ]
+  },
+  { id: 'sep-w2-b', type: 'gym', category: 'Gym', block: 'lapaz-sep26', week: 2, slot: 'B', wkStart: '2026-09-08', wkEnd: '2026-09-14', title: 'Gym B — Upper · Sep W2', duration: '~55 min',
+    warmup: ['Arrive 08:30 — 500 ml electrolytes before the first set', 'Walk to gym — 10–11 min (this IS the cardio warm-up)', 'Wet-wrap the bar BEFORE you touch it — and wrap the next one while you rest', 'Arm circles — 10 each way', 'Scapular push-ups — 10', 'Push-ups — 8 slow'],
+    exercises: [
+      { name: 'Barbell Bench Press', tempo: '3-1-1-0', rest: '2:30', cue: [...CUES.benchPress, ...CUES.heatRule],
+        sets: [ R(135,8), R(155,6), W(175,6,3), W(185,5,2), W(165,10,2) ] },
+      { name: 'B1 · T-Bar Row', tempo: '2-0-1-1', rest: 'straight into B2', cue: [...CUES.tbarRow, 'Superset with B2 — rest 2:00 after the landmine press'],
+        sets: [ W(185,12,3), W(200,10,2), W(215,10,2) ] },
+      { name: 'B2 · Standing Landmine Press', tempo: '2-0-1-0', rest: '2:00', cue: CUES.landminePress,
+        sets: [ W(50,12,2), W(50,12,2), W(50,12,2) ] },
+      { name: 'Pull-up', tempo: 'controlled', rest: '2:00', cue: CUES.pullups,
+        sets: [ W('Body',4,2), W('Body',4,2), W('Body','AMRAP',0) ] },
+      { name: 'C1 · Pec Fly (log as Cable Crossover)', tempo: '2-0-1-1', rest: 'straight into C2', cue: [...CUES.pecFly, 'Superset with C2 — rest 1:30 after the reverse fly'],
+        sets: [ W(80,15,2), W(80,15,2), W(80,15,2) ] },
+      { name: 'C2 · Incline Reverse Fly', tempo: '2-0-1-1', rest: '1:30', cue: CUES.rearDeltFly,
+        sets: [ W(25,15,2), W(25,15,2), W(25,15,2) ] },
+      { name: 'Preacher Curl', tempo: '2-0-1-0', rest: '1:15', cue: [...CUES.preacherCurl, 'Past 10:00? This is the set you cut — not the reverse flies'],
+        sets: [ W(60,10,2), W(60,10,2), W(60,'AMRAP',0) ] },
+    ]
+  },
+  { id: 'sep-w2-c', type: 'gym', category: 'Gym', block: 'lapaz-sep26', week: 2, slot: 'C', wkStart: '2026-09-08', wkEnd: '2026-09-14', title: 'Gym C — Full Body · Sep W2', duration: '~50 min',
+    warmup: ['Arrive 08:30 — 500 ml electrolytes before the first set', 'Walk to gym — 10–11 min (this IS the cardio warm-up)', 'Wet-wrap the bar BEFORE you touch it — and wrap the next one while you rest', 'Hip hinge drill — 10', 'Band pull-apart — 15', 'Bodyweight good morning — 10'],
+    exercises: [
+      { name: 'Barbell Deadlift', tempo: '2-0-1-0', rest: '2:30', cue: [...CUES.deadlift, ...CUES.heatRule],
+        sets: [ R(155,6), W(190,5,3), W(210,5,2), W(190,8,2) ] },
+      { name: 'Barbell Overhead Press', tempo: '2-0-1-0', rest: '2:00', cue: [...CUES.militaryPress, 'Same bar as the deadlift — stay put'],
+        sets: [ R(75,10), W(100,8,3), W(110,6,2), W(100,'AMRAP',0) ] },
+      { name: 'Barbell Hack Squat', tempo: 'controlled', rest: '2:00', cue: CUES.hackSquat,
+        sets: [ R(175,10), W(225,10,2), W(225,8,2) ] },
+      { name: 'D1 · Farmer’s Carry', tempo: 'brisk', rest: 'straight into D2', cue: [...CUES.farmersCarryDB, 'Superset with D2 — same dumbbells, rest 1:30 after the curls'],
+        sets: [ W(55,'40 steps',2), W(55,'40 steps',2), W(55,'40 steps',2) ] },
+      { name: 'D2 · Hammer Curl', tempo: '2-0-1-0', rest: '1:30', cue: CUES.hammerCurl,
+        sets: [ W(25,15,2), W(25,15,2), W(25,15,2) ] },
+      { name: 'Dumbbell Biceps Curl', tempo: '2-0-1-0', rest: '1:15', cue: [...CUES.strictCurl, 'Weakest link — which is why it gets its own slot on the shortest day'],
+        sets: [ W(25,15,2), W(25,15,2), W(25,'AMRAP',0) ] },
+    ]
+  },
+  // ---------- SEP 2026 LA PAZ BLOCK · WEEK 3 ----------
+  { id: 'sep-w3-a', type: 'gym', category: 'Gym', block: 'lapaz-sep26', week: 3, slot: 'A', wkStart: '2026-09-15', wkEnd: '2026-09-21', title: 'Gym A — Lower · Sep W3', duration: '~50 min',
+    warmup: ['Arrive 08:30 — 500 ml electrolytes before the first set', 'Walk to gym — 10–11 min (this IS the cardio warm-up)', 'Wet-wrap the bar BEFORE you touch it — and wrap the next one while you rest', 'Bodyweight squat — 10 slow', 'Glute bridge — 15', 'Leg swings front-back + side-side — 10/side'],
+    exercises: [
+      { name: 'Back Squat', tempo: '3-1-1-0', rest: '2:30', cue: [...CUES.squat, ...CUES.heatRule],
+        sets: [ R(135,8), R(165,6), W(195,6,3), W(210,6,2), W(185,10,2) ] },
+      { name: 'Romanian Deadlift', tempo: '3-0-1-0', rest: '2:00', cue: [...CUES.rdl, 'Same bar as the squat — stay at the rack, do not cool a second bar'],
+        sets: [ W(165,8,3), W(185,8,2), W(195,6,2) ] },
+      { name: 'Leg Press', tempo: 'controlled', rest: '2:00', cue: CUES.legPress,
+        sets: [ R(225,12), W(335,12,3), W(380,10,2), W(405,8,2) ] },
+      { name: 'A1 · Landmine Reverse Lunge', tempo: 'controlled', rest: 'straight into A2', cue: [...CUES.landmineLunge, 'Superset with A2 — no rest between; rest 1:30 after the calf raise'],
+        sets: [ W(50,8,2,true), W(50,8,2,true), W(50,8,2,true) ] },
+      { name: 'A2 · Weighted Seated Calf Raise', tempo: '3-sec eccentric', rest: '1:30', cue: [...CUES.seatedCalfMachine, 'REHAB WORK — never skip, never drop below 3 sets'],
+        sets: [ W(90,15,2), W(90,15,2), W(90,15,2) ] },
+    ]
+  },
+  { id: 'sep-w3-b', type: 'gym', category: 'Gym', block: 'lapaz-sep26', week: 3, slot: 'B', wkStart: '2026-09-15', wkEnd: '2026-09-21', title: 'Gym B — Upper · Sep W3', duration: '~55 min',
+    warmup: ['Arrive 08:30 — 500 ml electrolytes before the first set', 'Walk to gym — 10–11 min (this IS the cardio warm-up)', 'Wet-wrap the bar BEFORE you touch it — and wrap the next one while you rest', 'Arm circles — 10 each way', 'Scapular push-ups — 10', 'Push-ups — 8 slow'],
+    exercises: [
+      { name: 'Barbell Bench Press', tempo: '3-1-1-0', rest: '2:30', cue: [...CUES.benchPress, ...CUES.heatRule],
+        sets: [ R(135,8), R(155,6), W(180,6,3), W(190,5,2), W(170,10,2) ] },
+      { name: 'B1 · T-Bar Row', tempo: '2-0-1-1', rest: 'straight into B2', cue: [...CUES.tbarRow, 'Superset with B2 — rest 2:00 after the landmine press'],
+        sets: [ W(190,12,3), W(205,10,2), W(220,10,2) ] },
+      { name: 'B2 · Standing Landmine Press', tempo: '2-0-1-0', rest: '2:00', cue: CUES.landminePress,
+        sets: [ W(55,12,2), W(55,12,2), W(55,12,2) ] },
+      { name: 'Pull-up', tempo: 'controlled', rest: '2:00', cue: CUES.pullups,
+        sets: [ W('Body',4,2), W('Body',4,2), W('Body','AMRAP',0) ] },
+      { name: 'C1 · Pec Fly (log as Cable Crossover)', tempo: '2-0-1-1', rest: 'straight into C2', cue: [...CUES.pecFly, 'Superset with C2 — rest 1:30 after the reverse fly'],
+        sets: [ W(80,15,2), W(80,15,2), W(80,15,2) ] },
+      { name: 'C2 · Incline Reverse Fly', tempo: '2-0-1-1', rest: '1:30', cue: CUES.rearDeltFly,
+        sets: [ W(30,12,2), W(30,12,2), W(30,12,2) ] },
+      { name: 'Preacher Curl', tempo: '2-0-1-0', rest: '1:15', cue: [...CUES.preacherCurl, 'Past 10:00? This is the set you cut — not the reverse flies'],
+        sets: [ W(60,10,2), W(60,10,2), W(60,'AMRAP',0) ] },
+    ]
+  },
+  { id: 'sep-w3-c', type: 'gym', category: 'Gym', block: 'lapaz-sep26', week: 3, slot: 'C', wkStart: '2026-09-15', wkEnd: '2026-09-21', title: 'Gym C — Full Body · Sep W3', duration: '~50 min',
+    warmup: ['Arrive 08:30 — 500 ml electrolytes before the first set', 'Walk to gym — 10–11 min (this IS the cardio warm-up)', 'Wet-wrap the bar BEFORE you touch it — and wrap the next one while you rest', 'Hip hinge drill — 10', 'Band pull-apart — 15', 'Bodyweight good morning — 10'],
+    exercises: [
+      { name: 'Barbell Deadlift', tempo: '2-0-1-0', rest: '2:30', cue: [...CUES.deadlift, ...CUES.heatRule],
+        sets: [ R(155,6), W(195,5,3), W(215,5,2), W(195,8,2) ] },
+      { name: 'Barbell Overhead Press', tempo: '2-0-1-0', rest: '2:00', cue: [...CUES.militaryPress, 'Same bar as the deadlift — stay put'],
+        sets: [ R(75,10), W(105,8,3), W(115,6,2), W(105,'AMRAP',0) ] },
+      { name: 'Barbell Hack Squat', tempo: 'controlled', rest: '2:00', cue: CUES.hackSquat,
+        sets: [ R(175,10), W(235,10,2), W(235,8,2) ] },
+      { name: 'D1 · Farmer’s Carry', tempo: 'brisk', rest: 'straight into D2', cue: [...CUES.farmersCarryDB, 'Superset with D2 — same dumbbells, rest 1:30 after the curls'],
+        sets: [ W(60,'40 steps',2), W(60,'40 steps',2), W(60,'40 steps',2) ] },
+      { name: 'D2 · Hammer Curl', tempo: '2-0-1-0', rest: '1:30', cue: CUES.hammerCurl,
+        sets: [ W(30,12,2), W(30,12,2), W(30,12,2) ] },
+      { name: 'Dumbbell Biceps Curl', tempo: '2-0-1-0', rest: '1:15', cue: [...CUES.strictCurl, 'Weakest link — which is why it gets its own slot on the shortest day'],
+        sets: [ W(30,12,2), W(30,12,2), W(30,'AMRAP',0) ] },
+    ]
+  },
+  // ---------- SEP 2026 LA PAZ BLOCK · WEEK 4 ----------
+  { id: 'sep-w4-a', type: 'gym', category: 'Gym', block: 'lapaz-sep26', week: 4, slot: 'A', wkStart: '2026-09-22', wkEnd: '2026-09-28', title: 'Gym A — Lower · Sep W4', duration: '~50 min',
+    warmup: ['Arrive 08:30 — 500 ml electrolytes before the first set', 'Walk to gym — 10–11 min (this IS the cardio warm-up)', 'Wet-wrap the bar BEFORE you touch it — and wrap the next one while you rest', 'Bodyweight squat — 10 slow', 'Glute bridge — 15', 'Leg swings front-back + side-side — 10/side'],
+    exercises: [
+      { name: 'Back Squat', tempo: '3-1-1-0', rest: '2:30', cue: [...CUES.squat, ...CUES.heatRule],
+        sets: [ R(135,8), R(165,6), W(200,6,3), W(215,6,2), W(190,10,2) ] },
+      { name: 'Romanian Deadlift', tempo: '3-0-1-0', rest: '2:00', cue: [...CUES.rdl, 'Same bar as the squat — stay at the rack, do not cool a second bar'],
+        sets: [ W(170,8,3), W(190,8,2), W(200,6,2) ] },
+      { name: 'Leg Press', tempo: 'controlled', rest: '2:00', cue: CUES.legPress,
+        sets: [ R(225,12), W(345,12,3), W(390,10,2), W(415,8,2) ] },
+      { name: 'A1 · Landmine Reverse Lunge', tempo: 'controlled', rest: 'straight into A2', cue: [...CUES.landmineLunge, 'Superset with A2 — no rest between; rest 1:30 after the calf raise'],
+        sets: [ W(50,8,2,true), W(50,8,2,true), W(50,8,2,true) ] },
+      { name: 'A2 · Weighted Seated Calf Raise', tempo: '3-sec eccentric', rest: '1:30', cue: [...CUES.seatedCalfMachine, 'REHAB WORK — never skip, never drop below 3 sets'],
+        sets: [ W(90,15,2), W(90,15,2), W(90,15,2) ] },
+    ]
+  },
+  { id: 'sep-w4-b', type: 'gym', category: 'Gym', block: 'lapaz-sep26', week: 4, slot: 'B', wkStart: '2026-09-22', wkEnd: '2026-09-28', title: 'Gym B — Upper · Sep W4', duration: '~55 min',
+    warmup: ['Arrive 08:30 — 500 ml electrolytes before the first set', 'Walk to gym — 10–11 min (this IS the cardio warm-up)', 'Wet-wrap the bar BEFORE you touch it — and wrap the next one while you rest', 'Arm circles — 10 each way', 'Scapular push-ups — 10', 'Push-ups — 8 slow'],
+    exercises: [
+      { name: 'Barbell Bench Press', tempo: '3-1-1-0', rest: '2:30', cue: [...CUES.benchPress, ...CUES.heatRule],
+        sets: [ R(135,8), R(155,6), W(185,6,3), W(195,5,2), W(175,10,2) ] },
+      { name: 'B1 · T-Bar Row', tempo: '2-0-1-1', rest: 'straight into B2', cue: [...CUES.tbarRow, 'Superset with B2 — rest 2:00 after the landmine press'],
+        sets: [ W(195,12,3), W(210,10,2), W(225,10,2) ] },
+      { name: 'B2 · Standing Landmine Press', tempo: '2-0-1-0', rest: '2:00', cue: CUES.landminePress,
+        sets: [ W(55,12,2), W(55,12,2), W(55,12,2) ] },
+      { name: 'Pull-up', tempo: 'controlled', rest: '2:00', cue: CUES.pullups,
+        sets: [ W('Body',4,2), W('Body',4,2), W('Body','AMRAP',0) ] },
+      { name: 'C1 · Pec Fly (log as Cable Crossover)', tempo: '2-0-1-1', rest: 'straight into C2', cue: [...CUES.pecFly, 'Superset with C2 — rest 1:30 after the reverse fly'],
+        sets: [ W(85,15,2), W(85,15,2), W(85,15,2) ] },
+      { name: 'C2 · Incline Reverse Fly', tempo: '2-0-1-1', rest: '1:30', cue: CUES.rearDeltFly,
+        sets: [ W(30,12,2), W(30,12,2), W(30,12,2) ] },
+      { name: 'Preacher Curl', tempo: '2-0-1-0', rest: '1:15', cue: [...CUES.preacherCurl, 'Past 10:00? This is the set you cut — not the reverse flies'],
+        sets: [ W(65,10,2), W(65,10,2), W(65,'AMRAP',0) ] },
+    ]
+  },
+  { id: 'sep-w4-c', type: 'gym', category: 'Gym', block: 'lapaz-sep26', week: 4, slot: 'C', wkStart: '2026-09-22', wkEnd: '2026-09-28', title: 'Gym C — Full Body · Sep W4', duration: '~50 min',
+    warmup: ['Arrive 08:30 — 500 ml electrolytes before the first set', 'Walk to gym — 10–11 min (this IS the cardio warm-up)', 'Wet-wrap the bar BEFORE you touch it — and wrap the next one while you rest', 'Hip hinge drill — 10', 'Band pull-apart — 15', 'Bodyweight good morning — 10'],
+    exercises: [
+      { name: 'Barbell Deadlift', tempo: '2-0-1-0', rest: '2:30', cue: [...CUES.deadlift, ...CUES.heatRule],
+        sets: [ R(155,6), W(200,5,3), W(220,5,2), W(200,8,2) ] },
+      { name: 'Barbell Overhead Press', tempo: '2-0-1-0', rest: '2:00', cue: [...CUES.militaryPress, 'Same bar as the deadlift — stay put'],
+        sets: [ R(75,10), W(105,8,3), W(115,6,2), W(105,'AMRAP',0) ] },
+      { name: 'Barbell Hack Squat', tempo: 'controlled', rest: '2:00', cue: CUES.hackSquat,
+        sets: [ R(175,10), W(245,10,2), W(245,8,2) ] },
+      { name: 'D1 · Farmer’s Carry', tempo: 'brisk', rest: 'straight into D2', cue: [...CUES.farmersCarryDB, 'Superset with D2 — same dumbbells, rest 1:30 after the curls'],
+        sets: [ W(60,'40 steps',2), W(60,'40 steps',2), W(60,'40 steps',2) ] },
+      { name: 'D2 · Hammer Curl', tempo: '2-0-1-0', rest: '1:30', cue: CUES.hammerCurl,
+        sets: [ W(30,12,2), W(30,12,2), W(30,12,2) ] },
+      { name: 'Dumbbell Biceps Curl', tempo: '2-0-1-0', rest: '1:15', cue: [...CUES.strictCurl, 'Weakest link — which is why it gets its own slot on the shortest day'],
+        sets: [ W(30,12,2), W(30,12,2), W(30,'AMRAP',0) ] },
+    ]
+  },
 ];
 
 const WARMUP = [
@@ -1153,7 +1369,7 @@ const KB_WARMUP = [
 // STATE
 // ============================================================
 const STORE_KEY = 'workoutPwaState_v2';
-const APP_VERSION = 'Iron Protocol v7.2';
+const APP_VERSION = 'Iron Protocol v8.0';
 
 function loadState() {
   try {
