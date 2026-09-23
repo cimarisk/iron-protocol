@@ -1420,6 +1420,71 @@ const SESSIONS = [
         sets: [ W(90,15,2), W(90,15,2), W(90,15,2) ] },
     ]
   },
+
+  // ---------- 4-DAY BLOCK — starts 2026-09-22 ----------
+  // Straight sets only. No supersets. Rest is a floor, not a stopwatch.
+  { id: 'd4-w1-a', type: 'gym', category: 'Gym', block: 'lapaz-4day-sep26', week: 1, slot: 'A', wkStart: '2026-09-22', wkEnd: '2026-09-28', title: 'Day 1 \u2014 Lower \u00b7 Squat', duration: '~60 min',
+    warmup: ['Arrive 08:30 \u2014 500 ml electrolytes before the first set', 'Walk to gym \u2014 this IS the cardio warm-up', 'Wet-wrap the bar BEFORE you touch it', 'Bodyweight squat \u2014 15', 'Standing leg swings \u2014 10 each, front/back and side/side', 'Empty bar squat, 45 lb \u2014 10', 'Empty bar good morning, 45 lb \u2014 10'],
+    exercises: [
+      { name: 'Barbell Back Squat', tempo: '3-0-1-0', rest: '2:30', cue: [...CUES.squat, 'Back-off drops straight to 185 \u2014 pull one 45, put on a 25', 'LEAVE 185 ON THE BAR. The RDL starts there', ...CUES.heatRule],
+        sets: [ R(95,8), R(135,6), W(185,6,2), W(225,6,1), W(185,10,1) ] },
+      { name: 'Romanian Deadlift', tempo: '3-1-1-0', rest: '2:00', cue: [...CUES.rdl, 'Bar is already at 185 \u2014 nothing to change for set 1', '185 to 205 is ONE swap: pull the 25, put on the 35', 'Strip the bar here, not at the end of the session'],
+        sets: [ W(185,8,3), W(205,6,2), W(205,6,1) ] },
+      { name: 'Stationary Step-Back Lunge', tempo: '2-0-1-0', rest: '1:30', cue: ['Step BACK, not forward \u2014 return to the same spot', '16 total = 8 each leg, alternating', 'Dumbbells at the sides, chest tall', 'Do these in the shade \u2014 no reason they are at the rack'],
+        sets: [ W(30,16,3), W(30,16,2), W(30,16,2) ] },
+      { name: 'Weighted Seated Calf Raise', tempo: '2-1-2-1', rest: '1:15', cue: [...CUES.seatedCalfMachine, 'You have been hitting 18 \u2014 take 18 if it is there', 'NEVER cut this. 3 sets, every lower day'],
+        sets: [ W(90,15,2), W(90,15,2), W(90,15,1) ] },
+    ]
+  },
+  { id: 'd4-w1-b', type: 'gym', category: 'Gym', block: 'lapaz-4day-sep26', week: 1, slot: 'B', wkStart: '2026-09-22', wkEnd: '2026-09-28', title: 'Day 2 \u2014 Upper \u00b7 Bench & Pull', duration: '~75 min',
+    warmup: ['Arrive 08:30 \u2014 500 ml electrolytes before the first set', 'Walk to gym \u2014 this IS the cardio warm-up', 'Wet-wrap the bar BEFORE you touch it', 'Arm circles \u2014 15 each way', 'Dead hang from the pull-up bar \u2014 20 sec x 2', 'Empty bar bench, 45 lb \u2014 12', 'Light lateral raise, 10 lb \u2014 15'],
+    exercises: [
+      { name: 'Barbell Bench Press', tempo: '3-0-1-0', rest: '2:30', cue: [...CUES.benchPress, 'Sep 17 you hit 185 x 8 at RIR 2 \u2014 195 is earned, not a reach', '195 to 165 back-off is one swap: pull the 25, put on the 10', ...CUES.heatRule],
+        sets: [ R(45,10), R(95,8), W(145,6,3), W(185,6,2), W(195,6,1), W(165,12,1) ] },
+      { name: 'Pull-up', tempo: '2-0-1-1', rest: '2:00', cue: [...CUES.pullups, 'Sep 17 you did 4/4/4/3/3 = 18 reps', 'Anything past 18 is new territory \u2014 log it'],
+        sets: [ W('Body',4,1), W('Body',4,0), W('Body',4,0), W('Body',3,0), W('Body',3,0) ] },
+      { name: 'Standing Landmine Press', tempo: '2-0-1-0', rest: '1:45', cue: [...CUES.landminePress, '55 = the bar plus one 10 on the sleeve', 'Sep 17 you ran 45 x 15 at RIR 2 for three straight sets'],
+        sets: [ W(55,12,3), W(55,12,2), W(55,12,2), W(55,12,1) ] },
+      { name: 'Incline Reverse Fly', tempo: '2-1-2-0', rest: '1:15', cue: [...CUES.rearDeltFly, 'Up from 15 x 15 to 20 x 12'],
+        sets: [ W(20,12,3), W(20,12,2), W(20,12,1) ] },
+      { name: 'Dumbbell Biceps Curl', tempo: '2-1-2-0', rest: '1:15', cue: [...CUES.strictCurl, 'Sep 17: 25 x 12, last set with nothing left. 30 is the step'],
+        sets: [ W(30,10,3), W(30,10,2), W(30,10,1) ] },
+      { name: 'Airdyne Intervals', tempo: 'hard/easy', rest: 'built in', cue: ['1 minute HARD / 1 minute easy x 5', 'Hard = you cannot hold a sentence. Easy = spin, do not stop', '10 minutes total, then you are done', 'Log it as a separate Garmin activity', 'This is the conditioning work. Do not skip it because it is last'],
+        sets: [ W('Hard','1 min','\u2014'), W('Hard','1 min','\u2014'), W('Hard','1 min','\u2014'), W('Hard','1 min','\u2014'), W('Hard','1 min','\u2014') ] },
+    ]
+  },
+  { id: 'd4-w1-c', type: 'gym', category: 'Gym', block: 'lapaz-4day-sep26', week: 1, slot: 'C', wkStart: '2026-09-22', wkEnd: '2026-09-28', title: 'Day 3 \u2014 Lower \u00b7 Deadlift', duration: '~65 min',
+    warmup: ['Arrive 08:30 \u2014 500 ml electrolytes before the first set', 'Walk to gym \u2014 this IS the cardio warm-up', 'Wet-wrap the bar BEFORE you touch it', 'Bodyweight squat \u2014 15', 'Standing leg swings \u2014 10 each, front/back and side/side', 'Empty bar deadlift, 45 lb \u2014 10', 'Empty bar good morning, 45 lb \u2014 10'],
+    exercises: [
+      { name: 'Barbell Deadlift', tempo: '2-0-1-1', rest: '3:00', cue: [...CUES.deadlift, 'You pulled 255 x 3 on Sep 21 \u2014 this is two more reps at the same bar', 'Reset every rep. No touch-and-go at 255', 'Strip the bar before you walk away \u2014 it is the last barbell of the day', ...CUES.heatRule],
+        sets: [ R(155,6), W(195,5,3), W(255,5,1), W(225,10,1) ] },
+      { name: 'Barbell Hack Squat', tempo: '3-0-1-0', rest: '2:00', cue: [...CUES.hackSquat, 'Sled is 125 empty \u2014 the number already includes it', 'Load it once at 215 and leave it for all three'],
+        sets: [ R(175,10), W(215,10,2), W(215,10,2), W(215,10,1) ] },
+      { name: 'Leg Press', tempo: '2-0-1-0', rest: '2:00', cue: [...CUES.legPress, 'Top plate stays OFF \u2014 these numbers assume it is off', '410 is where you finished Sep 21. Same bar, more reps'],
+        sets: [ R(270,12), W(320,12,3), W(410,12,2), W(410,12,1) ] },
+      { name: 'Weighted Seated Calf Raise', tempo: '2-1-2-1', rest: '1:15', cue: [...CUES.seatedCalfMachine, 'Second calf session of the week \u2014 this is the one that matters', 'NEVER cut this. 3 sets'],
+        sets: [ W(90,15,2), W(90,15,2), W(90,15,1) ] },
+    ]
+  },
+  { id: 'd4-w1-d', type: 'gym', category: 'Gym', block: 'lapaz-4day-sep26', week: 1, slot: 'D', wkStart: '2026-09-22', wkEnd: '2026-09-28', title: 'Day 4 \u2014 Upper \u00b7 Press, Row & Arms', duration: '~75 min',
+    warmup: ['Arrive 08:30 \u2014 500 ml electrolytes before the first set', 'Walk to gym \u2014 this IS the cardio warm-up', 'Wet-wrap the bar BEFORE you touch it', 'Arm circles \u2014 15 each way', 'Dead hang from the pull-up bar \u2014 20 sec x 2', 'Empty bar overhead press, 45 lb \u2014 10', 'Light curl, 15 lb \u2014 15'],
+    exercises: [
+      { name: 'Barbell Overhead Press', tempo: '2-0-1-0', rest: '2:30', cue: [...CUES.militaryPress, 'You pressed 105 x 15 on Sep 21 \u2014 this is the first real step up', 'Squeeze the glutes, do not lean back', 'If 125 x 8 is not there, take 115 and log it', ...CUES.heatRule],
+        sets: [ R(65,10), R(95,8), W(115,8,2), W(125,8,1) ] },
+      { name: 'Barbell Row (landmine)', tempo: '2-1-1-0', rest: '2:15', cue: ['Handle on the bar end, plates on the sleeve \u2014 this replaces the row machine', 'CALIBRATED Sep 17: 135 x 10 with nothing left, and you wrote "hard at 135"', 'So 135 is the work weight, not the ceiling. The step is 155 on the last set', 'Numbers are TOTAL PLATES ON THE SLEEVE \u2014 the bar is not counted', 'Chest over the bar, pull to the hip, squeeze. No torso swing', 'Log it in Garmin as Barbell Row, NEVER as T-Bar Row'],
+        sets: [ R(90,10), W(135,10,2), W(135,10,1), W(155,8,1) ] },
+      { name: 'Dumbbell Bench Press', tempo: '3-0-1-0', rest: '2:00', cue: ['Second chest session of the week', '50s \u2014 take the 55s if they are free and log it', 'Dumbbells only. No plate hauling on this one', 'Garmin has this as Neutral-grip Dumbbell Bench Press \u2014 neutral grip is fine, easier on the shoulder'],
+        sets: [ W(50,10,3), W(50,10,2), W(50,10,1) ] },
+      { name: 'Barbell Biceps Curl', tempo: '2-0-2-0', rest: '1:30', cue: [...CUES.strictCurl, 'You hit 75 x 10 on Sep 22 \u2014 this steps to 85', 'Elbows pinned to the sides. No hips, no swing', 'Straight bar assumed. On the EZ bar the SIDE numbers are wrong \u2014 ignore them'],
+        sets: [ W(75,12,3), W(85,10,2), W(85,10,1) ] },
+      { name: 'Incline Dumbbell Biceps Curl', tempo: '2-1-2-0', rest: '1:15', cue: ['Bench at 45 degrees, arms hang BEHIND you', 'The stretch at the bottom is the whole point', 'Same 25s you used Sep 22'],
+        sets: [ W(25,10,3), W(25,10,2), W(25,10,1) ] },
+      { name: 'Dumbbell Lateral Raise', tempo: '2-0-2-0', rest: '1:15', cue: ['Lead with the elbows, stop at shoulder height', 'No swing \u2014 if you are swinging, the weight is wrong', '15 x 15 held clean on Sep 22'],
+        sets: [ W(15,15,3), W(15,15,2), W(15,15,1) ] },
+      { name: 'Airdyne Intervals', tempo: 'hard/easy', rest: 'built in', cue: ['1 minute HARD / 1 minute easy x 5', 'Same as Day 2', '10 minutes and out', 'Log it as a separate Garmin activity'],
+        sets: [ W('Hard','1 min','\u2014'), W('Hard','1 min','\u2014'), W('Hard','1 min','\u2014'), W('Hard','1 min','\u2014'), W('Hard','1 min','\u2014') ] },
+    ]
+  },
 ];
 
 const WARMUP = [
@@ -1439,7 +1504,7 @@ const KB_WARMUP = [
 // STATE
 // ============================================================
 const STORE_KEY = 'workoutPwaState_v2';
-const APP_VERSION = 'Iron Protocol v8.7';
+const APP_VERSION = 'Iron Protocol v8.8';
 
 const FRESH_STATE = () => ({ sessionIdx: 0, sessions: {}, notes: {}, metcons: {}, category: 'Gym' });
 const isStateShape = (s) => !!s && typeof s === 'object' && !Array.isArray(s);
@@ -1734,7 +1799,8 @@ const BARBELL_LIFTS = [
   'Barbell Deadlift',
   'Barbell Overhead Press',
   'Romanian Deadlift',
-];
+
+  'Barbell Biceps Curl',];
 function isBarbell(name) { return BARBELL_LIFTS.indexOf(name) >= 0; }
 
 // Every legal way to make ONE side add up to target, given what he owns.
