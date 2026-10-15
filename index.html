@@ -84,6 +84,7 @@ button.ghost { background: var(--surface-2); border-color: var(--border); color:
 .set-row.completed.deviated { opacity: 0.85; }
 .set-label { font-weight: 800; font-variant-numeric: tabular-nums; font-size: 19px; color: var(--text-muted); }
 .set-cell { font-variant-numeric: tabular-nums; text-align: left; font-weight: 700; color: var(--text); }
+.kg-sub { display:block; font-size: 14px; font-weight: 600; color: var(--text-dim); }
 .weight-big { font-size: 26px; font-weight: 800; font-variant-numeric: tabular-nums; }
 .tap-cell { text-align: right; color: var(--text-muted); font-size: 26px; line-height: 1; font-weight: 700; }
 .set-row.completed .tap-cell { color: var(--done); }
@@ -1550,6 +1551,219 @@ const SESSIONS = [
         sets: [ W('Easy','20 min','—') ] },
     ]
   },
+  // ---------- BOGOTÁ PLAN A · dumbbells + bench · lb big, kg small · v9.0 ----------
+  { id: 'bpa-w1-a', type: 'gym', category: 'Gym', block: 'bogota-plan-a', week: 1, slot: 'A', wkStart: '2026-10-12', wkEnd: '2026-10-18', title: "Day 1 — Legs · Push · Pull", duration: "~60 min",
+    warmup: ["500 ml electrolytes before the first set","Foam roll ~5 min: quads, glutes, hips","Bodyweight squat — 12","Leg swings — 10 each way"],
+    exercises: [
+      { name: "Bulgarian Split Squat", tempo: "3-0-1-0", rest: "2:30", cue: ["Back foot on the bench, DB in each hand","Last set: drop to 33 lb · 15 kg, go to near failure","Per-leg reps"],
+        sets: [ W("66 lb · 30 kg","10–12/leg",2), W("66 lb · 30 kg","10–12/leg",2), W("33 lb · 15 kg","to near failure",0) ] },
+      { name: "DB Bench Press", tempo: "2-0-1-0", rest: "2:00", cue: ["Flat bench, DB each hand","Stop 1–2 reps before failure"],
+        sets: [ W("66 lb · 30 kg","10–14",2), W("66 lb · 30 kg","10–14",2), W("66 lb · 30 kg","10–14",2) ] },
+      { name: "Single-Leg RDL", tempo: "3-0-1-0", rest: "2:00", cue: ["One DB, opposite hand to the working leg","Hinge, soft knee, 3 s down"],
+        sets: [ W("66 lb · 30 kg","10/leg",2), W("66 lb · 30 kg","10/leg",2), W("66 lb · 30 kg","10/leg",2) ] },
+      { name: "One-Arm DB Row", tempo: "1-1-1-0", rest: "2:00", cue: ["Knee and hand on the flat bench","Set 1 is a TEST at 121 lb · 55 kg — stop if back or grip complains","Then 3 × 12 each arm at 66 lb · 30 kg"],
+        sets: [ W("121 lb · 55 kg","~6",1), W("66 lb · 30 kg","12/arm",2), W("66 lb · 30 kg","12/arm",2), W("66 lb · 30 kg","12/arm",2) ] },
+      { name: "Incline DB Curl", tempo: "2-0-1-0", rest: "1:30", cue: ["Bench at ~45°, arms hang back","York pair: 5 + 2.5 + 1.25 kg plates each (handle weight estimated)"],
+        sets: [ W("22 lb · 10 kg","10–12",2), W("22 lb · 10 kg","10–12",2), W("22 lb · 10 kg","10–12",2) ] },
+      { name: "Seated Calf Raise", tempo: "2-2-1-0", rest: "1:00", cue: ["On bench, 30 kg DB + 10 kg plate across knees","If it slides, use the 30 kg DB alone","2 s pause at top"],
+        sets: [ W("88 lb · 40 kg","15",1), W("88 lb · 40 kg","15",1), W("88 lb · 40 kg","15",1) ] },
+    ]
+  },
+  { id: 'bpa-w1-b', type: 'gym', category: 'Gym', block: 'bogota-plan-a', week: 1, slot: 'B', wkStart: '2026-10-12', wkEnd: '2026-10-18', title: "Day 2 — Hinge · Back · Shoulders", duration: "~60 min",
+    warmup: ["500 ml electrolytes before the first set","Foam roll ~5 min: upper back, lats, hips","Hip hinge, no weight — 10","Arm circles — 10 each way"],
+    exercises: [
+      { name: "DB Romanian Deadlift", tempo: "3-0-1-0", rest: "2:00", cue: ["DB each hand, slide down the thighs","3 s down, flat back"],
+        sets: [ W("66 lb · 30 kg","12",2), W("66 lb · 30 kg","12",2), W("66 lb · 30 kg","12",2) ] },
+      { name: "Chest-Supported Incline Row", tempo: "2-1-1-0", rest: "1:30", cue: ["Lie face down on the bench, back at ~30–45°","Fallback: one-arm row"],
+        sets: [ W("66 lb · 30 kg","10–12",2), W("66 lb · 30 kg","10–12",2), W("66 lb · 30 kg","10–12",2), W("66 lb · 30 kg","10–12",2) ] },
+      { name: "Seated DB Shoulder Press", tempo: "2-0-1-0", rest: "2:00", cue: ["Bench upright, DB each hand","Last set may drop to 33 lb · 15 kg"],
+        sets: [ W("66 lb · 30 kg","8–10",2), W("66 lb · 30 kg","8–10",2), W("66 lb · 30 kg","8–10",1) ] },
+      { name: "DB Pullover", tempo: "2-1-1-0", rest: "1:30", cue: ["One DB held with both hands, lying across the bench","Lat substitute"],
+        sets: [ W("66 lb · 30 kg","12",2), W("66 lb · 30 kg","12",2), W("66 lb · 30 kg","12",2) ] },
+      { name: "Heels-Elevated Goblet Squat", tempo: "3-2-1-0", rest: "1:30", cue: ["Heels on a plate, DB at chest","2 s pause at the bottom"],
+        sets: [ W("66 lb · 30 kg","12–15",2), W("66 lb · 30 kg","12–15",2), W("66 lb · 30 kg","12–15",2) ] },
+      { name: "Hammer Curl", tempo: "2-0-1-0", rest: "1:30", cue: ["Neutral grip, no swing","York pair: 5 + 2.5 + 1.25 kg plates each (handle weight estimated)"],
+        sets: [ W("22 lb · 10 kg","10–12",2), W("22 lb · 10 kg","10–12",2), W("22 lb · 10 kg","10–12",2) ] },
+    ]
+  },
+  { id: 'bpa-w1-c', type: 'gym', category: 'Gym', block: 'bogota-plan-a', week: 1, slot: 'C', wkStart: '2026-10-12', wkEnd: '2026-10-18', title: "Day 3 — Legs · Push · Glutes", duration: "~65 min",
+    warmup: ["500 ml electrolytes before the first set","Foam roll ~5 min: quads, glutes, calves","Bodyweight step-up — 8 each leg","Glute bridge — 12"],
+    exercises: [
+      { name: "DB Step-Up", tempo: "2-0-1-0", rest: "2:00", cue: ["Bench against the wall","Drive through the front heel, DB each hand"],
+        sets: [ W("66 lb · 30 kg","10/leg",2), W("66 lb · 30 kg","10/leg",2), W("66 lb · 30 kg","10/leg",2) ] },
+      { name: "Incline DB Press", tempo: "2-0-1-0", rest: "2:00", cue: ["Bench at ~30°, DB each hand"],
+        sets: [ W("66 lb · 30 kg","8–12",2), W("66 lb · 30 kg","8–12",2), W("66 lb · 30 kg","8–12",2) ] },
+      { name: "Hip Thrust", tempo: "2-2-1-0", rest: "2:00", cue: ["Upper back on the bench edge","One 121 lb · 55 kg DB across the hips","2 s squeeze at the top"],
+        sets: [ W("121 lb · 55 kg","12",2), W("121 lb · 55 kg","12",2), W("121 lb · 55 kg","12",2) ] },
+      { name: "One-Arm DB Row", tempo: "1-1-1-0", rest: "2:00", cue: ["Knee and hand on the flat bench","Use 121 lb · 55 kg if the Day 1 test went well"],
+        sets: [ W("66 lb · 30 kg","8–10/arm",2), W("66 lb · 30 kg","8–10/arm",2), W("66 lb · 30 kg","8–10/arm",2) ] },
+      { name: "Lateral Raise", tempo: "2-0-1-0", rest: "1:00", cue: ["Slight elbow bend, no swing","York pair: 2.5 + 1.25 + 0.5 kg plates each (handle weight estimated)"],
+        sets: [ W("13 lb · 6 kg","15",1), W("13 lb · 6 kg","15",1), W("13 lb · 6 kg","15",1) ] },
+      { name: "Strict DB Curl", tempo: "2-0-1-0", rest: "1:30", cue: ["Standing, no swing","York pair: 5 + 2.5 + 1.25 kg plates each (handle weight estimated)"],
+        sets: [ W("22 lb · 10 kg","10–12",2), W("22 lb · 10 kg","10–12",2), W("22 lb · 10 kg","10–12",2) ] },
+      { name: "Seated Calf Raise", tempo: "2-2-1-0", rest: "1:00", cue: ["30 kg DB + 10 kg plate across knees","2 s pause at top"],
+        sets: [ W("88 lb · 40 kg","15",1), W("88 lb · 40 kg","15",1), W("88 lb · 40 kg","15",1) ] },
+    ]
+  },
+  { id: 'bpa-w2-a', type: 'gym', category: 'Gym', block: 'bogota-plan-a', week: 2, slot: 'A', wkStart: '2026-10-19', wkEnd: '2026-10-25', title: "Day 1 — Legs · Push · Pull", duration: "~60 min",
+    warmup: ["500 ml electrolytes before the first set","Foam roll ~5 min: quads, glutes, hips","Bodyweight squat — 12","Leg swings — 10 each way"],
+    exercises: [
+      { name: "Bulgarian Split Squat", tempo: "3-0-1-0", rest: "2:30", cue: ["Back foot on the bench, DB in each hand","Last set: drop to 33 lb · 15 kg, go to near failure","Per-leg reps"],
+        sets: [ W("66 lb · 30 kg","10–12/leg",2), W("66 lb · 30 kg","10–12/leg",2), W("33 lb · 15 kg","to near failure",0) ] },
+      { name: "DB Bench Press", tempo: "2-0-1-0", rest: "2:00", cue: ["Flat bench, DB each hand","Stop 1–2 reps before failure"],
+        sets: [ W("66 lb · 30 kg","10–14",2), W("66 lb · 30 kg","10–14",2), W("66 lb · 30 kg","10–14",2) ] },
+      { name: "Single-Leg RDL", tempo: "3-0-1-0", rest: "2:00", cue: ["One DB, opposite hand to the working leg","Hinge, soft knee, 3 s down"],
+        sets: [ W("66 lb · 30 kg","10/leg",2), W("66 lb · 30 kg","10/leg",2), W("66 lb · 30 kg","10/leg",2) ] },
+      { name: "One-Arm DB Row", tempo: "1-1-1-0", rest: "2:00", cue: ["Knee and hand on the flat bench","Set 1 is a TEST at 121 lb · 55 kg — stop if back or grip complains","Then 3 × 12 each arm at 66 lb · 30 kg"],
+        sets: [ W("121 lb · 55 kg","~6",1), W("66 lb · 30 kg","12/arm",2), W("66 lb · 30 kg","12/arm",2), W("66 lb · 30 kg","12/arm",2) ] },
+      { name: "Incline DB Curl", tempo: "2-0-1-0", rest: "1:30", cue: ["Bench at ~45°, arms hang back","York pair: 5 + 2.5 + 1.25 kg plates each (handle weight estimated)"],
+        sets: [ W("22 lb · 10 kg","10–12",2), W("22 lb · 10 kg","10–12",2), W("22 lb · 10 kg","10–12",2) ] },
+      { name: "Seated Calf Raise", tempo: "2-2-1-0", rest: "1:00", cue: ["On bench, 30 kg DB + 10 kg plate across knees","If it slides, use the 30 kg DB alone","2 s pause at top"],
+        sets: [ W("88 lb · 40 kg","15",1), W("88 lb · 40 kg","15",1), W("88 lb · 40 kg","15",1) ] },
+    ]
+  },
+  { id: 'bpa-w2-b', type: 'gym', category: 'Gym', block: 'bogota-plan-a', week: 2, slot: 'B', wkStart: '2026-10-19', wkEnd: '2026-10-25', title: "Day 2 — Hinge · Back · Shoulders", duration: "~60 min",
+    warmup: ["500 ml electrolytes before the first set","Foam roll ~5 min: upper back, lats, hips","Hip hinge, no weight — 10","Arm circles — 10 each way"],
+    exercises: [
+      { name: "DB Romanian Deadlift", tempo: "3-0-1-0", rest: "2:00", cue: ["DB each hand, slide down the thighs","3 s down, flat back"],
+        sets: [ W("66 lb · 30 kg","12",2), W("66 lb · 30 kg","12",2), W("66 lb · 30 kg","12",2) ] },
+      { name: "Chest-Supported Incline Row", tempo: "2-1-1-0", rest: "1:30", cue: ["Lie face down on the bench, back at ~30–45°","Fallback: one-arm row"],
+        sets: [ W("66 lb · 30 kg","10–12",2), W("66 lb · 30 kg","10–12",2), W("66 lb · 30 kg","10–12",2), W("66 lb · 30 kg","10–12",2) ] },
+      { name: "Seated DB Shoulder Press", tempo: "2-0-1-0", rest: "2:00", cue: ["Bench upright, DB each hand","Last set may drop to 33 lb · 15 kg"],
+        sets: [ W("66 lb · 30 kg","8–10",2), W("66 lb · 30 kg","8–10",2), W("66 lb · 30 kg","8–10",1) ] },
+      { name: "DB Pullover", tempo: "2-1-1-0", rest: "1:30", cue: ["One DB held with both hands, lying across the bench","Lat substitute"],
+        sets: [ W("66 lb · 30 kg","12",2), W("66 lb · 30 kg","12",2), W("66 lb · 30 kg","12",2) ] },
+      { name: "Heels-Elevated Goblet Squat", tempo: "3-2-1-0", rest: "1:30", cue: ["Heels on a plate, DB at chest","2 s pause at the bottom"],
+        sets: [ W("66 lb · 30 kg","12–15",2), W("66 lb · 30 kg","12–15",2), W("66 lb · 30 kg","12–15",2) ] },
+      { name: "Hammer Curl", tempo: "2-0-1-0", rest: "1:30", cue: ["Neutral grip, no swing","York pair: 5 + 2.5 + 1.25 kg plates each (handle weight estimated)"],
+        sets: [ W("22 lb · 10 kg","10–12",2), W("22 lb · 10 kg","10–12",2), W("22 lb · 10 kg","10–12",2) ] },
+    ]
+  },
+  { id: 'bpa-w2-c', type: 'gym', category: 'Gym', block: 'bogota-plan-a', week: 2, slot: 'C', wkStart: '2026-10-19', wkEnd: '2026-10-25', title: "Day 3 — Legs · Push · Glutes", duration: "~65 min",
+    warmup: ["500 ml electrolytes before the first set","Foam roll ~5 min: quads, glutes, calves","Bodyweight step-up — 8 each leg","Glute bridge — 12"],
+    exercises: [
+      { name: "DB Step-Up", tempo: "2-0-1-0", rest: "2:00", cue: ["Bench against the wall","Drive through the front heel, DB each hand"],
+        sets: [ W("66 lb · 30 kg","10/leg",2), W("66 lb · 30 kg","10/leg",2), W("66 lb · 30 kg","10/leg",2) ] },
+      { name: "Incline DB Press", tempo: "2-0-1-0", rest: "2:00", cue: ["Bench at ~30°, DB each hand"],
+        sets: [ W("66 lb · 30 kg","8–12",2), W("66 lb · 30 kg","8–12",2), W("66 lb · 30 kg","8–12",2) ] },
+      { name: "Hip Thrust", tempo: "2-2-1-0", rest: "2:00", cue: ["Upper back on the bench edge","One 121 lb · 55 kg DB across the hips","2 s squeeze at the top"],
+        sets: [ W("121 lb · 55 kg","12",2), W("121 lb · 55 kg","12",2), W("121 lb · 55 kg","12",2) ] },
+      { name: "One-Arm DB Row", tempo: "1-1-1-0", rest: "2:00", cue: ["Knee and hand on the flat bench","Use 121 lb · 55 kg if the Day 1 test went well"],
+        sets: [ W("66 lb · 30 kg","8–10/arm",2), W("66 lb · 30 kg","8–10/arm",2), W("66 lb · 30 kg","8–10/arm",2) ] },
+      { name: "Lateral Raise", tempo: "2-0-1-0", rest: "1:00", cue: ["Slight elbow bend, no swing","York pair: 2.5 + 1.25 + 0.5 kg plates each (handle weight estimated)"],
+        sets: [ W("13 lb · 6 kg","15",1), W("13 lb · 6 kg","15",1), W("13 lb · 6 kg","15",1) ] },
+      { name: "Strict DB Curl", tempo: "2-0-1-0", rest: "1:30", cue: ["Standing, no swing","York pair: 5 + 2.5 + 1.25 kg plates each (handle weight estimated)"],
+        sets: [ W("22 lb · 10 kg","10–12",2), W("22 lb · 10 kg","10–12",2), W("22 lb · 10 kg","10–12",2) ] },
+      { name: "Seated Calf Raise", tempo: "2-2-1-0", rest: "1:00", cue: ["30 kg DB + 10 kg plate across knees","2 s pause at top"],
+        sets: [ W("88 lb · 40 kg","15",1), W("88 lb · 40 kg","15",1), W("88 lb · 40 kg","15",1) ] },
+    ]
+  },
+  { id: 'bpa-w3-a', type: 'gym', category: 'Gym', block: 'bogota-plan-a', week: 3, slot: 'A', wkStart: '2026-10-26', wkEnd: '2026-11-01', title: "Day 1 — Legs · Push · Pull", duration: "~60 min",
+    warmup: ["500 ml electrolytes before the first set","Foam roll ~5 min: quads, glutes, hips","Bodyweight squat — 12","Leg swings — 10 each way"],
+    exercises: [
+      { name: "Bulgarian Split Squat", tempo: "3-0-1-0", rest: "2:30", cue: ["Back foot on the bench, DB in each hand","Last set: drop to 33 lb · 15 kg, go to near failure","Per-leg reps"],
+        sets: [ W("66 lb · 30 kg","10–12/leg",2), W("66 lb · 30 kg","10–12/leg",2), W("33 lb · 15 kg","to near failure",0) ] },
+      { name: "DB Bench Press", tempo: "2-0-1-0", rest: "2:00", cue: ["Flat bench, DB each hand","Stop 1–2 reps before failure"],
+        sets: [ W("66 lb · 30 kg","10–14",2), W("66 lb · 30 kg","10–14",2), W("66 lb · 30 kg","10–14",2) ] },
+      { name: "Single-Leg RDL", tempo: "3-0-1-0", rest: "2:00", cue: ["One DB, opposite hand to the working leg","Hinge, soft knee, 3 s down"],
+        sets: [ W("66 lb · 30 kg","10/leg",2), W("66 lb · 30 kg","10/leg",2), W("66 lb · 30 kg","10/leg",2) ] },
+      { name: "One-Arm DB Row", tempo: "1-1-1-0", rest: "2:00", cue: ["Knee and hand on the flat bench","Set 1 is a TEST at 121 lb · 55 kg — stop if back or grip complains","Then 3 × 12 each arm at 66 lb · 30 kg"],
+        sets: [ W("121 lb · 55 kg","~6",1), W("66 lb · 30 kg","12/arm",2), W("66 lb · 30 kg","12/arm",2), W("66 lb · 30 kg","12/arm",2) ] },
+      { name: "Incline DB Curl", tempo: "2-0-1-0", rest: "1:30", cue: ["Bench at ~45°, arms hang back","York pair: 5 + 2.5 + 1.25 kg plates each (handle weight estimated)"],
+        sets: [ W("22 lb · 10 kg","10–12",2), W("22 lb · 10 kg","10–12",2), W("22 lb · 10 kg","10–12",2) ] },
+      { name: "Seated Calf Raise", tempo: "2-2-1-0", rest: "1:00", cue: ["On bench, 30 kg DB + 10 kg plate across knees","If it slides, use the 30 kg DB alone","2 s pause at top"],
+        sets: [ W("88 lb · 40 kg","15",1), W("88 lb · 40 kg","15",1), W("88 lb · 40 kg","15",1) ] },
+    ]
+  },
+  { id: 'bpa-w3-b', type: 'gym', category: 'Gym', block: 'bogota-plan-a', week: 3, slot: 'B', wkStart: '2026-10-26', wkEnd: '2026-11-01', title: "Day 2 — Hinge · Back · Shoulders", duration: "~60 min",
+    warmup: ["500 ml electrolytes before the first set","Foam roll ~5 min: upper back, lats, hips","Hip hinge, no weight — 10","Arm circles — 10 each way"],
+    exercises: [
+      { name: "DB Romanian Deadlift", tempo: "3-0-1-0", rest: "2:00", cue: ["DB each hand, slide down the thighs","3 s down, flat back"],
+        sets: [ W("66 lb · 30 kg","12",2), W("66 lb · 30 kg","12",2), W("66 lb · 30 kg","12",2) ] },
+      { name: "Chest-Supported Incline Row", tempo: "2-1-1-0", rest: "1:30", cue: ["Lie face down on the bench, back at ~30–45°","Fallback: one-arm row"],
+        sets: [ W("66 lb · 30 kg","10–12",2), W("66 lb · 30 kg","10–12",2), W("66 lb · 30 kg","10–12",2), W("66 lb · 30 kg","10–12",2) ] },
+      { name: "Seated DB Shoulder Press", tempo: "2-0-1-0", rest: "2:00", cue: ["Bench upright, DB each hand","Last set may drop to 33 lb · 15 kg"],
+        sets: [ W("66 lb · 30 kg","8–10",2), W("66 lb · 30 kg","8–10",2), W("66 lb · 30 kg","8–10",1) ] },
+      { name: "DB Pullover", tempo: "2-1-1-0", rest: "1:30", cue: ["One DB held with both hands, lying across the bench","Lat substitute"],
+        sets: [ W("66 lb · 30 kg","12",2), W("66 lb · 30 kg","12",2), W("66 lb · 30 kg","12",2) ] },
+      { name: "Heels-Elevated Goblet Squat", tempo: "3-2-1-0", rest: "1:30", cue: ["Heels on a plate, DB at chest","2 s pause at the bottom"],
+        sets: [ W("66 lb · 30 kg","12–15",2), W("66 lb · 30 kg","12–15",2), W("66 lb · 30 kg","12–15",2) ] },
+      { name: "Hammer Curl", tempo: "2-0-1-0", rest: "1:30", cue: ["Neutral grip, no swing","York pair: 5 + 2.5 + 1.25 kg plates each (handle weight estimated)"],
+        sets: [ W("22 lb · 10 kg","10–12",2), W("22 lb · 10 kg","10–12",2), W("22 lb · 10 kg","10–12",2) ] },
+    ]
+  },
+  { id: 'bpa-w3-c', type: 'gym', category: 'Gym', block: 'bogota-plan-a', week: 3, slot: 'C', wkStart: '2026-10-26', wkEnd: '2026-11-01', title: "Day 3 — Legs · Push · Glutes", duration: "~65 min",
+    warmup: ["500 ml electrolytes before the first set","Foam roll ~5 min: quads, glutes, calves","Bodyweight step-up — 8 each leg","Glute bridge — 12"],
+    exercises: [
+      { name: "DB Step-Up", tempo: "2-0-1-0", rest: "2:00", cue: ["Bench against the wall","Drive through the front heel, DB each hand"],
+        sets: [ W("66 lb · 30 kg","10/leg",2), W("66 lb · 30 kg","10/leg",2), W("66 lb · 30 kg","10/leg",2) ] },
+      { name: "Incline DB Press", tempo: "2-0-1-0", rest: "2:00", cue: ["Bench at ~30°, DB each hand"],
+        sets: [ W("66 lb · 30 kg","8–12",2), W("66 lb · 30 kg","8–12",2), W("66 lb · 30 kg","8–12",2) ] },
+      { name: "Hip Thrust", tempo: "2-2-1-0", rest: "2:00", cue: ["Upper back on the bench edge","One 121 lb · 55 kg DB across the hips","2 s squeeze at the top"],
+        sets: [ W("121 lb · 55 kg","12",2), W("121 lb · 55 kg","12",2), W("121 lb · 55 kg","12",2) ] },
+      { name: "One-Arm DB Row", tempo: "1-1-1-0", rest: "2:00", cue: ["Knee and hand on the flat bench","Use 121 lb · 55 kg if the Day 1 test went well"],
+        sets: [ W("66 lb · 30 kg","8–10/arm",2), W("66 lb · 30 kg","8–10/arm",2), W("66 lb · 30 kg","8–10/arm",2) ] },
+      { name: "Lateral Raise", tempo: "2-0-1-0", rest: "1:00", cue: ["Slight elbow bend, no swing","York pair: 2.5 + 1.25 + 0.5 kg plates each (handle weight estimated)"],
+        sets: [ W("13 lb · 6 kg","15",1), W("13 lb · 6 kg","15",1), W("13 lb · 6 kg","15",1) ] },
+      { name: "Strict DB Curl", tempo: "2-0-1-0", rest: "1:30", cue: ["Standing, no swing","York pair: 5 + 2.5 + 1.25 kg plates each (handle weight estimated)"],
+        sets: [ W("22 lb · 10 kg","10–12",2), W("22 lb · 10 kg","10–12",2), W("22 lb · 10 kg","10–12",2) ] },
+      { name: "Seated Calf Raise", tempo: "2-2-1-0", rest: "1:00", cue: ["30 kg DB + 10 kg plate across knees","2 s pause at top"],
+        sets: [ W("88 lb · 40 kg","15",1), W("88 lb · 40 kg","15",1), W("88 lb · 40 kg","15",1) ] },
+    ]
+  },
+  { id: 'bpa-w4-a', type: 'gym', category: 'Gym', block: 'bogota-plan-a', week: 4, slot: 'A', wkStart: '2026-11-02', wkEnd: '2026-11-08', title: "Day 1 — Legs · Push · Pull", duration: "~60 min",
+    warmup: ["500 ml electrolytes before the first set","Foam roll ~5 min: quads, glutes, hips","Bodyweight squat — 12","Leg swings — 10 each way"],
+    exercises: [
+      { name: "Bulgarian Split Squat", tempo: "3-0-1-0", rest: "2:30", cue: ["Back foot on the bench, DB in each hand","Last set: drop to 33 lb · 15 kg, go to near failure","Per-leg reps"],
+        sets: [ W("66 lb · 30 kg","10–12/leg",2), W("66 lb · 30 kg","10–12/leg",2), W("33 lb · 15 kg","to near failure",0) ] },
+      { name: "DB Bench Press", tempo: "2-0-1-0", rest: "2:00", cue: ["Flat bench, DB each hand","Stop 1–2 reps before failure"],
+        sets: [ W("66 lb · 30 kg","10–14",2), W("66 lb · 30 kg","10–14",2), W("66 lb · 30 kg","10–14",2) ] },
+      { name: "Single-Leg RDL", tempo: "3-0-1-0", rest: "2:00", cue: ["One DB, opposite hand to the working leg","Hinge, soft knee, 3 s down"],
+        sets: [ W("66 lb · 30 kg","10/leg",2), W("66 lb · 30 kg","10/leg",2), W("66 lb · 30 kg","10/leg",2) ] },
+      { name: "One-Arm DB Row", tempo: "1-1-1-0", rest: "2:00", cue: ["Knee and hand on the flat bench","Set 1 is a TEST at 121 lb · 55 kg — stop if back or grip complains","Then 3 × 12 each arm at 66 lb · 30 kg"],
+        sets: [ W("121 lb · 55 kg","~6",1), W("66 lb · 30 kg","12/arm",2), W("66 lb · 30 kg","12/arm",2), W("66 lb · 30 kg","12/arm",2) ] },
+      { name: "Incline DB Curl", tempo: "2-0-1-0", rest: "1:30", cue: ["Bench at ~45°, arms hang back","York pair: 5 + 2.5 + 1.25 kg plates each (handle weight estimated)"],
+        sets: [ W("22 lb · 10 kg","10–12",2), W("22 lb · 10 kg","10–12",2), W("22 lb · 10 kg","10–12",2) ] },
+      { name: "Seated Calf Raise", tempo: "2-2-1-0", rest: "1:00", cue: ["On bench, 30 kg DB + 10 kg plate across knees","If it slides, use the 30 kg DB alone","2 s pause at top"],
+        sets: [ W("88 lb · 40 kg","15",1), W("88 lb · 40 kg","15",1), W("88 lb · 40 kg","15",1) ] },
+    ]
+  },
+  { id: 'bpa-w4-b', type: 'gym', category: 'Gym', block: 'bogota-plan-a', week: 4, slot: 'B', wkStart: '2026-11-02', wkEnd: '2026-11-08', title: "Day 2 — Hinge · Back · Shoulders", duration: "~60 min",
+    warmup: ["500 ml electrolytes before the first set","Foam roll ~5 min: upper back, lats, hips","Hip hinge, no weight — 10","Arm circles — 10 each way"],
+    exercises: [
+      { name: "DB Romanian Deadlift", tempo: "3-0-1-0", rest: "2:00", cue: ["DB each hand, slide down the thighs","3 s down, flat back"],
+        sets: [ W("66 lb · 30 kg","12",2), W("66 lb · 30 kg","12",2), W("66 lb · 30 kg","12",2) ] },
+      { name: "Chest-Supported Incline Row", tempo: "2-1-1-0", rest: "1:30", cue: ["Lie face down on the bench, back at ~30–45°","Fallback: one-arm row"],
+        sets: [ W("66 lb · 30 kg","10–12",2), W("66 lb · 30 kg","10–12",2), W("66 lb · 30 kg","10–12",2), W("66 lb · 30 kg","10–12",2) ] },
+      { name: "Seated DB Shoulder Press", tempo: "2-0-1-0", rest: "2:00", cue: ["Bench upright, DB each hand","Last set may drop to 33 lb · 15 kg"],
+        sets: [ W("66 lb · 30 kg","8–10",2), W("66 lb · 30 kg","8–10",2), W("66 lb · 30 kg","8–10",1) ] },
+      { name: "DB Pullover", tempo: "2-1-1-0", rest: "1:30", cue: ["One DB held with both hands, lying across the bench","Lat substitute"],
+        sets: [ W("66 lb · 30 kg","12",2), W("66 lb · 30 kg","12",2), W("66 lb · 30 kg","12",2) ] },
+      { name: "Heels-Elevated Goblet Squat", tempo: "3-2-1-0", rest: "1:30", cue: ["Heels on a plate, DB at chest","2 s pause at the bottom"],
+        sets: [ W("66 lb · 30 kg","12–15",2), W("66 lb · 30 kg","12–15",2), W("66 lb · 30 kg","12–15",2) ] },
+      { name: "Hammer Curl", tempo: "2-0-1-0", rest: "1:30", cue: ["Neutral grip, no swing","York pair: 5 + 2.5 + 1.25 kg plates each (handle weight estimated)"],
+        sets: [ W("22 lb · 10 kg","10–12",2), W("22 lb · 10 kg","10–12",2), W("22 lb · 10 kg","10–12",2) ] },
+    ]
+  },
+  { id: 'bpa-w4-c', type: 'gym', category: 'Gym', block: 'bogota-plan-a', week: 4, slot: 'C', wkStart: '2026-11-02', wkEnd: '2026-11-08', title: "Day 3 — Legs · Push · Glutes", duration: "~65 min",
+    warmup: ["500 ml electrolytes before the first set","Foam roll ~5 min: quads, glutes, calves","Bodyweight step-up — 8 each leg","Glute bridge — 12"],
+    exercises: [
+      { name: "DB Step-Up", tempo: "2-0-1-0", rest: "2:00", cue: ["Bench against the wall","Drive through the front heel, DB each hand"],
+        sets: [ W("66 lb · 30 kg","10/leg",2), W("66 lb · 30 kg","10/leg",2), W("66 lb · 30 kg","10/leg",2) ] },
+      { name: "Incline DB Press", tempo: "2-0-1-0", rest: "2:00", cue: ["Bench at ~30°, DB each hand"],
+        sets: [ W("66 lb · 30 kg","8–12",2), W("66 lb · 30 kg","8–12",2), W("66 lb · 30 kg","8–12",2) ] },
+      { name: "Hip Thrust", tempo: "2-2-1-0", rest: "2:00", cue: ["Upper back on the bench edge","One 121 lb · 55 kg DB across the hips","2 s squeeze at the top"],
+        sets: [ W("121 lb · 55 kg","12",2), W("121 lb · 55 kg","12",2), W("121 lb · 55 kg","12",2) ] },
+      { name: "One-Arm DB Row", tempo: "1-1-1-0", rest: "2:00", cue: ["Knee and hand on the flat bench","Use 121 lb · 55 kg if the Day 1 test went well"],
+        sets: [ W("66 lb · 30 kg","8–10/arm",2), W("66 lb · 30 kg","8–10/arm",2), W("66 lb · 30 kg","8–10/arm",2) ] },
+      { name: "Lateral Raise", tempo: "2-0-1-0", rest: "1:00", cue: ["Slight elbow bend, no swing","York pair: 2.5 + 1.25 + 0.5 kg plates each (handle weight estimated)"],
+        sets: [ W("13 lb · 6 kg","15",1), W("13 lb · 6 kg","15",1), W("13 lb · 6 kg","15",1) ] },
+      { name: "Strict DB Curl", tempo: "2-0-1-0", rest: "1:30", cue: ["Standing, no swing","York pair: 5 + 2.5 + 1.25 kg plates each (handle weight estimated)"],
+        sets: [ W("22 lb · 10 kg","10–12",2), W("22 lb · 10 kg","10–12",2), W("22 lb · 10 kg","10–12",2) ] },
+      { name: "Seated Calf Raise", tempo: "2-2-1-0", rest: "1:00", cue: ["30 kg DB + 10 kg plate across knees","2 s pause at top"],
+        sets: [ W("88 lb · 40 kg","15",1), W("88 lb · 40 kg","15",1), W("88 lb · 40 kg","15",1) ] },
+    ]
+  },
 ];
 
 const WARMUP = [
@@ -1569,7 +1783,7 @@ const KB_WARMUP = [
 // STATE
 // ============================================================
 const STORE_KEY = 'workoutPwaState_v2';
-const APP_VERSION = 'Iron Protocol v8.9';
+const APP_VERSION = 'Iron Protocol v9.0';
 
 const FRESH_STATE = () => ({ sessionIdx: 0, sessions: {}, notes: {}, metcons: {}, category: 'Gym' });
 const isStateShape = (s) => !!s && typeof s === 'object' && !Array.isArray(s);
@@ -2782,7 +2996,7 @@ function renderStrength(ses, app) {
         row.innerHTML = `
           <span class="set-label">${setLabel}</span>
           <span class="set-cell weight-cell">
-            <span class="weight-big">${wText}</span>
+            <span class="weight-big">${String(wText).split(' · ')[0]}</span>${String(wText).includes(' · ') ? `<span class="kg-sub">${String(wText).split(' · ')[1]}</span>` : ''}
             ${rowPI ? `<span class="plate-line"><span class="ps">side</span> ${rowPI.text}</span>` : ''}
             ${rowPI && rowPI.delta && sIdx === currentSetIdx ? `<span class="plate-delta">${rowPI.delta}</span>` : ''}
           </span>
