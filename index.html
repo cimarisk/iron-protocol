@@ -167,6 +167,8 @@ body.resting { padding-bottom: 210px; }
 .swap-chips { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
 .swap-chip { background: var(--surface-2); border: 1px solid var(--border); border-radius: 20px; padding: 7px 16px; font-size: 13px; color: var(--text); cursor: pointer; font-family: inherit; }
 .swap-chip:active { opacity: 0.7; }
+.note-conv { margin: 4px 2px 0; font-size: 13px; font-weight: 600; color: var(--text-dim); }
+.note-conv:empty { display: none; }
 .notes-field:focus { border-color: var(--accent); background: var(--surface-3); }
 .complete-banner { background: rgba(91, 212, 156, 0.12); border: 1px solid var(--done); color: var(--done); padding: 14px; text-align: center; border-radius: 10px; margin: 8px 0; font-weight: 500; font-size: 14px; }
 .session-list { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
@@ -360,6 +362,18 @@ const CUES = {
   heatRule: ['Rest cap: 2:30 compounds / 1:30 accessories', 'Wet-wrap the NEXT implement while you rest', 'Need 3:00+ twice in a row? End the session and log it'],
 };
 
+// Real loads at the Bogota gym, in lb. York pairs (same plates on each end, handle ~1.5 kg est.), hex 15/30 kg, 55 lb bumpers.
+const YORK_LOADS = [5.5, 8.8, 11, 14.3, 16.5, 19.8, 22, 25.4, 27.6, 30.9, 33.1, 36.4, 38.6, 41.9, 44.1];
+const HEX_LOADS = [33, 66];
+const BUMPER_LOADS = [55, 110];
+const GYM_LOADS_BOG = [5.5, 8.8, 11, 14.3, 16.5, 19.8, 22, 25.4, 27.6, 30.9, 33, 36.4, 38.6, 41.9, 44.1, 55, 66, 110];
+const kgOf = (v) => { const n = parseFloat(v); return (isFinite(n) && n > 0) ? (n / 2.20462).toFixed(1) + ' kg' : ''; };
+const unitConv = (t) => {
+  const out = [];
+  String(t || '').replace(/(\d+(?:[.,]\d+)?)\s*(kg|kgs|kilos?)\b/gi, (m, n) => { const v = parseFloat(n.replace(',', '.')); out.push(v + ' kg = ' + (v * 2.20462).toFixed(1) + ' lb'); return m; });
+  String(t || '').replace(/(\d+(?:[.,]\d+)?)\s*(lb|lbs|pounds?)\b/gi, (m, n) => { const v = parseFloat(n.replace(',', '.')); out.push(v + ' lb = ' + (v / 2.20462).toFixed(1) + ' kg'); return m; });
+  return out.join('  ·  ');
+};
 const SESSIONS = [
   // ============ GYM SESSIONS — Week 1 ============
   { id: '2026-05-20-C', type: 'gym', category: 'Gym', date: '2026-05-20', day: 'Wed', lift: 'C', week: 1, title: 'Lift C — Deadlift · W1',
@@ -1563,7 +1577,7 @@ const SESSIONS = [
         sets: [ W("66 lb · 30 kg","10/leg",2), W("66 lb · 30 kg","10/leg",2), W("66 lb · 30 kg","10/leg",2) ] },
       { name: "One-Arm DB Row", tempo: "1-1-1-0", rest: "2:00", cue: ["Knee and hand on the flat bench","Set 1 is a TEST at 121 lb · 55 kg — stop if back or grip complains","Then 3 × 12 each arm at 66 lb · 30 kg"],
         sets: [ W("121 lb · 55 kg","~6",1), W("66 lb · 30 kg","12/arm",2), W("66 lb · 30 kg","12/arm",2), W("66 lb · 30 kg","12/arm",2) ] },
-      { name: "Incline DB Curl", tempo: "2-0-1-0", rest: "1:30", cue: ["Bench at ~45°, arms hang back","York pair: 5 + 2.5 + 1.25 kg plates each (handle weight estimated)"],
+      { name: "Incline DB Curl", tempo: "2-0-1-0", rest: "1:30", cue: ["Bench at ~45°, arms hang back","York pair — each end: 2.5 + 1.25 + 0.5 kg = 10.0 kg = 22.0 lb per dumbbell (handle ~1.5 kg, estimated)"],
         sets: [ W("22 lb · 10 kg","10–12",2), W("22 lb · 10 kg","10–12",2), W("22 lb · 10 kg","10–12",2) ] },
       { name: "Seated Calf Raise", tempo: "2-2-1-0", rest: "1:00", cue: ["On bench, 30 kg DB + 10 kg plate across knees","If it slides, use the 30 kg DB alone","2 s pause at top"],
         sets: [ W("88 lb · 40 kg","15",1), W("88 lb · 40 kg","15",1), W("88 lb · 40 kg","15",1) ] },
@@ -1582,7 +1596,7 @@ const SESSIONS = [
         sets: [ W("66 lb · 30 kg","12",2), W("66 lb · 30 kg","12",2), W("66 lb · 30 kg","12",2) ] },
       { name: "Heels-Elevated Goblet Squat", tempo: "3-2-1-0", rest: "1:30", cue: ["Heels on a plate, DB at chest","2 s pause at the bottom"],
         sets: [ W("66 lb · 30 kg","12–15",2), W("66 lb · 30 kg","12–15",2), W("66 lb · 30 kg","12–15",2) ] },
-      { name: "Hammer Curl", tempo: "2-0-1-0", rest: "1:30", cue: ["Neutral grip, no swing","York pair: 5 + 2.5 + 1.25 kg plates each (handle weight estimated)"],
+      { name: "Hammer Curl", tempo: "2-0-1-0", rest: "1:30", cue: ["Neutral grip, no swing","York pair — each end: 2.5 + 1.25 + 0.5 kg = 10.0 kg = 22.0 lb per dumbbell (handle ~1.5 kg, estimated)"],
         sets: [ W("22 lb · 10 kg","10–12",2), W("22 lb · 10 kg","10–12",2), W("22 lb · 10 kg","10–12",2) ] },
     ]
   },
@@ -1597,9 +1611,9 @@ const SESSIONS = [
         sets: [ W("121 lb · 55 kg","12",2), W("121 lb · 55 kg","12",2), W("121 lb · 55 kg","12",2) ] },
       { name: "One-Arm DB Row", tempo: "1-1-1-0", rest: "2:00", cue: ["Knee and hand on the flat bench","Use 121 lb · 55 kg if the Day 1 test went well"],
         sets: [ W("66 lb · 30 kg","8–10/arm",2), W("66 lb · 30 kg","8–10/arm",2), W("66 lb · 30 kg","8–10/arm",2) ] },
-      { name: "Lateral Raise", tempo: "2-0-1-0", rest: "1:00", cue: ["Slight elbow bend, no swing","York pair: 2.5 + 1.25 + 0.5 kg plates each (handle weight estimated)"],
-        sets: [ W("13 lb · 6 kg","15",1), W("13 lb · 6 kg","15",1), W("13 lb · 6 kg","15",1) ] },
-      { name: "Strict DB Curl", tempo: "2-0-1-0", rest: "1:30", cue: ["Standing, no swing","York pair: 5 + 2.5 + 1.25 kg plates each (handle weight estimated)"],
+      { name: "Lateral Raise", tempo: "2-0-1-0", rest: "1:00", cue: ["Slight elbow bend, no swing","York pair — each end: 2.5 kg = 6.5 kg = 14.3 lb per dumbbell (handle ~1.5 kg, estimated)"],
+        sets: [ W("14.3 lb · 6.5 kg","15",1), W("14.3 lb · 6.5 kg","15",1), W("14.3 lb · 6.5 kg","15",1) ] },
+      { name: "Strict DB Curl", tempo: "2-0-1-0", rest: "1:30", cue: ["Standing, no swing","York pair — each end: 2.5 + 1.25 + 0.5 kg = 10.0 kg = 22.0 lb per dumbbell (handle ~1.5 kg, estimated)"],
         sets: [ W("22 lb · 10 kg","10–12",2), W("22 lb · 10 kg","10–12",2), W("22 lb · 10 kg","10–12",2) ] },
       { name: "Seated Calf Raise", tempo: "2-2-1-0", rest: "1:00", cue: ["30 kg DB + 10 kg plate across knees","2 s pause at top"],
         sets: [ W("88 lb · 40 kg","15",1), W("88 lb · 40 kg","15",1), W("88 lb · 40 kg","15",1) ] },
@@ -1616,7 +1630,7 @@ const SESSIONS = [
         sets: [ W("66 lb · 30 kg","10/leg",2), W("66 lb · 30 kg","10/leg",2), W("66 lb · 30 kg","10/leg",2) ] },
       { name: "One-Arm DB Row", tempo: "1-1-1-0", rest: "2:00", cue: ["Knee and hand on the flat bench","Set 1 is a TEST at 121 lb · 55 kg — stop if back or grip complains","Then 3 × 12 each arm at 66 lb · 30 kg"],
         sets: [ W("121 lb · 55 kg","~6",1), W("66 lb · 30 kg","12/arm",2), W("66 lb · 30 kg","12/arm",2), W("66 lb · 30 kg","12/arm",2) ] },
-      { name: "Incline DB Curl", tempo: "2-0-1-0", rest: "1:30", cue: ["Bench at ~45°, arms hang back","York pair: 5 + 2.5 + 1.25 kg plates each (handle weight estimated)"],
+      { name: "Incline DB Curl", tempo: "2-0-1-0", rest: "1:30", cue: ["Bench at ~45°, arms hang back","York pair — each end: 2.5 + 1.25 + 0.5 kg = 10.0 kg = 22.0 lb per dumbbell (handle ~1.5 kg, estimated)"],
         sets: [ W("22 lb · 10 kg","10–12",2), W("22 lb · 10 kg","10–12",2), W("22 lb · 10 kg","10–12",2) ] },
       { name: "Seated Calf Raise", tempo: "2-2-1-0", rest: "1:00", cue: ["On bench, 30 kg DB + 10 kg plate across knees","If it slides, use the 30 kg DB alone","2 s pause at top"],
         sets: [ W("88 lb · 40 kg","15",1), W("88 lb · 40 kg","15",1), W("88 lb · 40 kg","15",1) ] },
@@ -1635,7 +1649,7 @@ const SESSIONS = [
         sets: [ W("66 lb · 30 kg","12",2), W("66 lb · 30 kg","12",2), W("66 lb · 30 kg","12",2) ] },
       { name: "Heels-Elevated Goblet Squat", tempo: "3-2-1-0", rest: "1:30", cue: ["Heels on a plate, DB at chest","2 s pause at the bottom"],
         sets: [ W("66 lb · 30 kg","12–15",2), W("66 lb · 30 kg","12–15",2), W("66 lb · 30 kg","12–15",2) ] },
-      { name: "Hammer Curl", tempo: "2-0-1-0", rest: "1:30", cue: ["Neutral grip, no swing","York pair: 5 + 2.5 + 1.25 kg plates each (handle weight estimated)"],
+      { name: "Hammer Curl", tempo: "2-0-1-0", rest: "1:30", cue: ["Neutral grip, no swing","York pair — each end: 2.5 + 1.25 + 0.5 kg = 10.0 kg = 22.0 lb per dumbbell (handle ~1.5 kg, estimated)"],
         sets: [ W("22 lb · 10 kg","10–12",2), W("22 lb · 10 kg","10–12",2), W("22 lb · 10 kg","10–12",2) ] },
     ]
   },
@@ -1650,9 +1664,9 @@ const SESSIONS = [
         sets: [ W("121 lb · 55 kg","12",2), W("121 lb · 55 kg","12",2), W("121 lb · 55 kg","12",2) ] },
       { name: "One-Arm DB Row", tempo: "1-1-1-0", rest: "2:00", cue: ["Knee and hand on the flat bench","Use 121 lb · 55 kg if the Day 1 test went well"],
         sets: [ W("66 lb · 30 kg","8–10/arm",2), W("66 lb · 30 kg","8–10/arm",2), W("66 lb · 30 kg","8–10/arm",2) ] },
-      { name: "Lateral Raise", tempo: "2-0-1-0", rest: "1:00", cue: ["Slight elbow bend, no swing","York pair: 2.5 + 1.25 + 0.5 kg plates each (handle weight estimated)"],
-        sets: [ W("13 lb · 6 kg","15",1), W("13 lb · 6 kg","15",1), W("13 lb · 6 kg","15",1) ] },
-      { name: "Strict DB Curl", tempo: "2-0-1-0", rest: "1:30", cue: ["Standing, no swing","York pair: 5 + 2.5 + 1.25 kg plates each (handle weight estimated)"],
+      { name: "Lateral Raise", tempo: "2-0-1-0", rest: "1:00", cue: ["Slight elbow bend, no swing","York pair — each end: 2.5 kg = 6.5 kg = 14.3 lb per dumbbell (handle ~1.5 kg, estimated)"],
+        sets: [ W("14.3 lb · 6.5 kg","15",1), W("14.3 lb · 6.5 kg","15",1), W("14.3 lb · 6.5 kg","15",1) ] },
+      { name: "Strict DB Curl", tempo: "2-0-1-0", rest: "1:30", cue: ["Standing, no swing","York pair — each end: 2.5 + 1.25 + 0.5 kg = 10.0 kg = 22.0 lb per dumbbell (handle ~1.5 kg, estimated)"],
         sets: [ W("22 lb · 10 kg","10–12",2), W("22 lb · 10 kg","10–12",2), W("22 lb · 10 kg","10–12",2) ] },
       { name: "Seated Calf Raise", tempo: "2-2-1-0", rest: "1:00", cue: ["30 kg DB + 10 kg plate across knees","2 s pause at top"],
         sets: [ W("88 lb · 40 kg","15",1), W("88 lb · 40 kg","15",1), W("88 lb · 40 kg","15",1) ] },
@@ -1669,7 +1683,7 @@ const SESSIONS = [
         sets: [ W("66 lb · 30 kg","10/leg",2), W("66 lb · 30 kg","10/leg",2), W("66 lb · 30 kg","10/leg",2) ] },
       { name: "One-Arm DB Row", tempo: "1-1-1-0", rest: "2:00", cue: ["Knee and hand on the flat bench","Set 1 is a TEST at 121 lb · 55 kg — stop if back or grip complains","Then 3 × 12 each arm at 66 lb · 30 kg"],
         sets: [ W("121 lb · 55 kg","~6",1), W("66 lb · 30 kg","12/arm",2), W("66 lb · 30 kg","12/arm",2), W("66 lb · 30 kg","12/arm",2) ] },
-      { name: "Incline DB Curl", tempo: "2-0-1-0", rest: "1:30", cue: ["Bench at ~45°, arms hang back","York pair: 5 + 2.5 + 1.25 kg plates each (handle weight estimated)"],
+      { name: "Incline DB Curl", tempo: "2-0-1-0", rest: "1:30", cue: ["Bench at ~45°, arms hang back","York pair — each end: 2.5 + 1.25 + 0.5 kg = 10.0 kg = 22.0 lb per dumbbell (handle ~1.5 kg, estimated)"],
         sets: [ W("22 lb · 10 kg","10–12",2), W("22 lb · 10 kg","10–12",2), W("22 lb · 10 kg","10–12",2) ] },
       { name: "Seated Calf Raise", tempo: "2-2-1-0", rest: "1:00", cue: ["On bench, 30 kg DB + 10 kg plate across knees","If it slides, use the 30 kg DB alone","2 s pause at top"],
         sets: [ W("88 lb · 40 kg","15",1), W("88 lb · 40 kg","15",1), W("88 lb · 40 kg","15",1) ] },
@@ -1688,7 +1702,7 @@ const SESSIONS = [
         sets: [ W("66 lb · 30 kg","12",2), W("66 lb · 30 kg","12",2), W("66 lb · 30 kg","12",2) ] },
       { name: "Heels-Elevated Goblet Squat", tempo: "3-2-1-0", rest: "1:30", cue: ["Heels on a plate, DB at chest","2 s pause at the bottom"],
         sets: [ W("66 lb · 30 kg","12–15",2), W("66 lb · 30 kg","12–15",2), W("66 lb · 30 kg","12–15",2) ] },
-      { name: "Hammer Curl", tempo: "2-0-1-0", rest: "1:30", cue: ["Neutral grip, no swing","York pair: 5 + 2.5 + 1.25 kg plates each (handle weight estimated)"],
+      { name: "Hammer Curl", tempo: "2-0-1-0", rest: "1:30", cue: ["Neutral grip, no swing","York pair — each end: 2.5 + 1.25 + 0.5 kg = 10.0 kg = 22.0 lb per dumbbell (handle ~1.5 kg, estimated)"],
         sets: [ W("22 lb · 10 kg","10–12",2), W("22 lb · 10 kg","10–12",2), W("22 lb · 10 kg","10–12",2) ] },
     ]
   },
@@ -1703,9 +1717,9 @@ const SESSIONS = [
         sets: [ W("121 lb · 55 kg","12",2), W("121 lb · 55 kg","12",2), W("121 lb · 55 kg","12",2) ] },
       { name: "One-Arm DB Row", tempo: "1-1-1-0", rest: "2:00", cue: ["Knee and hand on the flat bench","Use 121 lb · 55 kg if the Day 1 test went well"],
         sets: [ W("66 lb · 30 kg","8–10/arm",2), W("66 lb · 30 kg","8–10/arm",2), W("66 lb · 30 kg","8–10/arm",2) ] },
-      { name: "Lateral Raise", tempo: "2-0-1-0", rest: "1:00", cue: ["Slight elbow bend, no swing","York pair: 2.5 + 1.25 + 0.5 kg plates each (handle weight estimated)"],
-        sets: [ W("13 lb · 6 kg","15",1), W("13 lb · 6 kg","15",1), W("13 lb · 6 kg","15",1) ] },
-      { name: "Strict DB Curl", tempo: "2-0-1-0", rest: "1:30", cue: ["Standing, no swing","York pair: 5 + 2.5 + 1.25 kg plates each (handle weight estimated)"],
+      { name: "Lateral Raise", tempo: "2-0-1-0", rest: "1:00", cue: ["Slight elbow bend, no swing","York pair — each end: 2.5 kg = 6.5 kg = 14.3 lb per dumbbell (handle ~1.5 kg, estimated)"],
+        sets: [ W("14.3 lb · 6.5 kg","15",1), W("14.3 lb · 6.5 kg","15",1), W("14.3 lb · 6.5 kg","15",1) ] },
+      { name: "Strict DB Curl", tempo: "2-0-1-0", rest: "1:30", cue: ["Standing, no swing","York pair — each end: 2.5 + 1.25 + 0.5 kg = 10.0 kg = 22.0 lb per dumbbell (handle ~1.5 kg, estimated)"],
         sets: [ W("22 lb · 10 kg","10–12",2), W("22 lb · 10 kg","10–12",2), W("22 lb · 10 kg","10–12",2) ] },
       { name: "Seated Calf Raise", tempo: "2-2-1-0", rest: "1:00", cue: ["30 kg DB + 10 kg plate across knees","2 s pause at top"],
         sets: [ W("88 lb · 40 kg","15",1), W("88 lb · 40 kg","15",1), W("88 lb · 40 kg","15",1) ] },
@@ -1722,7 +1736,7 @@ const SESSIONS = [
         sets: [ W("66 lb · 30 kg","10/leg",2), W("66 lb · 30 kg","10/leg",2), W("66 lb · 30 kg","10/leg",2) ] },
       { name: "One-Arm DB Row", tempo: "1-1-1-0", rest: "2:00", cue: ["Knee and hand on the flat bench","Set 1 is a TEST at 121 lb · 55 kg — stop if back or grip complains","Then 3 × 12 each arm at 66 lb · 30 kg"],
         sets: [ W("121 lb · 55 kg","~6",1), W("66 lb · 30 kg","12/arm",2), W("66 lb · 30 kg","12/arm",2), W("66 lb · 30 kg","12/arm",2) ] },
-      { name: "Incline DB Curl", tempo: "2-0-1-0", rest: "1:30", cue: ["Bench at ~45°, arms hang back","York pair: 5 + 2.5 + 1.25 kg plates each (handle weight estimated)"],
+      { name: "Incline DB Curl", tempo: "2-0-1-0", rest: "1:30", cue: ["Bench at ~45°, arms hang back","York pair — each end: 2.5 + 1.25 + 0.5 kg = 10.0 kg = 22.0 lb per dumbbell (handle ~1.5 kg, estimated)"],
         sets: [ W("22 lb · 10 kg","10–12",2), W("22 lb · 10 kg","10–12",2), W("22 lb · 10 kg","10–12",2) ] },
       { name: "Seated Calf Raise", tempo: "2-2-1-0", rest: "1:00", cue: ["On bench, 30 kg DB + 10 kg plate across knees","If it slides, use the 30 kg DB alone","2 s pause at top"],
         sets: [ W("88 lb · 40 kg","15",1), W("88 lb · 40 kg","15",1), W("88 lb · 40 kg","15",1) ] },
@@ -1741,7 +1755,7 @@ const SESSIONS = [
         sets: [ W("66 lb · 30 kg","12",2), W("66 lb · 30 kg","12",2), W("66 lb · 30 kg","12",2) ] },
       { name: "Heels-Elevated Goblet Squat", tempo: "3-2-1-0", rest: "1:30", cue: ["Heels on a plate, DB at chest","2 s pause at the bottom"],
         sets: [ W("66 lb · 30 kg","12–15",2), W("66 lb · 30 kg","12–15",2), W("66 lb · 30 kg","12–15",2) ] },
-      { name: "Hammer Curl", tempo: "2-0-1-0", rest: "1:30", cue: ["Neutral grip, no swing","York pair: 5 + 2.5 + 1.25 kg plates each (handle weight estimated)"],
+      { name: "Hammer Curl", tempo: "2-0-1-0", rest: "1:30", cue: ["Neutral grip, no swing","York pair — each end: 2.5 + 1.25 + 0.5 kg = 10.0 kg = 22.0 lb per dumbbell (handle ~1.5 kg, estimated)"],
         sets: [ W("22 lb · 10 kg","10–12",2), W("22 lb · 10 kg","10–12",2), W("22 lb · 10 kg","10–12",2) ] },
     ]
   },
@@ -1756,12 +1770,55 @@ const SESSIONS = [
         sets: [ W("121 lb · 55 kg","12",2), W("121 lb · 55 kg","12",2), W("121 lb · 55 kg","12",2) ] },
       { name: "One-Arm DB Row", tempo: "1-1-1-0", rest: "2:00", cue: ["Knee and hand on the flat bench","Use 121 lb · 55 kg if the Day 1 test went well"],
         sets: [ W("66 lb · 30 kg","8–10/arm",2), W("66 lb · 30 kg","8–10/arm",2), W("66 lb · 30 kg","8–10/arm",2) ] },
-      { name: "Lateral Raise", tempo: "2-0-1-0", rest: "1:00", cue: ["Slight elbow bend, no swing","York pair: 2.5 + 1.25 + 0.5 kg plates each (handle weight estimated)"],
-        sets: [ W("13 lb · 6 kg","15",1), W("13 lb · 6 kg","15",1), W("13 lb · 6 kg","15",1) ] },
-      { name: "Strict DB Curl", tempo: "2-0-1-0", rest: "1:30", cue: ["Standing, no swing","York pair: 5 + 2.5 + 1.25 kg plates each (handle weight estimated)"],
+      { name: "Lateral Raise", tempo: "2-0-1-0", rest: "1:00", cue: ["Slight elbow bend, no swing","York pair — each end: 2.5 kg = 6.5 kg = 14.3 lb per dumbbell (handle ~1.5 kg, estimated)"],
+        sets: [ W("14.3 lb · 6.5 kg","15",1), W("14.3 lb · 6.5 kg","15",1), W("14.3 lb · 6.5 kg","15",1) ] },
+      { name: "Strict DB Curl", tempo: "2-0-1-0", rest: "1:30", cue: ["Standing, no swing","York pair — each end: 2.5 + 1.25 + 0.5 kg = 10.0 kg = 22.0 lb per dumbbell (handle ~1.5 kg, estimated)"],
         sets: [ W("22 lb · 10 kg","10–12",2), W("22 lb · 10 kg","10–12",2), W("22 lb · 10 kg","10–12",2) ] },
       { name: "Seated Calf Raise", tempo: "2-2-1-0", rest: "1:00", cue: ["30 kg DB + 10 kg plate across knees","2 s pause at top"],
         sets: [ W("88 lb · 40 kg","15",1), W("88 lb · 40 kg","15",1), W("88 lb · 40 kg","15",1) ] },
+    ]
+  },
+  // ---------- RETURN · Nov 2026 · full body, ease back in · v9.1 ----------
+  { id: 'rtn-w1-a', type: 'gym', category: 'Gym', block: 'return-nov26', week: 1, slot: 'A', wkStart: '2026-11-09', wkEnd: '2026-11-15', title: "Return Day 1 — Full Body", duration: "~55 min", loads: GYM_LOADS_BOG,
+    warmup: ["Foam roll ~5 min: quads, glutes, hips","Bodyweight squat — 12","Leg swings — 10 each way","Load the York pair once: 1.25 kg + 0.5 kg on each end"],
+    exercises: [
+      { name: "Goblet Squat", tempo: "3-0-1-0", rest: "2:00", cue: ["One 33 lb · 15 kg hex DB held at your chest", "Stop with about 3 reps left"], loads: HEX_LOADS,
+        sets: [ W("33 lb · 15 kg",20,3), W("33 lb · 15 kg",20,3), W("33 lb · 15 kg",20,3) ] },
+      { name: "DB Bench Press", tempo: "2-0-1-0", rest: "2:00", cue: ["Flat bench, 66 lb · 30 kg DB in each hand", "Stop with about 3 reps left"], loads: HEX_LOADS,
+        sets: [ W("66 lb · 30 kg",10,3), W("66 lb · 30 kg",10,3), W("66 lb · 30 kg",10,3) ] },
+      { name: "One-Arm DB Row", tempo: "1-1-1-0", rest: "1:30", cue: ["Flat bench: same-side knee and hand on the bench, other foot on the floor", "Reps per arm — log 12, not 24"], loads: HEX_LOADS,
+        sets: [ W("66 lb · 30 kg","12/arm",3), W("66 lb · 30 kg","12/arm",3), W("66 lb · 30 kg","12/arm",3) ] },
+      { name: "DB Romanian Deadlift", tempo: "3-0-1-0", rest: "2:00", cue: ["33 lb · 15 kg hex DB in each hand", "Hinge, soft knee, 3 s down"], loads: HEX_LOADS,
+        sets: [ W("33 lb · 15 kg",15,3), W("33 lb · 15 kg",15,3), W("33 lb · 15 kg",15,3) ] },
+      { name: "Seated DB Shoulder Press", tempo: "2-0-1-0", rest: "1:30", cue: ["Bench upright, 33 lb · 15 kg DB in each hand"], loads: HEX_LOADS,
+        sets: [ W("33 lb · 15 kg",12,3), W("33 lb · 15 kg",12,3), W("33 lb · 15 kg",12,3) ] },
+      { name: "Lateral Raise", tempo: "2-0-1-0", rest: "1:00", cue: ["York pair — each end: 1.25 kg + 0.5 kg", "Per dumbbell: 3.5 kg plates + handle ~1.5 kg (estimated) = 5.0 kg = 11.0 lb", "Slight elbow bend, no swing"], loads: YORK_LOADS,
+        sets: [ W("11.0 lb · 5.0 kg",15,3), W("11.0 lb · 5.0 kg",15,3), W("11.0 lb · 5.0 kg",15,3) ] },
+      { name: "Hammer Curl", tempo: "2-0-1-0", rest: "1:30", cue: ["33 lb · 15 kg hex DB in each hand", "Standing, no swing"], loads: HEX_LOADS,
+        sets: [ W("33 lb · 15 kg",10,2), W("33 lb · 15 kg",10,2), W("33 lb · 15 kg",10,2) ] },
+      { name: "Seated Calf Raise", tempo: "2-2-1-0", rest: "1:00", cue: ["Both 55 lb bumper plates across your knees = 110 lb · 49.9 kg", "Toes on a plate, 2 s pause at the top"], loads: BUMPER_LOADS,
+        sets: [ W("110 lb · 49.9 kg",20,2), W("110 lb · 49.9 kg",20,2), W("110 lb · 49.9 kg",20,2) ] },
+    ]
+  },
+  { id: 'rtn-w1-b', type: 'gym', category: 'Gym', block: 'return-nov26', week: 1, slot: 'B', wkStart: '2026-11-09', wkEnd: '2026-11-15', title: "Return Day 2 — Full Body", duration: "~55 min", loads: GYM_LOADS_BOG,
+    warmup: ["Foam roll ~5 min: quads, glutes, hips","Bodyweight squat — 12","Leg swings — 10 each way","Load the York pair once: 1.25 kg + 0.5 kg on each end"],
+    exercises: [
+      { name: "Bulgarian Split Squat", tempo: "3-0-1-0", rest: "2:00", cue: ["Back foot on the bench, 33 lb · 15 kg hex DB in each hand", "Reps per leg — log 10, not 20"], loads: HEX_LOADS,
+        sets: [ W("33 lb · 15 kg","10/leg",3), W("33 lb · 15 kg","10/leg",3), W("33 lb · 15 kg","10/leg",3) ] },
+      { name: "Incline DB Press", tempo: "2-0-1-0", rest: "1:30", cue: ["Bench at ~30°, 33 lb · 15 kg DB in each hand"], loads: HEX_LOADS,
+        sets: [ W("33 lb · 15 kg",15,2), W("33 lb · 15 kg",15,2), W("33 lb · 15 kg",15,2) ] },
+      { name: "Bent-Over DB Row", tempo: "2-1-1-0", rest: "1:30", cue: ["Stand, hinge forward, 33 lb · 15 kg hex DB in each hand", "Row both together, no bench"], loads: HEX_LOADS,
+        sets: [ W("33 lb · 15 kg",15,3), W("33 lb · 15 kg",15,3), W("33 lb · 15 kg",15,3) ] },
+      { name: "Hip Thrust", tempo: "2-2-1-0", rest: "1:30", cue: ["Upper back on the flat bench, one 55 lb bumper plate across your hips = 55 lb · 24.9 kg", "2 s squeeze at the top"], loads: BUMPER_LOADS,
+        sets: [ W("55 lb · 24.9 kg",15,2), W("55 lb · 24.9 kg",15,2), W("55 lb · 24.9 kg",15,2) ] },
+      { name: "Step-Up", tempo: "2-0-1-0", rest: "1:30", cue: ["Step onto the sled with the two 55 lb bumpers stacked on it", "33 lb · 15 kg hex DB in each hand", "Reps per leg — log 10, not 20"], loads: HEX_LOADS,
+        sets: [ W("33 lb · 15 kg","10/leg",3), W("33 lb · 15 kg","10/leg",3), W("33 lb · 15 kg","10/leg",3) ] },
+      { name: "Lateral Raise", tempo: "2-0-1-0", rest: "1:00", cue: ["York pair — each end: 1.25 kg + 0.5 kg", "Per dumbbell: 3.5 kg plates + handle ~1.5 kg (estimated) = 5.0 kg = 11.0 lb", "Slight elbow bend, no swing"], loads: YORK_LOADS,
+        sets: [ W("11.0 lb · 5.0 kg",15,3), W("11.0 lb · 5.0 kg",15,3), W("11.0 lb · 5.0 kg",15,3) ] },
+      { name: "Incline DB Curl", tempo: "2-0-1-0", rest: "1:30", cue: ["Bench at ~45°, arms hang back", "33 lb · 15 kg hex DB in each hand"], loads: HEX_LOADS,
+        sets: [ W("33 lb · 15 kg",10,2), W("33 lb · 15 kg",10,2), W("33 lb · 15 kg",10,2) ] },
+      { name: "Seated Calf Raise", tempo: "2-2-1-0", rest: "1:00", cue: ["Both 55 lb bumper plates across your knees = 110 lb · 49.9 kg", "Toes on a plate, 2 s pause at the top"], loads: BUMPER_LOADS,
+        sets: [ W("110 lb · 49.9 kg",20,2), W("110 lb · 49.9 kg",20,2), W("110 lb · 49.9 kg",20,2) ] },
     ]
   },
 ];
@@ -1783,7 +1840,8 @@ const KB_WARMUP = [
 // STATE
 // ============================================================
 const STORE_KEY = 'workoutPwaState_v2';
-const APP_VERSION = 'Iron Protocol v9.0';
+const APP_VERSION = 'Iron Protocol v9.1';
+document.addEventListener('input', (e) => { const t = e.target; if (t && t.id && t.id.startsWith('edW_')) { const kl = document.getElementById('edWkg_' + t.id.slice(4)); if (kl) kl.textContent = 'lb' + (kgOf(t.value) ? ' · ' + kgOf(t.value) : ''); } });
 
 const FRESH_STATE = () => ({ sessionIdx: 0, sessions: {}, notes: {}, metcons: {}, category: 'Gym' });
 const isStateShape = (s) => !!s && typeof s === 'object' && !Array.isArray(s);
@@ -2945,7 +3003,7 @@ function renderStrength(ses, app) {
           <div class="confirm-head">${setLabel} · prescribed <b>${wTxt} × ${repsStr}${rirStr}</b></div>
           <div class="edit-stack">
             <div class="ed-row">
-              <div class="ed-label">Weight <span class="ed-unit">lb</span></div>
+              <div class="ed-label">Weight <span class="ed-unit" id="edWkg_${k}">lb${kgOf(pre.w) ? ' · ' + kgOf(pre.w) : ''}</span></div>
               <div class="ed-ctl">
                 <button class="ed-step" data-act="step" data-set="${k}" data-f="W" data-d="-5">−</button>
                 <input type="text" id="edW_${k}" value="${pre.w}" placeholder="—" inputmode="decimal" autocomplete="off">
@@ -3037,11 +3095,16 @@ function renderStrength(ses, app) {
     notes.value = noteText;
     notes.placeholder = 'Tap to note — use your side-button voice dictation';
     notes.rows = 2;
+    const conv = document.createElement('div');
+    conv.className = 'note-conv';
+    conv.textContent = unitConv(noteText);
     notes.addEventListener('input', (e) => {
       state.notes[noteKey] = e.target.value;
+      conv.textContent = unitConv(e.target.value);
       saveState();
     });
     body.appendChild(notes);
+    body.appendChild(conv);
 
     card.appendChild(body);
     app.appendChild(card);
@@ -3165,12 +3228,21 @@ function handleStrengthAction(act, setKeyStr, btn) {
   // Steppers edit the box in place — no state write, no re-render, no lost focus.
   if (act === 'step') {
     const el = document.getElementById('ed' + btn.dataset.f + '_' + setKeyStr);
+    if (el && btn.dataset.f === 'W' && Array.isArray(ex.loads || ses.loads)) {
+      const L = ex.loads || ses.loads, cur = parseFloat(el.value), up = parseFloat(btn.dataset.d) > 0;
+      let next = isFinite(cur) ? (up ? L.find(x => x > cur + 0.05) : L.slice().reverse().find(x => x < cur - 0.05)) : L[0];
+      if (next == null) next = cur;
+      el.value = String(next);
+      const kl = document.getElementById('edWkg_' + setKeyStr); if (kl) kl.textContent = 'lb · ' + kgOf(next);
+      return;
+    }
     if (el) {
       const d = parseFloat(btn.dataset.d) || 0;
       const cur = parseFloat(el.value);
       let next = (isFinite(cur) ? cur : 0) + d;
       if (next < 0) next = 0;
       el.value = String(Math.round(next * 100) / 100);
+      if (btn.dataset.f === 'W') { const kl = document.getElementById('edW' + 'kg_' + setKeyStr); if (kl) kl.textContent = 'lb · ' + kgOf(el.value); }
     }
     return;
   }
