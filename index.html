@@ -221,6 +221,17 @@ body.resting { padding-bottom: 210px; }
 .metcon-finish-btn { width: 100%; height: 52px; font-size: 15px; font-weight: 600; }
 .metcon-final { background: rgba(91, 212, 156, 0.12); border: 1px solid var(--done); color: var(--done); padding: 16px; text-align: center; border-radius: 10px; margin-bottom: 14px; font-weight: 500; }
 .metcon-final .final-time { font-size: 32px; font-weight: 700; font-variant-numeric: tabular-nums; margin: 4px 0; color: var(--text); }
+.iv-timer-panel { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 20px 16px; text-align: center; margin-bottom: 14px; }
+.iv-timer-panel.work { border-color: var(--done); }
+.iv-timer-panel.rest { border-color: var(--accent); }
+.iv-phase { font-size: 13px; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 700; margin-bottom: 4px; color: var(--text-dim); }
+.iv-phase.work { color: var(--done); }
+.iv-phase.rest { color: var(--accent); }
+.iv-count { font-size: 72px; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1; margin-bottom: 4px; color: var(--text); }
+.iv-move { font-size: 16px; color: var(--text); margin-bottom: 4px; min-height: 20px; font-weight: 600; }
+.iv-round { font-size: 12px; color: var(--text-dim); margin-bottom: 10px; }
+.iv-controls { display: flex; gap: 8px; justify-content: center; margin-top: 8px; }
+.iv-controls button { min-width: 96px; height: 44px; }
 /* ===== Home view ===== */
 .view-toggle { display: flex; background: var(--surface); border: 1px solid var(--border); border-radius: 999px; padding: 4px; margin-bottom: 14px; }
 .view-toggle button { flex: 1; height: 44px; min-height: 44px; padding: 0 12px; background: transparent; border: none; border-radius: 999px; color: var(--text-muted); font-weight: 500; font-size: 14px; display: flex; align-items: center; justify-content: center; gap: 6px; }
@@ -1821,6 +1832,69 @@ const SESSIONS = [
         sets: [ W("110 lb · 49.9 kg",20,2), W("110 lb · 49.9 kg",20,2), W("110 lb · 49.9 kg",20,2) ] },
     ]
   },
+  { id: 'rtn-w2-a', type: 'gym', category: 'Gym', block: 'return-nov26', week: 2, slot: 'A', wkStart: '2026-11-16', wkEnd: '2026-11-22', title: "Return Day 3 — Full Body", duration: "~60 min", loads: GYM_LOADS_BOG,
+    warmup: ["Foam roll ~5 min: quads, glutes, hips","Bodyweight squat — 12","Leg swings — 10 each way","Load the York pair for lateral raises: aim ~15 lb"],
+    exercises: [
+      { name: "Goblet Squat", tempo: "3-0-1-0", rest: "2:00", cue: ["One 33 lb · 15 kg hex DB held at your chest", "Hold 20 — not chasing reps, conditioning is the limiter, not strength"], loads: HEX_LOADS,
+        sets: [ W("33 lb · 15 kg",20,3), W("33 lb · 15 kg",20,3), W("33 lb · 15 kg",20,3) ] },
+      { name: "DB Bench Press", tempo: "2-0-1-0", rest: "2:00", cue: ["Flat bench, 66 lb · 30 kg DB in each hand", "Stop with about 3 reps left"], loads: HEX_LOADS,
+        sets: [ W("66 lb · 30 kg",10,3), W("66 lb · 30 kg",10,3), W("66 lb · 30 kg",10,3) ] },
+      { name: "One-Arm DB Row", tempo: "1-1-1-0", rest: "1:30", cue: ["Flat bench: same-side knee and hand on the bench, other foot on the floor", "66 lb · 30 kg DB", "Reps per arm — log 12, not 24"], loads: HEX_LOADS,
+        sets: [ W("66 lb · 30 kg","12/arm",3), W("66 lb · 30 kg","12/arm",3), W("66 lb · 30 kg","12/arm",3) ] },
+      { name: "DB Romanian Deadlift", tempo: "3-0-1-0", rest: "2:00", cue: ["33 lb · 15 kg hex DB in each hand", "Hinge, soft knee, 3 s down"], loads: HEX_LOADS,
+        sets: [ W("33 lb · 15 kg",15,3), W("33 lb · 15 kg",15,3), W("33 lb · 15 kg",15,3) ] },
+      { name: "Seated DB Shoulder Press", tempo: "2-0-1-0", rest: "1:30", cue: ["Bench upright, 33 lb · 15 kg DB in each hand", "Up to 14 reps now"], loads: HEX_LOADS,
+        sets: [ W("33 lb · 15 kg",14,3), W("33 lb · 15 kg",14,3), W("33 lb · 15 kg",14,3) ] },
+      { name: "Lateral Raise", tempo: "2-0-1-0", rest: "1:00", cue: ["York pair loaded to ~15 lb · 6.8 kg — about a 2.5 kg plate each end over the bare handle", "Up from 11 lb; last couple reps a grind, not a fail", "Slight elbow bend, no swing"], loads: YORK_LOADS,
+        sets: [ W("15 lb · 6.8 kg",15,3), W("15 lb · 6.8 kg",15,3), W("15 lb · 6.8 kg",15,3) ] },
+      { name: "Hammer Curl", tempo: "2-0-1-0", rest: "1:30", cue: ["33 lb · 15 kg hex DB in each hand", "Standing, no swing"], loads: HEX_LOADS,
+        sets: [ W("33 lb · 15 kg",10,2), W("33 lb · 15 kg",10,2), W("33 lb · 15 kg",10,2) ] },
+      { name: "Single-Leg Seated Calf Raise", tempo: "2-2-1-0", rest: "1:00", cue: ["Seated on the bench, ONE dumbbell stood on the working thigh, one leg at a time", "Slow down, deep stretch at the bottom, 2 s hold at the top", "Soleus maintenance — controlled, not heavy. Both feet down with one DB per thigh if balancing is off"], loads: HEX_LOADS,
+        sets: [ W("33 lb · 15 kg","15/leg",2), W("33 lb · 15 kg","15/leg",2), W("33 lb · 15 kg","15/leg",2) ] },
+    ],
+    finisher: { label: "Conditioning finisher — 30s on / 30s off", moves: ["KB Swing · 12 kg","Light DB Thruster"], timer: { leadInSec: 5, workSec: 30, restSec: 30, rounds: 6 } }
+  },
+  { id: 'rtn-w2-b', type: 'gym', category: 'Gym', block: 'return-nov26', week: 2, slot: 'B', wkStart: '2026-11-16', wkEnd: '2026-11-22', title: "Return Day 4 — Full Body", duration: "~60 min", loads: GYM_LOADS_BOG,
+    warmup: ["Foam roll ~5 min: quads, glutes, hips","Bodyweight squat — 12","Leg swings — 10 each way","Load the York pair for lateral raises: aim ~15 lb"],
+    exercises: [
+      { name: "Bulgarian Split Squat", tempo: "3-0-1-0", rest: "2:00", cue: ["Back foot on the bench, 33 lb · 15 kg hex DB in each hand", "Reps per leg — log 10, not 20"], loads: HEX_LOADS,
+        sets: [ W("33 lb · 15 kg","10/leg",3), W("33 lb · 15 kg","10/leg",3), W("33 lb · 15 kg","10/leg",3) ] },
+      { name: "Incline DB Press", tempo: "2-0-1-0", rest: "1:30", cue: ["Bench at ~30°, 33 lb · 15 kg DB in each hand"], loads: HEX_LOADS,
+        sets: [ W("33 lb · 15 kg",15,2), W("33 lb · 15 kg",15,2), W("33 lb · 15 kg",15,2) ] },
+      { name: "Bent-Over DB Row", tempo: "2-1-1-0", rest: "1:30", cue: ["Stand, hinge forward, 33 lb · 15 kg hex DB in each hand", "Row both together, no bench"], loads: HEX_LOADS,
+        sets: [ W("33 lb · 15 kg",15,3), W("33 lb · 15 kg",15,3), W("33 lb · 15 kg",15,3) ] },
+      { name: "Floor Glute Bridge", tempo: "2-2-1-0", rest: "1:30", cue: ["On your back on the floor, ONE dumbbell held on your hip", "Drive through the heels, 2 s squeeze at the top", "Start with the 15 kg on the hip; go heavier if it is easy to place and control"], loads: HEX_LOADS,
+        sets: [ W("33 lb · 15 kg",15,2), W("33 lb · 15 kg",15,2), W("33 lb · 15 kg",15,2) ] },
+      { name: "Step-Up", tempo: "2-0-1-0", rest: "1:30", cue: ["Onto the bench or a box", "33 lb · 15 kg hex DB in each hand", "Reps per leg — log 10, not 20"], loads: HEX_LOADS,
+        sets: [ W("33 lb · 15 kg","10/leg",3), W("33 lb · 15 kg","10/leg",3), W("33 lb · 15 kg","10/leg",3) ] },
+      { name: "Lateral Raise", tempo: "2-0-1-0", rest: "1:00", cue: ["York pair loaded to ~15 lb · 6.8 kg — about a 2.5 kg plate each end over the bare handle", "Up from 11 lb; last couple reps a grind, not a fail", "Slight elbow bend, no swing"], loads: YORK_LOADS,
+        sets: [ W("15 lb · 6.8 kg",15,3), W("15 lb · 6.8 kg",15,3), W("15 lb · 6.8 kg",15,3) ] },
+      { name: "Incline DB Curl", tempo: "2-0-1-0", rest: "1:30", cue: ["Bench at ~45°, arms hang back", "33 lb · 15 kg hex DB in each hand"], loads: HEX_LOADS,
+        sets: [ W("33 lb · 15 kg",10,2), W("33 lb · 15 kg",10,2), W("33 lb · 15 kg",10,2) ] },
+      { name: "Single-Leg Seated Calf Raise", tempo: "2-2-1-0", rest: "1:00", cue: ["Seated on the bench, ONE dumbbell stood on the working thigh, one leg at a time", "Slow down, deep stretch, 2 s hold at the top", "Soleus maintenance — controlled, not heavy. Both feet down with one DB per thigh if balancing is off"], loads: HEX_LOADS,
+        sets: [ W("33 lb · 15 kg","15/leg",2), W("33 lb · 15 kg","15/leg",2), W("33 lb · 15 kg","15/leg",2) ] },
+    ],
+    finisher: { label: "Conditioning finisher — 30s on / 30s off", moves: ["KB Swing · 12 kg","Light DB Thruster"], timer: { leadInSec: 5, workSec: 30, restSec: 30, rounds: 6 } }
+  },
+  { id: 'cond-a-nov26', type: 'kb-metcon', category: 'Conditioning', block: 'return-nov26', week: 2, slot: 'C', wkStart: '2026-11-16', wkEnd: '2026-11-22', title: "Conditioning A — Swings + Get-Ups", duration: "~15-20 min", metconKind: 'forCompletion',
+    protocol: [
+      "EASY day — conversational pace, leave gas in the tank.",
+      "1) Turkish Get-Ups FIRST, while fresh: 3-5 per side, one at a time, slow and controlled. Light — 12 kg kettlebell or a light dumbbell. Never rush a get-up.",
+      "2) Kettlebell Swings: 5 sets of 10, smooth and easy, rest as needed between sets.",
+      "Get-ups double as shoulder and core work on a day you are not pressing."
+    ],
+    timer: { mode: 'stopwatch' }
+  },
+  { id: 'cond-b-nov26', type: 'kb-metcon', category: 'Conditioning', block: 'return-nov26', week: 2, slot: 'D', wkStart: '2026-11-16', wkEnd: '2026-11-22', title: "Conditioning B — Easy Intervals", duration: "~15 min", metconKind: 'forCompletion',
+    protocol: [
+      "EASY on-ramp — the long rest keeps this from redlining you.",
+      "Warm up 5 min easy first (walk, or easy on the elliptical).",
+      "Hit Start: 8 rounds of 20 seconds steady effort / 70 seconds easy. Pick ONE — KB swings or step-ups. The app beeps the changes.",
+      "Cool down 5 min easy after.",
+      "Finish with 2-3 slow Turkish get-ups per side."
+    ],
+    timer: { mode: 'interval', leadInSec: 10, workSec: 20, restSec: 70, rounds: 8, moves: ["Swings or step-ups"] }
+  },
 ];
 
 const WARMUP = [
@@ -1840,7 +1914,7 @@ const KB_WARMUP = [
 // STATE
 // ============================================================
 const STORE_KEY = 'workoutPwaState_v2';
-const APP_VERSION = 'Iron Protocol v9.1';
+const APP_VERSION = 'Iron Protocol v9.2';
 document.addEventListener('input', (e) => { const t = e.target; if (t && t.id && t.id.startsWith('edW_')) { const kl = document.getElementById('edWkg_' + t.id.slice(4)); if (kl) kl.textContent = 'lb' + (kgOf(t.value) ? ' · ' + kgOf(t.value) : ''); } });
 
 const FRESH_STATE = () => ({ sessionIdx: 0, sessions: {}, notes: {}, metcons: {}, category: 'Gym' });
@@ -2772,6 +2846,7 @@ function renderHome() {
 // RENDER ROOT
 // ============================================================
 function render() {
+  clearIntervalTimer();
   if (state.view === 'home') {
     clearRestDock();
     renderHome();
@@ -3118,6 +3193,15 @@ function renderStrength(ses, app) {
     app.appendChild(fl);
   }
 
+  // Conditioning finisher — work/rest interval timer built into the lift day
+  if (ses.finisher) {
+    const fh = document.createElement('div');
+    fh.className = 'warmup-block';
+    fh.innerHTML = `<div class="label">${ses.finisher.label}</div><ul>${(ses.finisher.moves || []).map(m => `<li>${m}</li>`).join('')}<li>${ses.finisher.timer.rounds} rounds · ${ses.finisher.timer.workSec}s on / ${ses.finisher.timer.restSec}s off — do what you get, even 3 min to start</li></ul>`;
+    app.appendChild(fh);
+    renderIntervalTimer(app, { timer: ses.finisher.timer, id: ses.id + '_fin', title: 'Finisher', moves: ses.finisher.moves || [] });
+  }
+
   // Wire action buttons
   app.querySelectorAll('[data-act]').forEach(btn => {
     btn.addEventListener('click', (e) => {
@@ -3410,6 +3494,19 @@ function renderMetcon(ses, app) {
     });
   }
 
+  // Interval (work/rest) timer — self-contained; used for Conditioning B
+  if (ses.timer && ses.timer.mode === 'interval') {
+    renderIntervalTimer(app, { timer: ses.timer, id: ses.id, title: 'Intervals', moves: ses.timer.moves || [] });
+    const nk = ses.id + '_metcon';
+    const nt = document.createElement('textarea');
+    nt.className = 'notes-field'; nt.style.marginTop = '12px'; nt.rows = 2;
+    nt.value = state.notes[nk] || '';
+    nt.placeholder = 'Tap to note — use your side-button voice dictation';
+    nt.addEventListener('input', (e) => { state.notes[nk] = e.target.value; saveState(); });
+    app.appendChild(nt);
+    return;
+  }
+
   // Timer panel
   const timerPanel = document.createElement('div');
   timerPanel.className = 'metcon-timer-panel' + (ms.timerRunning ? ' active' : '');
@@ -3690,6 +3787,79 @@ function closeOverlay() {
 }
 
 // ============================================================
+// INTERVAL (work/rest) TIMER — self-contained. Drives the
+// conditioning-day intervals and the lift-day finishers.
+// ============================================================
+let _ivHandle = null;
+let _ivLastPhase = null;
+function clearIntervalTimer() { if (_ivHandle) { clearInterval(_ivHandle); _ivHandle = null; } }
+function ivCompute(timer, elapsed) {
+  const lead = timer.leadInSec || 0, work = timer.workSec, rest = timer.restSec, rounds = timer.rounds;
+  const cycle = work + rest, total = lead + rounds * cycle;
+  if (elapsed >= total) return { phase: 'done', left: 0, round: rounds, total };
+  if (elapsed < lead) return { phase: 'ready', left: Math.ceil(lead - elapsed), round: 0, total };
+  const t = elapsed - lead, round = Math.floor(t / cycle) + 1, within = t % cycle;
+  if (within < work) return { phase: 'work', left: Math.ceil(work - within), round, total };
+  return { phase: 'rest', left: Math.ceil(rest - (within - work)), round, total };
+}
+const IV_PHASE = { ready: 'GET READY', work: 'WORK', rest: 'REST', done: 'DONE' };
+function ivMove(o, round, phase) {
+  if (phase !== 'work' || !o.moves || !o.moves.length) return '';
+  return o.moves[(Math.max(1, round) - 1) % o.moves.length];
+}
+function renderIntervalTimer(container, o) {
+  const st = getMetconState(o.id), timer = o.timer;
+  const elapsed = st.timerRunning && st.timerStart ? (Date.now() - st.timerStart + st.timerElapsed) / 1000 : st.timerElapsed / 1000;
+  const info = ivCompute(timer, elapsed);
+  const panel = document.createElement('div');
+  panel.className = 'iv-timer-panel ' + (st.timerRunning ? info.phase : (st.completed ? 'done' : ''));
+  panel.innerHTML = `
+    <div class="metcon-timer-label">${o.title || 'Intervals'}</div>
+    <div class="iv-phase ${info.phase}">${IV_PHASE[info.phase]}</div>
+    <div class="iv-count">${st.completed ? '✓' : info.left}</div>
+    <div class="iv-move">${st.timerRunning ? ivMove(o, info.round, info.phase) : ''}</div>
+    <div class="iv-round">${(st.completed || info.phase === 'done') ? `${timer.rounds} rounds done` : `Round ${Math.max(1, info.round)} of ${timer.rounds} · ${timer.workSec}s on / ${timer.restSec}s off`}</div>
+    <div class="iv-controls">
+      ${st.completed ? `<button class="ghost" data-iv="reset" data-id="${o.id}">Reset</button>`
+        : st.timerRunning ? `<button class="ghost" data-iv="pause" data-id="${o.id}">Pause</button>`
+        : `<button class="primary" data-iv="start" data-id="${o.id}">${st.timerElapsed > 0 ? 'Resume' : 'Start'}</button>${st.timerElapsed > 0 ? `<button class="ghost" data-iv="reset" data-id="${o.id}">Reset</button>` : ''}`}
+    </div>`;
+  container.appendChild(panel);
+  panel.querySelectorAll('[data-iv]').forEach(b => b.addEventListener('click', (e) => { e.stopPropagation(); ivAction(o, b.dataset.iv); }));
+  if (st.timerRunning && !st.completed) { _ivLastPhase = info.phase; _ivHandle = setInterval(() => ivTickDom(container, o), 250); }
+}
+function ivTickDom(container, o) {
+  const st = getMetconState(o.id);
+  if (!st.timerRunning) { clearIntervalTimer(); return; }
+  const elapsed = (Date.now() - st.timerStart + st.timerElapsed) / 1000;
+  const info = ivCompute(o.timer, elapsed);
+  if (info.phase !== _ivLastPhase) {
+    if (info.phase === 'work') beep(880, 160);
+    else if (info.phase === 'rest') beep(440, 200);
+    else if (info.phase === 'done') { beep(660, 200); setTimeout(() => beep(660, 200), 260); setTimeout(() => beep(660, 420), 520); }
+    _ivLastPhase = info.phase;
+  }
+  if (info.phase === 'done') {
+    st.timerRunning = false; st.timerStart = null; st.timerElapsed = info.total * 1000; st.completed = true; st.finalSec = Math.round(info.total);
+    saveState(); clearIntervalTimer(); render(); return;
+  }
+  const panel = container.querySelector('.iv-timer-panel');
+  if (!panel) { clearIntervalTimer(); return; }
+  panel.className = 'iv-timer-panel ' + info.phase;
+  const c = panel.querySelector('.iv-count'); if (c) c.textContent = info.left;
+  const ph = panel.querySelector('.iv-phase'); if (ph) { ph.className = 'iv-phase ' + info.phase; ph.textContent = IV_PHASE[info.phase]; }
+  const mv = panel.querySelector('.iv-move'); if (mv) mv.textContent = ivMove(o, info.round, info.phase);
+  const rd = panel.querySelector('.iv-round'); if (rd) rd.textContent = `Round ${Math.max(1, info.round)} of ${o.timer.rounds} · ${o.timer.workSec}s on / ${o.timer.restSec}s off`;
+}
+function ivAction(o, action) {
+  const st = getMetconState(o.id);
+  if (action === 'start') { st.timerStart = Date.now(); st.timerRunning = true; st.completed = false; beep(440, 120); }
+  else if (action === 'pause') { if (st.timerStart) { st.timerElapsed += Date.now() - st.timerStart; st.timerStart = null; } st.timerRunning = false; }
+  else if (action === 'reset') { st.timerStart = null; st.timerElapsed = 0; st.timerRunning = false; st.completed = false; st.finalSec = null; }
+  saveState(); render();
+}
+
+// ============================================================
 // TICK LOOP — strength rest + metcon timer
 // ============================================================
 setInterval(() => {
@@ -3697,6 +3867,7 @@ setInterval(() => {
   if (!ses) return;
 
   if (ses.type === 'kb-metcon') {
+    if (ses.timer && ses.timer.mode === 'interval') return; // interval timer self-ticks
     const ms = state.metcons[ses.id];
     if (!ms || !ms.timerRunning) return;
     const elapsed = Math.floor((Date.now() - ms.timerStart + ms.timerElapsed) / 1000);
