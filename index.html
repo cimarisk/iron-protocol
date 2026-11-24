@@ -3814,6 +3814,7 @@ function ivMove(o, round, phase) {
   if (phase !== 'work' || !o.moves || !o.moves.length) return '';
   return o.moves[(Math.max(1, round) - 1) % o.moves.length];
 }
+function ivSay(txt){ try{ if(txt && 'speechSynthesis' in window){ const u=new SpeechSynthesisUtterance(txt); u.rate=1.0; u.volume=1.0; window.speechSynthesis.cancel(); window.speechSynthesis.speak(u); } }catch(e){} }
 function renderIntervalTimer(container, o) {
   const st = getMetconState(o.id), timer = o.timer;
   const elapsed = st.timerRunning && st.timerStart ? (Date.now() - st.timerStart + st.timerElapsed) / 1000 : st.timerElapsed / 1000;
@@ -3841,7 +3842,7 @@ function ivTickDom(container, o) {
   const elapsed = (Date.now() - st.timerStart + st.timerElapsed) / 1000;
   const info = ivCompute(o.timer, elapsed);
   if (info.phase !== _ivLastPhase) {
-    if (info.phase === 'work') beep(880, 160);
+    if (info.phase === 'work') { beep(880, 160); ivSay(ivMove(o, info.round, info.phase)); }
     else if (info.phase === 'rest') beep(440, 200);
     else if (info.phase === 'done') { beep(660, 200); setTimeout(() => beep(660, 200), 260); setTimeout(() => beep(660, 420), 520); }
     _ivLastPhase = info.phase;
