@@ -3327,14 +3327,6 @@ function handleStrengthAction(act, setKeyStr, btn) {
   // Steppers edit the box in place — no state write, no re-render, no lost focus.
   if (act === 'step') {
     const el = document.getElementById('ed' + btn.dataset.f + '_' + setKeyStr);
-    if (el && btn.dataset.f === 'W' && Array.isArray(ex.loads || ses.loads)) {
-      const L = ex.loads || ses.loads, cur = parseFloat(el.value), up = parseFloat(btn.dataset.d) > 0;
-      let next = isFinite(cur) ? (up ? L.find(x => x > cur + 0.05) : L.slice().reverse().find(x => x < cur - 0.05)) : L[0];
-      if (next == null) next = cur;
-      el.value = String(next);
-      const kl = document.getElementById('edWkg_' + setKeyStr); if (kl) kl.textContent = 'lb · ' + kgOf(next);
-      return;
-    }
     if (el) {
       const d = parseFloat(btn.dataset.d) || 0;
       const cur = parseFloat(el.value);
