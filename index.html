@@ -108,6 +108,28 @@ button.ghost { background: var(--surface-2); border-color: var(--border); color:
 .ed-step { flex: 0 0 68px; height: 60px; min-height: 60px; padding: 0; font-size: 30px; font-weight: 800; line-height: 1;
   background: var(--surface-3); border: 2px solid var(--border); color: var(--text); }
 .ed-step:active { background: var(--accent); color: #0B0F14; border-color: var(--accent); }
+/* Weight entry: tap the number to type it, or nudge it — in the unit stamped on the equipment. */
+.ed-units { flex: 0 0 auto; display: flex; border: 2px solid var(--border); border-radius: 10px; overflow: hidden; }
+.ed-unit-btn { width: 58px; height: 56px; min-height: 56px; padding: 0; border: none; border-radius: 0; background: var(--surface-3); color: var(--text-dim); font-size: 19px; font-weight: 800; }
+.ed-unit-btn.on { background: var(--accent); color: #0B0F14; }
+.ed-conv { font-size: 18px; font-weight: 700; color: var(--text-muted); text-align: center; margin: 6px 0 8px; min-height: 24px; font-variant-numeric: tabular-nums; }
+.ed-nudge { display: flex; gap: 8px; }
+.ed-nudge .ed-step { flex: 1 1 0; height: 56px; min-height: 56px; font-size: 22px; }
+.confirm-plan { font-size: 14px; color: var(--text-dim); margin: -6px 0 12px; }
+/* Timed sets (planks, carries): which phase the clock is in. */
+.work-phase { font-size: 22px; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; color: var(--warn); margin-top: 8px; }
+.work-phase.work { color: var(--done); }
+.work-panel.work { border-color: var(--done); }
+.iv-controls button.primary { flex: 1; height: 56px; font-size: 18px; font-weight: 700; }
+.iv-controls { min-height: 56px; align-items: center; }
+/* In the Actuals panel the boxes are the big numbers; the plan is a one-line reminder, so Save stays on screen above the rest bar. */
+.edit-panel .confirm-head { font-size: 15px; margin-bottom: 8px; }
+.edit-panel .confirm-head b { display: inline; font-size: 17px; margin-top: 0; }
+.edit-panel .edit-stack { gap: 10px; margin: 8px 0 12px; }
+/* "Bodyweight" is a word, not a number: keep it inside its column instead of running into the reps. */
+.weight-big.wt-word { font-size: 19px; line-height: 1.3; }
+/* Six slots in a week must wrap, not run off the edge of the card. */
+.week-row-dots { flex-wrap: wrap; }
 .rest-panel { background: var(--surface-2); border: 1px solid var(--accent); border-radius: 12px; padding: 18px 16px; text-align: center; margin: 0 -16px 12px; }
 .rest-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent); font-weight: 600; }
 .rest-time { font-size: 56px; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1; margin: 6px 0 4px; color: var(--text); }
@@ -378,13 +400,37 @@ const YORK_LOADS = [5.5, 8.8, 11, 14.3, 16.5, 19.8, 22, 25.4, 27.6, 30.9, 33.1, 
 const HEX_LOADS = [33, 66];
 const BUMPER_LOADS = [55, 110];
 const GYM_LOADS_BOG = [5.5, 8.8, 11, 14.3, 16.5, 19.8, 22, 25.4, 27.6, 30.9, 33, 36.4, 38.6, 41.9, 44.1, 55, 66, 110];
-const kgOf = (v) => { const n = parseFloat(v); return (isFinite(n) && n > 0) ? (n / 2.20462).toFixed(1) + ' kg' : ''; };
+// ONE conversion for the whole app. The gym's kit is labelled this way — the 15 kg dumbbell is
+// "33 lb", the 30 kg is "66 lb", 7.5 kg is "16.5 lb" — so weight entry, set rows and notes all agree.
+const LB_PER_KG = 2.2;
+const num1 = (n) => String(Math.round(n * 10) / 10);
+const kgToLb = (kg) => Math.round(kg * LB_PER_KG * 10) / 10;
+const lbToKg = (lb) => Math.round(lb / LB_PER_KG * 10) / 10;
 const unitConv = (t) => {
   const out = [];
-  String(t || '').replace(/(\d+(?:[.,]\d+)?)\s*(kg|kgs|kilos?)\b/gi, (m, n) => { const v = parseFloat(n.replace(',', '.')); out.push(v + ' kg = ' + (v * 2.20462).toFixed(1) + ' lb'); return m; });
-  String(t || '').replace(/(\d+(?:[.,]\d+)?)\s*(lb|lbs|pounds?)\b/gi, (m, n) => { const v = parseFloat(n.replace(',', '.')); out.push(v + ' lb = ' + (v / 2.20462).toFixed(1) + ' kg'); return m; });
+  String(t || '').replace(/(\d+(?:[.,]\d+)?)\s*(kg|kgs|kilos?)\b/gi, (m, n) => { const v = parseFloat(n.replace(',', '.')); out.push(v + ' kg = ' + num1(kgToLb(v)) + ' lb'); return m; });
+  String(t || '').replace(/(\d+(?:[.,]\d+)?)\s*(lb|lbs|pounds?)\b/gi, (m, n) => { const v = parseFloat(n.replace(',', '.')); out.push(v + ' lb = ' + num1(lbToKg(v)) + ' kg'); return m; });
   return out.join('  ·  ');
 };
+// Reads ANY weight the app holds — 225, "66", "33 lb · 15 kg", "20 kg", "240 lb (6 plates)", "Bodyweight" —
+// into pounds, kilos, and the unit the kit is stamped in. lb is NaN when there is no number at all.
+// Every place that needs a weight as a number goes through here; nothing else parses weights.
+function parseLoad(w) {
+  if (typeof w === 'number') return { lb: w, kg: lbToKg(w), unit: 'lb' };
+  const t = String(w == null ? '' : w).replace(/(\d),(\d)/g, '$1.$2');
+  const mLb = t.match(/(\d+(?:\.\d+)?)\s*(?:lbs?|pounds?)\b/i);
+  const mKg = t.match(/(\d+(?:\.\d+)?)\s*(?:kgs?|kilos?)\b/i);
+  if (mLb && mKg) {
+    const lb = parseFloat(mLb[1]), kg = parseFloat(mKg[1]);
+    // The round number is the one stamped on the kit: "33 lb · 15 kg" is a 15 kg bell, "55 lb · 24.9 kg" a 55 lb plate.
+    return { lb, kg, unit: Math.abs(kg * 2 - Math.round(kg * 2)) < 1e-6 ? 'kg' : 'lb' };
+  }
+  if (mLb) { const lb = parseFloat(mLb[1]); return { lb, kg: lbToKg(lb), unit: 'lb' }; }
+  if (mKg) { const kg = parseFloat(mKg[1]); return { lb: kgToLb(kg), kg, unit: 'kg' }; }
+  const m = t.match(/^\s*(\d+(?:\.\d+)?)/);
+  if (m) { const lb = parseFloat(m[1]); return { lb, kg: lbToKg(lb), unit: 'lb' }; }
+  return { lb: NaN, kg: NaN, unit: null };
+}
 const SESSIONS = [
   // ============ GYM SESSIONS — Week 1 ============
   { id: '2026-05-20-C', type: 'gym', category: 'Gym', date: '2026-05-20', day: 'Wed', lift: 'C', week: 1, title: 'Lift C — Deadlift · W1',
@@ -1919,7 +1965,6 @@ const SESSIONS = [
     ],
     timer: { mode: 'interval', leadInSec: 10, workSec: 20, restSec: 70, rounds: 8, moves: ["Swings or step-ups"] }
   },
-,
   { id: 'cond-c-nov26', type: 'kb-metcon', category: 'Conditioning', block: 'return-nov26', week: 2, slot: 'E', wkStart: '2026-11-16', wkEnd: '2026-11-22', title: "Conditioning C — Mixed Circuit", duration: "~18 min", metconKind: 'forCompletion',
     protocol: [
       "Mixed circuit — rotates the pattern each round so nothing gets hammered. Low impact, no jumping.",
@@ -1950,6 +1995,9 @@ const SESSIONS = [
     timer: { mode: 'interval', leadInSec: 10, workSec: 40, restSec: 20, rounds: 12, moves: ["Goblet squat","Push-ups","Farmer carry","Glute bridge"] }
   }
 ];
+// A stray comma in the list above leaves an empty slot, and one empty slot took the whole Home
+// screen down from Nov 24 to Nov 28 2026. Close up any gaps so a typo here can never do that again.
+for (let i = SESSIONS.length - 1; i >= 0; i--) { if (!SESSIONS[i]) SESSIONS.splice(i, 1); }
 
 const WARMUP = [
   '5 min treadmill, incline 2',
@@ -1968,8 +2016,20 @@ const KB_WARMUP = [
 // STATE
 // ============================================================
 const STORE_KEY = 'workoutPwaState_v2';
-const APP_VERSION = 'Iron Protocol v9.2';
-document.addEventListener('input', (e) => { const t = e.target; if (t && t.id && t.id.startsWith('edW_')) { const kl = document.getElementById('edWkg_' + t.id.slice(4)); if (kl) kl.textContent = 'lb' + (kgOf(t.value) ? ' · ' + kgOf(t.value) : ''); } });
+const APP_VERSION = 'Iron Protocol v9.3';
+// Actuals boxes: whatever is typed goes straight into the saved draft (see makeDraft), so it survives a redraw.
+document.addEventListener('input', (e) => {
+  const t = e.target, m = t && t.id && t.id.match(/^ed([WRI])_(\d+_\d+)$/);
+  if (!m) return;
+  const ses = SESSIONS[state.sessionIdx], ssState = ses && state.sessions[ses.id], ss = ssState && ssState.sets[m[2]];
+  if (!ss || !ss.draft) return;
+  ss.draft[m[1] === 'W' ? 'w' : (m[1] === 'R' ? 'r' : 'rir')] = t.value;
+  if (m[1] === 'W') { delete ss.draft.prev; const cl = document.getElementById('edWc_' + m[2]); if (cl) cl.textContent = convLine(ss.draft); }
+  saveState();
+});
+// Tap a box and the old number is selected, so the first key typed replaces it. Enter puts the keyboard away.
+document.addEventListener('focusin', (e) => { const t = e.target; if (t && t.id && /^ed[WRI]_/.test(t.id)) setTimeout(() => { try { t.select(); } catch (_) {} }, 0); });
+document.addEventListener('keydown', (e) => { const t = e.target; if (e.key === 'Enter' && t && t.id && /^ed[WRI]_/.test(t.id)) t.blur(); });
 
 const FRESH_STATE = () => ({ sessionIdx: 0, sessions: {}, notes: {}, metcons: {}, category: 'Gym' });
 const isStateShape = (s) => !!s && typeof s === 'object' && !Array.isArray(s);
@@ -2370,7 +2430,7 @@ const _chainCache = {};
 function chainFor(sesId, ex, eIdx, ssState) {
   if (!ex || !isBarbell(ex.name)) return null;
   const targets = ex.sets.map((s, sIdx) => {
-    const w = effWeightNum(ssState.sets[setKey(eIdx, sIdx)], s);
+    const w = shownWeightNum(ex, eIdx, sIdx, ssState);
     if (!isFinite(w) || w < BAR_LB) return null;
     return (w - BAR_LB) / 2;
   });
@@ -2405,9 +2465,13 @@ function plateDelta(a, b) {
 // Numeric load actually on the bar for a set (logged actual wins over prescribed).
 function effWeightNum(ss, s) {
   const raw = (ss && ss.actual && ss.actual.w != null && ss.actual.w !== '') ? ss.actual.w : (s ? s.w : null);
-  if (typeof raw === 'number') return raw;
-  const num = parseFloat(String(raw).replace(/[^0-9.]/g, ''));
-  return isFinite(num) ? num : NaN;
+  return parseLoad(raw).lb;
+}
+// Same, but a set not done yet follows the weight carried from his last set (see targetFor).
+function shownWeightNum(ex, eIdx, sIdx, ssState) {
+  const s = ex.sets[sIdx], ss = ssState.sets[setKey(eIdx, sIdx)];
+  if (!setResolved(ss)) { const t = targetFor(ex, eIdx, sIdx, ssState); if (t.carried) return parseLoad(t.w).lb; }
+  return effWeightNum(ss, s);
 }
 
 // { text, delta, arr } for a set, or null when this lift gets no plate math.
@@ -2438,12 +2502,15 @@ function lastTimeFor(ses, exName) {
     if (set.t !== 'work') return;
     const r = ss.sets[pIdx + '_' + sIdx];
     if (!r || r.status !== 'completed') return;
-    const w = (r.actual && r.actual.w) || set.w;
+    const logged = r.actual && r.actual.w != null && r.actual.w !== '';
     const rp = (r.actual && r.actual.r) || set.r;
-    out = { w: w, r: rp };
+    out = { w: logged ? r.actual.w : set.w, kg: logged ? r.actual.kg : null, plan: set.w, logged: logged, r: rp };
   });
   if (!out) return null;
-  const wTxt = typeof out.w === 'number' ? out.w + ' lb' : String(out.w);
+  // A logged weight is stored as a bare number of pounds — write it the way the plan writes weights.
+  let wTxt;
+  if (out.logged) { const p = loadParts(out.w, out.kg, out.plan); wTxt = (/[a-z]/i.test(p.main) ? p.main : p.main + ' lb') + (p.sub ? ' · ' + p.sub : ''); }
+  else wTxt = typeof out.w === 'number' ? out.w + ' lb' : String(out.w);
   return wTxt + ' \u00d7 ' + out.r;
 }
 
@@ -2826,7 +2893,7 @@ function renderHome() {
               if (result && result.status === 'completed') {
                 const wRaw = (result.actual && result.actual.w) || set.w;
                 const rRaw = (result.actual && result.actual.r) || set.r;
-                const wNum = parseFloat(String(wRaw).replace(/[^0-9.]/g,'')) || 0;
+                const wNum = parseLoad(wRaw).lb || 0;
                 // Only count clean numeric reps. "40 steps" and "AMRAP" are not 40 reps.
                 const rNum = /^\s*\d+\s*$/.test(String(rRaw)) ? parseInt(String(rRaw), 10) : 0;
                 if (wNum > 0 && rNum > 0) totalTonnage += wNum * rNum;
@@ -2901,6 +2968,7 @@ function renderHome() {
 // ============================================================
 function render() {
   clearIntervalTimer();
+  armHold(); syncWake();
   if (state.view === 'home') {
     clearRestDock();
     renderHome();
@@ -2989,6 +3057,7 @@ function navigateSession(dir) {
 // ============================================================
 // RENDER — STRENGTH (gym + kb-strength)
 // ============================================================
+let _scrollKey = null;   // set by the tap that opens a set panel, used up by the next draw
 function renderStrength(ses, app) {
   const ssState = getSessionState(ses.id);
   let restDockFor = null;   // set by whichever exercise is resting; docked after the loop
@@ -3071,25 +3140,29 @@ function renderStrength(ses, app) {
       const isRamp = s.t === 'ramp';
       const row = document.createElement('div');
 
-      const wDisplay = (val) => {
-        if (val === 'BW') return 'BW';
-        if (typeof val === 'string') return val;
-        return val;
-      };
+      // The plan as a sentence, and what this set is expected to be right now (see targetFor).
+      const repsStr = typeof s.r === 'string' ? s.r : `${s.r}${s.perSide ? '/side' : ''}`;
+      const rirStr = (s.rir !== '—' && s.rir != null) ? `, RIR ${s.rir}` : '';
+      const wTxt = s.w === 'BW' ? 'bodyweight' : (typeof s.w === 'number' ? `${s.w} lb` : s.w);
+      const tgt = targetFor(ex, eIdx, sIdx, ssState);
+      const carried = tgt.carried && !setResolved(ss);
 
       if (ss.mode === 'confirm') {
         row.className = 'confirm-panel';
-        const repsStr = typeof s.r === 'string' ? s.r : `${s.r}${s.perSide ? '/side' : ''}`;
-        const rirStr = (s.rir !== '—' && s.rir != null) ? `, RIR ${s.rir}` : '';
-        const wTxt = s.w === 'BW' ? 'bodyweight' : (typeof s.w === 'number' ? `${s.w} lb` : s.w);
+        row.dataset.panel = k;
         const setLabel = isRamp ? `Ramp ${sIdx + 1}` : `Set ${sIdx + 1}`;
-        const hSec = holdSec(ex, s);
-        const primaryLabel = hSec ? `Start ${hSec}s` : 'Done';
-        const primaryClass = hSec ? 'btn-start' : 'primary btn-done';
-        const primaryAct = hSec ? 'workStart' : 'done';
+        const hi = holdInfo(ex, s);
+        const primaryLabel = hi ? `Start ${hi.sec}s${hi.sides > 1 ? ' each ' + hi.per : ''}` : 'Done';
+        const primaryClass = hi ? 'btn-start' : 'primary btn-done';
+        const primaryAct = hi ? 'workStart' : 'done';
         const pi = plateInfoFor(ses.id, ex, eIdx, sIdx, ssState);
+        // Once he has changed the weight on an earlier set, say plainly what one tap will log.
+        const head = carried
+          ? `<div class="confirm-head">${setLabel} · your weight <b>${loadLine(tgt.w, tgt.kg, s.w)} × ${repsText(tgt.r, s)}</b></div>
+          <div class="confirm-plan">Plan was ${wTxt} × ${repsStr}</div>`
+          : `<div class="confirm-head">${setLabel} · prescribed <b>${wTxt} × ${repsStr}${rirStr}</b></div>`;
         row.innerHTML = `
-          <div class="confirm-head">${setLabel} · prescribed <b>${wTxt} × ${repsStr}${rirStr}</b></div>
+          ${head}
           ${pi ? `<div class="plate-big">
             <div class="pb-label">Load each side</div>
             <div class="pb-val">${pi.text}</div>
@@ -3106,44 +3179,59 @@ function renderStrength(ses, app) {
           </div>
         `;
       } else if (ss.mode === 'working') {
-        row.className = 'work-panel';
-        const hSec = holdSec(ex, s) || 0;
-        const remaining = ss.workEndTs ? Math.max(0, Math.ceil((ss.workEndTs - Date.now()) / 1000)) : hSec;
-        const setLabel = `Set ${sIdx + 1}`;
+        // Timed set. Phases: get set -> go -> (switch sides -> go) -> done. holdAdvance() moves it along.
+        const hi = holdInfo(ex, s) || { sec: 0, sides: 1, per: '' };
+        const phase = ss.workPhase || 'work', side = ss.workSide || 1;
+        row.className = 'work-panel ' + phase;
+        row.dataset.panel = k;
+        const remaining = ss.workEndTs ? Math.max(0, Math.ceil((ss.workEndTs - Date.now()) / 1000)) : hi.sec;
+        const per = hi.per || 'side';
+        const head = phase === 'ready' ? 'Get set'
+          : phase === 'switch' ? `Switch ${per}s`
+          : (hi.sides > 1 ? `${per} ${side} of ${hi.sides}` : 'Go');
+        const lastStretch = phase === 'work' && side >= hi.sides;
         row.innerHTML = `
-          <div class="work-label">${ex.name} · ${setLabel}</div>
-          <div class="work-time">${remaining}s</div>
-          <div class="work-sub">Hold form. Breathe.</div>
+          <div class="work-label">${ex.name} · Set ${sIdx + 1}</div>
+          <div class="work-phase ${phase}">${head}</div>
+          <div class="work-time">${remaining}</div>
           <div class="work-actions">
             <button class="ghost" data-act="workCancel" data-set="${k}">Cancel</button>
             <button data-act="workAdd" data-set="${k}">+10s</button>
-            <button class="primary" data-act="workStop" data-set="${k}">Done early</button>
+            ${lastStretch
+              ? `<button class="primary" data-act="workStop" data-set="${k}">Done early</button>`
+              : `<button class="primary" data-act="workNext" data-set="${k}">${phase === 'work' ? `Next ${per}` : 'Go now'}</button>`}
           </div>
         `;
       } else if (ss.mode === 'deviate') {
-        row.className = 'confirm-panel';
-        const repsStr = typeof s.r === 'string' ? s.r : `${s.r}${s.perSide ? '/side' : ''}`;
-        const rirStr = (s.rir !== '—' && s.rir != null) ? `, RIR ${s.rir}` : '';
-        const wTxt = s.w === 'BW' ? 'bodyweight' : (typeof s.w === 'number' ? `${s.w} lb` : s.w);
+        row.className = 'confirm-panel edit-panel';
+        row.dataset.panel = k;
         const setLabel = isRamp ? `Ramp ${sIdx + 1}` : `Set ${sIdx + 1}`;
-        // Prefill with what was prescribed, so he only touches what actually differed.
-        const pre = prefillFor(s, ss);
+        // The boxes show the saved draft: the plan, the weight carried from his last set, or what he already logged.
+        if (!ss.draft) ss.draft = makeDraft(ex, eIdx, sIdx, ssState);
+        const dr = ss.draft, kgMode = dr.u === 'kg';
+        const nudges = kgMode ? [-5, -0.5, 0.5, 5] : [-5, -1, 1, 5];
         row.innerHTML = `
           <div class="confirm-head">${setLabel} · prescribed <b>${wTxt} × ${repsStr}${rirStr}</b></div>
           <div class="edit-stack">
             <div class="ed-row">
-              <div class="ed-label">Weight <span class="ed-unit" id="edWkg_${k}">lb${kgOf(pre.w) ? ' · ' + kgOf(pre.w) : ''}</span></div>
+              <div class="ed-label">Weight <span class="ed-unit">tap the number to type it</span></div>
               <div class="ed-ctl">
-                <button class="ed-step" data-act="step" data-set="${k}" data-f="W" data-d="-5">−</button>
-                <input type="text" id="edW_${k}" value="${pre.w}" placeholder="—" inputmode="decimal" autocomplete="off">
-                <button class="ed-step" data-act="step" data-set="${k}" data-f="W" data-d="5">+</button>
+                <input type="text" id="edW_${k}" value="${escAttr(dr.w)}" placeholder="—" inputmode="decimal" autocomplete="off" enterkeyhint="done">
+                <div class="ed-units">
+                  <button class="ed-unit-btn${kgMode ? '' : ' on'}" data-act="unit" data-set="${k}" data-u="lb">lb</button>
+                  <button class="ed-unit-btn${kgMode ? ' on' : ''}" data-act="unit" data-set="${k}" data-u="kg">kg</button>
+                </div>
+              </div>
+              <div class="ed-conv" id="edWc_${k}">${convLine(dr)}</div>
+              <div class="ed-nudge">
+                ${nudges.map(d => `<button class="ed-step" data-act="step" data-set="${k}" data-f="W" data-d="${d}">${d < 0 ? '−' : '+'}${Math.abs(d)}</button>`).join('')}
               </div>
             </div>
             <div class="ed-row">
               <div class="ed-label">Reps <span class="ed-unit">done</span></div>
               <div class="ed-ctl">
                 <button class="ed-step" data-act="step" data-set="${k}" data-f="R" data-d="-1">−</button>
-                <input type="text" id="edR_${k}" value="${pre.r}" placeholder="—" inputmode="numeric" autocomplete="off">
+                <input type="text" id="edR_${k}" value="${escAttr(dr.r)}" placeholder="—" inputmode="numeric" autocomplete="off" enterkeyhint="done">
                 <button class="ed-step" data-act="step" data-set="${k}" data-f="R" data-d="1">+</button>
               </div>
             </div>
@@ -3151,7 +3239,7 @@ function renderStrength(ses, app) {
               <div class="ed-label">RIR <span class="ed-unit">reps left in the tank</span></div>
               <div class="ed-ctl">
                 <button class="ed-step" data-act="step" data-set="${k}" data-f="I" data-d="-1">−</button>
-                <input type="text" id="edI_${k}" value="${pre.rir}" placeholder="—" inputmode="numeric" autocomplete="off">
+                <input type="text" id="edI_${k}" value="${escAttr(dr.rir)}" placeholder="—" inputmode="numeric" autocomplete="off" enterkeyhint="done">
                 <button class="ed-step" data-act="step" data-set="${k}" data-f="I" data-d="1">+</button>
               </div>
             </div>
@@ -3172,18 +3260,20 @@ function renderStrength(ses, app) {
           row.classList.add('current');
           row.classList.add('tappable');
         }
-        const dispW = ss.actual ? (ss.actual.w == null ? s.w : ss.actual.w) : s.w;
-        const dispR = ss.actual ? (ss.actual.r == null ? s.r : ss.actual.r) : s.r;
-        const dispI = ss.actual ? (ss.actual.rir == null ? s.rir : ss.actual.rir) : s.rir;
-        const wText = wDisplay(dispW);
-        const rText = typeof dispR === 'string' ? dispR : (dispR + (s.perSide ? '/sd' : ''));
+        // The row shows exactly what one tap on Done will log: his logged numbers, else the
+        // weight carried from his last set, else the plan.
+        const a = ss.actual || null;
+        const aW = !!a && a.w != null && a.w !== '', aR = !!a && a.r != null && a.r !== '';
+        const wp = loadParts(aW ? a.w : (carried ? tgt.w : s.w), aW ? a.kg : (carried ? tgt.kg : null), s.w);
+        const rText = repsText(aR ? a.r : (carried ? tgt.r : s.r), s);
+        const dispI = a ? (a.rir == null ? s.rir : a.rir) : s.rir;
         const tapMark = ss.status === 'cut' ? '–' : (ss.status === 'completed' ? '✓' : (sIdx === currentSetIdx ? '›' : ''));
         const setLabel = isRamp ? `R${sIdx + 1}` : `${sIdx + 1}`;
         const rowPI = plateInfoFor(ses.id, ex, eIdx, sIdx, ssState);
         row.innerHTML = `
           <span class="set-label">${setLabel}</span>
           <span class="set-cell weight-cell">
-            <span class="weight-big">${String(wText).split(' · ')[0]}</span>${String(wText).includes(' · ') ? `<span class="kg-sub">${String(wText).split(' · ')[1]}</span>` : ''}
+            <span class="weight-big${wp.main.length > 6 && !/\d/.test(wp.main) ? ' wt-word' : ''}">${wp.main}</span>${wp.sub ? `<span class="kg-sub">${wp.sub}</span>` : ''}
             ${rowPI ? `<span class="plate-line"><span class="ps">side</span> ${rowPI.text}</span>` : ''}
             ${rowPI && rowPI.delta && sIdx === currentSetIdx ? `<span class="plate-delta">${rowPI.delta}</span>` : ''}
           </span>
@@ -3194,12 +3284,14 @@ function renderStrength(ses, app) {
         if (!setResolved(ss) && sIdx === currentSetIdx) {
           row.addEventListener('click', () => {
             ssState.sets[k] = { ...ss, mode: 'confirm' };
+            _scrollKey = k;
             saveState(); render();
           });
         } else if (setResolved(ss)) {
           row.classList.add('tappable');
           row.addEventListener('click', () => {
-            ssState.sets[k] = { ...ss, mode: 'deviate' };
+            ssState.sets[k] = { ...ss, mode: 'deviate', draft: makeDraft(ex, eIdx, sIdx, ssState) };
+            _scrollKey = k;
             saveState(); render();
           });
         }
@@ -3247,13 +3339,20 @@ function renderStrength(ses, app) {
     app.appendChild(fl);
   }
 
-  // Conditioning finisher — work/rest interval timer built into the lift day
+  // Conditioning finisher — work/rest interval timer built into the lift day.
+  // Spelled out: which rounds are which move, how long, and that the timer sits right below.
   if (ses.finisher) {
+    const f = ses.finisher, ft = f.timer, mv = f.moves || [];
+    const mins = Math.round(ft.rounds * (ft.workSec + ft.restSec) / 60);
+    const roundsOf = (i) => { const a = []; for (let r = i + 1; r <= ft.rounds; r += mv.length) a.push(r); return a; };
+    const moveLines = mv.length > 1
+      ? mv.map((m, i) => `<li>Round${roundsOf(i).length > 1 ? 's' : ''} ${roundsOf(i).join(', ')} — ${m}</li>`).join('')
+      : mv.map(m => `<li>${m}</li>`).join('');
     const fh = document.createElement('div');
     fh.className = 'warmup-block';
-    fh.innerHTML = `<div class="label">${ses.finisher.label}</div><ul>${(ses.finisher.moves || []).map(m => `<li>${m}</li>`).join('')}<li>${ses.finisher.timer.rounds} rounds · ${ses.finisher.timer.workSec}s on / ${ses.finisher.timer.restSec}s off — do what you get, even 3 min to start</li></ul>`;
+    fh.innerHTML = `<div class="label">${f.label}</div><ul>${moveLines}<li>${ft.workSec} s work, then ${ft.restSec} s rest · ${ft.rounds} rounds · ${mins} min</li><li>Press Start below. It beeps and calls each move — do what you get, even 3 min to start.</li></ul>`;
     app.appendChild(fh);
-    renderIntervalTimer(app, { timer: ses.finisher.timer, id: ses.id + '_fin', title: 'Finisher', moves: ses.finisher.moves || [] });
+    renderIntervalTimer(app, { timer: ft, id: ses.id + '_fin', title: 'Finisher timer', moves: mv });
   }
 
   // Wire action buttons
@@ -3266,10 +3365,20 @@ function renderStrength(ses, app) {
 
   renderRestDock(ses, ssState, restDockFor);
 
-  // He tapped a set — put that panel where his eyes already are.
-  const panel = app.querySelector('.confirm-panel, .work-panel');
-  if (panel) {
-    try { panel.scrollIntoView({ block: 'center', behavior: 'auto' }); } catch (e) {}
+  // He tapped a set — put that panel where his eyes already are. ONLY then: a redraw for any other
+  // reason (a timer starting, a rest clock ending) must never drag the page somewhere else.
+  if (_scrollKey) {
+    const panel = app.querySelector('[data-panel="' + _scrollKey + '"]');
+    _scrollKey = null;
+    if (panel) {
+      try {
+        // Centre it in the part of the screen the rest bar is not covering; too tall for that, pin its top.
+        const dock = document.querySelector('.rest-dock');
+        const room = window.innerHeight - (dock ? dock.offsetHeight : 0);
+        const box = panel.getBoundingClientRect();
+        window.scrollBy(0, box.top - (box.height > room - 16 ? 8 : (room - box.height) / 2));
+      } catch (e) {}
+    }
   }
 }
 
@@ -3288,8 +3397,11 @@ function renderRestDock(ses, ssState, info) {
   const nextSetIdx = ex.sets.findIndex((_, i) => !setResolved(ssState.sets[setKey(eIdx, i)]));
   const nextSet = nextSetIdx >= 0 ? ex.sets[nextSetIdx] : null;
   const pi = nextSetIdx >= 0 ? plateInfoFor(ses.id, ex, eIdx, nextSetIdx, ssState) : null;
+  const nt = nextSet ? targetFor(ex, eIdx, nextSetIdx, ssState) : null;
   const nextTxt = nextSet
-    ? `${nextSet.w}${typeof nextSet.w === 'number' ? ' lb' : ''} × ${nextSet.r}${nextSet.perSide ? '/side' : ''}`
+    ? (nt.carried
+        ? `${loadLine(nt.w, nt.kg, nextSet.w)} × ${repsText(nt.r, nextSet)}`
+        : `${nextSet.w}${typeof nextSet.w === 'number' ? ' lb' : ''} × ${nextSet.r}${nextSet.perSide ? '/side' : ''}`)
     : 'Exercise complete';
   const dock = document.createElement('div');
   dock.className = 'rest-dock';
@@ -3320,20 +3432,103 @@ function renderRestDock(ses, ssState, info) {
   document.body.classList.add('resting');
 }
 
-// What the "log actuals" boxes start at: the prescribed numbers, or whatever was
-// already logged. Blank only when there is no sensible number (bodyweight, AMRAP).
-function prefillFor(s, ss) {
-  const numOr = (v) => {
-    if (typeof v === 'number') return String(v);
-    if (typeof v === 'string') { const m = v.match(/-?\d+(\.\d+)?/); return m ? m[0] : ''; }
-    return '';
-  };
-  const a = ss && ss.actual ? ss.actual : null;
+// ============================================================
+// WHAT A SET IS RIGHT NOW — plan, carried weight, and the Actuals draft
+// ============================================================
+const escAttr = (v) => String(v == null ? '' : v).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+
+// The leading number of a reps prescription: 15 -> "15", "10/leg" -> "10", "30 s/side" -> "30", "AMRAP" -> "".
+function repsLead(r) {
+  if (typeof r === 'number') return String(r);
+  const m = String(r == null ? '' : r).match(/^\s*~?\s*(\d+)/);
+  return m ? m[1] : '';
+}
+
+// Reps as shown on a row. A logged number keeps the plan's unit: "8" on a "10/leg" set reads "8/leg".
+function repsText(r, s) {
+  if (r === s.r) return typeof r === 'string' ? r : (r + (s.perSide ? '/sd' : ''));
+  if (typeof s.r === 'number') return String(r) + (s.perSide ? '/sd' : '');
+  const m = String(s.r).match(/^\s*~?\s*\d+(?:\s*[–-]\s*\d+)?(\s*(?:s|sec|secs|steps?|yd|min)?\s*(?:\/\s*(?:side|leg|arm|hand))?)\s*$/i);
+  return String(r) + (m && /^\d+(?:\.\d+)?$/.test(String(r).trim()) ? m[1] : '');
+}
+
+// How a weight reads on screen: pounds first, kilos under it. Kilos show whenever the plan shows
+// them or he logged in kilos. A plan written as a bare number (a pounds-only gym) stays a bare number.
+function loadParts(w, kg, planW) {
+  const isNum = typeof w === 'number' || /^\s*\d+(?:[.,]\d+)?\s*$/.test(String(w));
+  if (!isNum) { const parts = String(w).split(' · '); return { main: parts[0], sub: parts[1] || '' }; }
+  const lb = parseLoad(w).lb;
+  const planKg = typeof planW === 'string' && /kg/i.test(planW);
+  const hasKg = kg != null && kg !== '';
+  const bare = !planKg && !hasKg && (typeof planW === 'number' || /^\s*\d+(?:\.\d+)?\s*$/.test(String(planW)));
+  return { main: bare ? num1(lb) : num1(lb) + ' lb', sub: hasKg ? kg + ' kg' : (planKg ? num1(lbToKg(lb)) + ' kg' : '') };
+}
+const loadLine = (w, kg, planW) => { const p = loadParts(w, kg, planW); return p.sub ? p.main + ' · ' + p.sub : p.main; };
+
+// What this set should be RIGHT NOW. Normally the plan. But once he logs a set at a different
+// weight, the sets still to come that were planned at that same weight follow the weight in his
+// hands (and the reps he got with it). Without this, one tap on Done logs a weight he is not holding.
+function targetFor(ex, eIdx, sIdx, ssState) {
+  const s = ex.sets[sIdx];
+  const out = { w: s.w, kg: null, r: s.r, carried: false };
+  for (let i = sIdx - 1; i >= 0; i--) {
+    const p = ex.sets[i];
+    if (p.t !== s.t || String(p.w) !== String(s.w)) continue;
+    const ps = ssState.sets[setKey(eIdx, i)];
+    if (!ps || ps.status !== 'completed') continue;
+    const a = ps.actual;
+    if (a && a.w != null && a.w !== '') {
+      out.w = a.w;
+      out.kg = (a.kg != null && a.kg !== '') ? a.kg : null;
+      out.carried = true;
+      // Reps carry too, but only for counted reps on the same prescription — a timed hold keeps its clock.
+      if (a.r != null && a.r !== '' && !holdInfo(ex, s) && repsLead(p.r) === repsLead(s.r)) out.r = a.r;
+    }
+    break;   // only the most recent set done at this planned weight speaks for the next one
+  }
+  return out;
+}
+
+// The line under the weight box: the same weight in the other unit.
+function convLine(dr) {
+  const v = parseFloat(String(dr.w).replace(',', '.'));
+  if (!isFinite(v) || v <= 0) return '';
+  return dr.u === 'kg' ? '= ' + num1(kgToLb(v)) + ' lb' : '= ' + num1(lbToKg(v)) + ' kg';
+}
+
+// The numbers in the Actuals boxes. They live in the saved state, not just on screen, so nothing he
+// has entered is lost when a rest clock runs out or the page redraws underneath him.
+// Starts from: what he already logged for this set, else the weight carried from his last set, else the plan —
+// in the unit the equipment is stamped in (kilos for "33 lb · 15 kg", pounds for 225).
+function makeDraft(ex, eIdx, sIdx, ssState) {
+  const s = ex.sets[sIdx], ss = ssState.sets[setKey(eIdx, sIdx)] || {};
+  const a = ss.actual || null, plan = parseLoad(s.w);
+  const has = (v) => v != null && v !== '';
+  const tgt = targetFor(ex, eIdx, sIdx, ssState);
+  const carried = tgt.carried && !setResolved(ss);
+  let u, w;
+  if (a && has(a.w)) { u = has(a.kg) ? 'kg' : 'lb'; w = String(has(a.kg) ? a.kg : a.w); }
+  else if (carried) { u = has(tgt.kg) ? 'kg' : 'lb'; w = String(has(tgt.kg) ? tgt.kg : tgt.w); }
+  else { u = plan.unit || state.wUnit || 'lb'; w = isFinite(plan.lb) ? num1(u === 'kg' ? plan.kg : plan.lb) : ''; }
   return {
-    w:   a && a.w   != null && a.w   !== '' ? String(a.w)   : numOr(s.w),
-    r:   a && a.r   != null && a.r   !== '' ? String(a.r)   : (typeof s.r === 'number' ? String(s.r) : ''),
-    rir: a && a.rir != null && a.rir !== '' ? String(a.rir) : (typeof s.rir === 'number' ? String(s.rir) : ''),
+    u: u, w: w,
+    r: a && has(a.r) ? String(a.r) : (carried && tgt.r !== s.r ? String(tgt.r) : repsLead(s.r)),
+    rir: a && has(a.rir) ? String(a.rir) : (typeof s.rir === 'number' ? String(s.rir) : ''),
   };
+}
+
+// Marks a set done at the numbers its row shows: the plan, or the weight carried from his last set.
+function completeAsShown(ss, ex, eIdx, sIdx, ssState) {
+  const s = ex.sets[sIdx], tgt = targetFor(ex, eIdx, sIdx, ssState);
+  ss.mode = null; ss.workEndTs = null;
+  delete ss.workPhase; delete ss.workSide; delete ss.draft;
+  ss.status = 'completed';
+  if (tgt.carried) {
+    ss.actual = { w: String(tgt.w), r: (tgt.r !== s.r ? String(tgt.r) : null), rir: null };
+    if (tgt.kg != null) ss.actual.kg = String(tgt.kg);
+  } else {
+    ss.actual = null;
+  }
 }
 
 function handleStrengthAction(act, setKeyStr, btn) {
@@ -3363,22 +3558,43 @@ function handleStrengthAction(act, setKeyStr, btn) {
   if (!ssState.sets[setKeyStr]) ssState.sets[setKeyStr] = {};
   const ss = ssState.sets[setKeyStr];
 
-  // Steppers edit the box in place — no state write, no re-render, no lost focus.
-  if (act === 'step') {
-    const el = document.getElementById('ed' + btn.dataset.f + '_' + setKeyStr);
-    if (el) {
-      const d = parseFloat(btn.dataset.d) || 0;
-      const cur = parseFloat(el.value);
-      let next = (isFinite(cur) ? cur : 0) + d;
-      if (next < 0) next = 0;
-      el.value = String(Math.round(next * 100) / 100);
-      if (btn.dataset.f === 'W') { const kl = document.getElementById('edW' + 'kg_' + setKeyStr); if (kl) kl.textContent = 'lb · ' + kgOf(el.value); }
+  // Nudge buttons and the lb/kg switch change the saved draft first, then the box on screen.
+  if (act === 'step' || act === 'unit') {
+    if (!ss.draft) ss.draft = makeDraft(ex, eIdx, sIdx, ssState);
+    const dr = ss.draft;
+    if (act === 'unit') {
+      const u = btn.dataset.u === 'kg' ? 'kg' : 'lb';
+      if (dr.u !== u) {
+        const was = { u: dr.u, w: dr.w };
+        if (dr.prev && dr.prev.u === u && dr.prev.conv === dr.w) {
+          dr.w = dr.prev.w;                       // flipped back untouched: the exact number he started from, no rounding drift
+        } else {
+          const v = parseFloat(String(dr.w).replace(',', '.'));
+          if (isFinite(v)) dr.w = num1(u === 'kg' ? lbToKg(v) : kgToLb(v));
+        }
+        dr.u = u;
+        dr.prev = { u: was.u, w: was.w, conv: dr.w };
+      }
+      saveState(); render();
+      return;
     }
+    const key = btn.dataset.f === 'W' ? 'w' : (btn.dataset.f === 'R' ? 'r' : 'rir');
+    const d = parseFloat(btn.dataset.d) || 0;
+    const cur = parseFloat(String(dr[key]).replace(',', '.'));
+    let next = (isFinite(cur) ? cur : 0) + d;
+    if (next < 0) next = 0;
+    dr[key] = String(Math.round(next * 100) / 100);
+    if (key === 'w') delete dr.prev;
+    saveState();
+    const el = document.getElementById('ed' + btn.dataset.f + '_' + setKeyStr);
+    if (el) el.value = dr[key];
+    if (key === 'w') { const cl = document.getElementById('edWc_' + setKeyStr); if (cl) cl.textContent = convLine(dr); }
     return;
   }
 
   if (act === 'cancel') {
     ss.mode = null;
+    delete ss.draft;
   } else if (act === 'cut') {
     // Cut this set and every set left in the exercise. No rest timer — you are moving on.
     ex.sets.forEach((_, i) => {
@@ -3387,6 +3603,7 @@ function handleStrengthAction(act, setKeyStr, btn) {
       const t = ssState.sets[setKey(eIdx, i)];
       if (t.status === 'completed') return;   // never un-do work you actually did
       t.status = 'cut'; t.mode = null; t.actual = null; t.workEndTs = null;
+      delete t.draft; delete t.workPhase; delete t.workSide;
     });
     ssState.restEndTs = null;
     ssState.restEx = null;
@@ -3395,52 +3612,74 @@ function handleStrengthAction(act, setKeyStr, btn) {
     ss.actual = null;
     ss.mode = null;
     ss.workEndTs = null;
+    delete ss.draft; delete ss.workPhase; delete ss.workSide;
     ssState.restEndTs = null;
     ssState.restEx = null;
   } else if (act === 'dev') {
     ss.mode = 'deviate';
+    ss.draft = makeDraft(ex, eIdx, sIdx, ssState);
+    _scrollKey = setKeyStr;
   } else if (act === 'done') {
-    ss.mode = null;
-    ss.status = 'completed';
-    ss.actual = null;
+    completeAsShown(ss, ex, eIdx, sIdx, ssState);
     startRestForEx(eIdx, ex, s);
   } else if (act === 'workStart') {
-    const hSec = holdSec(ex, s);
-    if (hSec) {
+    if (holdInfo(ex, s)) {
       ss.mode = 'working';
-      ss.workEndTs = Date.now() + hSec * 1000;
-      beep(880, 150);
+      ss.workPhase = 'ready';
+      ss.workSide = 1;
+      ss.workEndTs = Date.now() + HOLD_LEAD_SEC * 1000;
+      beep(440, 120);
+      _scrollKey = setKeyStr;
     }
   } else if (act === 'workAdd') {
     if (ss.workEndTs) ss.workEndTs += 10000;
   } else if (act === 'workCancel') {
     ss.mode = null;
     ss.workEndTs = null;
+    delete ss.workPhase; delete ss.workSide;
+  } else if (act === 'workNext') {
+    // Skip what is left of this phase: straight to the hold, or on to the other side.
+    if (ss.workEndTs) { ss.workEndTs = Date.now() - 1; holdAdvance(); }
+    return;
   } else if (act === 'workStop') {
-    ss.mode = null;
-    ss.workEndTs = null;
-    ss.status = 'completed';
-    ss.actual = null;
+    completeAsShown(ss, ex, eIdx, sIdx, ssState);
     beep(660, 200);
     startRestForEx(eIdx, ex, s);
   } else if (act === 'save') {
+    if (!ss.draft) ss.draft = makeDraft(ex, eIdx, sIdx, ssState);
+    const dr = ss.draft;
+    // The boxes on screen have the last word (covers a keystroke the draft has not caught yet).
     const wEl = document.getElementById('edW_' + setKeyStr);
     const rEl = document.getElementById('edR_' + setKeyStr);
     const iEl = document.getElementById('edI_' + setKeyStr);
-    const wVal = wEl ? wEl.value.trim() : '';
-    const rVal = rEl ? rEl.value.trim() : '';
-    const iVal = iEl ? iEl.value.trim() : '';
-    // Boxes are prefilled with the prescription, so only a CHANGED box is a deviation.
-    const base = prefillFor(s, null);
-    const dev = {
-      w:   (wVal && wVal !== base.w)   ? wVal : null,
-      r:   (rVal && rVal !== base.r)   ? rVal : null,
-      rir: (iVal && iVal !== base.rir) ? iVal : null,
-    };
+    const wVal = String(wEl ? wEl.value : (dr.w || '')).trim();
+    const rVal = String(rEl ? rEl.value : (dr.r || '')).trim();
+    const iVal = String(iEl ? iEl.value : (dr.rir || '')).trim();
+    // Only what differs from the PLAN is a deviation. Weight is compared as pounds, whichever unit he entered it in.
+    const plan = parseLoad(s.w);
+    const dev = { w: null, r: null, rir: null };
+    if (wVal) {
+      if (/^\d+(?:[.,]\d+)?$/.test(wVal)) {
+        const n = parseFloat(wVal.replace(',', '.'));
+        const lb = dr.u === 'kg' ? kgToLb(n) : Math.round(n * 100) / 100;
+        if (!(isFinite(plan.lb) && Math.abs(lb - plan.lb) < 0.05)) {
+          dev.w = String(lb);
+          if (dr.u === 'kg') dev.kg = String(Math.round(n * 100) / 100);
+        }
+        state.wUnit = dr.u;
+      } else if (wVal !== String(s.w)) {
+        dev.w = wVal;                             // not a plain number: keep exactly what he typed
+      }
+    }
+    const baseR = repsLead(s.r);
+    const baseI = typeof s.rir === 'number' ? String(s.rir) : '';
+    if (rVal && rVal !== baseR) dev.r = rVal;
+    if (iVal && iVal !== baseI) dev.rir = iVal;
     ss.actual = (dev.w || dev.r || dev.rir) ? dev : null;
     const wasResolved = setResolved(ss);
     ss.status = 'completed';
     ss.mode = null;
+    delete ss.draft;
     if (!wasResolved) startRestForEx(eIdx, ex, s);
   }
   // Stamp the day you actually trained, so the calendar shows reality even if you
@@ -3452,13 +3691,115 @@ function handleStrengthAction(act, setKeyStr, btn) {
   saveState(); render();
 }
 
-// Returns work-timer seconds if this set is a timed hold (e.g. Plank 45s), else null.
-function holdSec(ex, setData) {
-  if (!ex || ex.tempo !== 'hold' || !setData) return null;
-  if (typeof setData.r !== 'string') return null;
-  const m = setData.r.match(/^\s*(\d+)\s*s\s*$/i);
-  return m ? parseInt(m[1], 10) : null;
+// ============================================================
+// TIMED SETS — planks, side planks, carries
+// ============================================================
+// A set measured in seconds ("45s", "45 sec", "30 s/side") gets a countdown. "/side" means the
+// clock runs once per side with a cue to switch in between. Returns null for a set counted in reps.
+const HOLD_LEAD_SEC = 5;   // time to get into position, and to change sides
+function holdInfo(ex, setData) {
+  if (!ex || !setData || typeof setData.r !== 'string') return null;
+  const m = setData.r.match(/^\s*(\d+)\s*(?:s|sec|secs|seconds?)\s*(?:\/\s*(side|leg|arm|hand))?\s*$/i);
+  if (!m) return null;
+  return { sec: parseInt(m[1], 10), sides: m[2] ? 2 : 1, per: m[2] ? m[2].toLowerCase() : '' };
 }
+
+// The set whose clock is running in the session on screen, if any.
+function runningHold() {
+  const ses = SESSIONS[state.sessionIdx];
+  if (!ses || ses.type === 'kb-metcon') return null;
+  const ssState = state.sessions[ses.id];
+  if (!ssState || !ssState.sets) return null;
+  for (const k in ssState.sets) {
+    const e = ssState.sets[k];
+    if (e && e.mode === 'working' && e.workEndTs) return { k: k, ss: e, ses: ses, ssState: ssState };
+  }
+  return null;
+}
+
+// Sound, voice and a buzz together: on a plank the phone is on the floor and he is not looking at it.
+function holdCue(freq, ms, say, buzz) {
+  beep(freq, ms);
+  ivSay(say);
+  try { if (navigator.vibrate) navigator.vibrate(buzz); } catch (e) {}
+}
+
+// Moves a running clock to its next phase once the current one has run out:
+// get set -> go -> (switch sides -> go) -> done. Returns true if it changed anything.
+function holdAdvance() {
+  const cur = runningHold();
+  if (!cur || Date.now() < cur.ss.workEndTs) return false;
+  const ss = cur.ss, ses = cur.ses, ssState = cur.ssState;
+  const parts = cur.k.split('_');
+  const eIdx = parseInt(parts[0], 10), sIdx = parseInt(parts[1], 10);
+  const ex = ses.exercises[eIdx], s = ex.sets[sIdx];
+  const hi = holdInfo(ex, s) || { sec: 0, sides: 1, per: '' };
+  const phase = ss.workPhase || 'work', side = ss.workSide || 1;
+  const slept = Date.now() - ss.workEndTs > 15000;   // the phone was asleep through the rest of it
+  if (slept || (phase === 'work' && side >= hi.sides)) {
+    completeAsShown(ss, ex, eIdx, sIdx, ssState);
+    holdCue(660, 300, 'Done', [300, 120, 300]);
+    startRestForEx(eIdx, ex, s);
+    ssState.touchedDate = todayStr();
+    if (getSessionCompletion(ses.id) === 'complete' && !ssState.doneDate) ssState.doneDate = todayStr();
+  } else if (phase === 'work') {
+    ss.workPhase = 'switch';
+    ss.workEndTs = Date.now() + HOLD_LEAD_SEC * 1000;
+    holdCue(440, 250, 'Switch ' + (hi.per || 'side') + 's', [200]);
+  } else {
+    if (phase === 'switch') ss.workSide = side + 1;
+    ss.workPhase = 'work';
+    ss.workEndTs = Date.now() + hi.sec * 1000;
+    holdCue(880, 200, 'Go', [120]);
+  }
+  saveState(); render();
+  return true;
+}
+
+// Keeps the running clock exact (fires on the phase boundary, not up to a second late)
+// and the big number moving. Re-armed on every draw.
+let _holdTimeout = null, _holdTick = null;
+function armHold() {
+  if (_holdTimeout) { clearTimeout(_holdTimeout); _holdTimeout = null; }
+  if (_holdTick) { clearInterval(_holdTick); _holdTick = null; }
+  const cur = runningHold();
+  if (!cur) return;
+  _holdTimeout = setTimeout(holdAdvance, Math.max(0, cur.ss.workEndTs - Date.now()) + 15);
+  _holdTick = setInterval(() => {
+    const c = runningHold(), el = document.querySelector('.work-time');
+    if (c && el) el.textContent = Math.max(0, Math.ceil((c.ss.workEndTs - Date.now()) / 1000));
+  }, 250);
+}
+
+// A hands-free timer is no timer if the screen goes to sleep halfway through: the beeps stop.
+// Hold the screen awake while a timed set or an interval timer is running, and only then.
+let _wake = null, _wakeBusy = false;
+function timedWorkRunning() {
+  const ses = SESSIONS[state.sessionIdx];
+  if (!ses) return false;
+  const ms = state.metcons[ses.id], fin = state.metcons[ses.id + '_fin'];
+  return !!((ms && ms.timerRunning) || (fin && fin.timerRunning) || runningHold());
+}
+function syncWake() {
+  try {
+    if (!('wakeLock' in navigator)) return;
+    const want = timedWorkRunning() && document.visibilityState === 'visible';
+    if (want && !_wake && !_wakeBusy) {
+      _wakeBusy = true;
+      navigator.wakeLock.request('screen').then((w) => {
+        _wakeBusy = false;
+        _wake = w;
+        w.addEventListener('release', () => { if (_wake === w) _wake = null; });
+        syncWake();                               // the timer may have ended while we were asking
+      }).catch(() => { _wakeBusy = false; });
+    } else if (!want && _wake) {
+      const w = _wake;
+      _wake = null;
+      w.release().catch(() => {});
+    }
+  } catch (e) {}
+}
+document.addEventListener('visibilitychange', syncWake);
 
 // Short beep on timer events (work-start, work-end). Reuses Web Audio.
 function beep(freq, ms) {
@@ -3854,18 +4195,28 @@ function ivMove(o, round, phase) {
   return o.moves[(Math.max(1, round) - 1) % o.moves.length];
 }
 function ivSay(txt){ try{ if(txt && 'speechSynthesis' in window){ const u=new SpeechSynthesisUtterance(txt); u.rate=1.0; u.volume=1.0; window.speechSynthesis.cancel(); window.speechSynthesis.speak(u); } }catch(e){} }
+// The line under the big number: the move being done, or the one coming up.
+function ivMoveText(o, info) {
+  if (!o.moves || !o.moves.length) return '';
+  if (info.phase === 'work') return ivMove(o, info.round, 'work');
+  if (info.phase === 'ready') return 'First: ' + o.moves[0];
+  if (info.phase === 'rest' && info.round < o.timer.rounds) return 'Next: ' + o.moves[info.round % o.moves.length];
+  return '';
+}
 function renderIntervalTimer(container, o) {
   const st = getMetconState(o.id), timer = o.timer;
   const elapsed = st.timerRunning && st.timerStart ? (Date.now() - st.timerStart + st.timerElapsed) / 1000 : st.timerElapsed / 1000;
   const info = ivCompute(timer, elapsed);
+  // Before Start it has to read as a timer at a glance: the work time, the rounds, the first move.
+  const idle = !st.timerRunning && !st.completed && !(st.timerElapsed > 0);
   const panel = document.createElement('div');
   panel.className = 'iv-timer-panel ' + (st.timerRunning ? info.phase : (st.completed ? 'done' : ''));
   panel.innerHTML = `
     <div class="metcon-timer-label">${o.title || 'Intervals'}</div>
-    <div class="iv-phase ${info.phase}">${IV_PHASE[info.phase]}</div>
-    <div class="iv-count">${st.completed ? '✓' : info.left}</div>
-    <div class="iv-move">${st.timerRunning ? ivMove(o, info.round, info.phase) : ''}</div>
-    <div class="iv-round">${(st.completed || info.phase === 'done') ? `${timer.rounds} rounds done` : `Round ${Math.max(1, info.round)} of ${timer.rounds} · ${timer.workSec}s on / ${timer.restSec}s off`}</div>
+    <div class="iv-phase ${idle ? '' : info.phase}">${idle ? timer.rounds + ' rounds' : IV_PHASE[info.phase]}</div>
+    <div class="iv-count">${st.completed ? '✓' : (idle ? timer.workSec : info.left)}</div>
+    <div class="iv-move">${st.completed ? '' : ivMoveText(o, idle ? { phase: 'ready', round: 0 } : info)}</div>
+    <div class="iv-round">${(st.completed || info.phase === 'done') ? `${timer.rounds} rounds done` : (idle ? `${timer.workSec}s on / ${timer.restSec}s off` : `Round ${Math.max(1, info.round)} of ${timer.rounds} · ${timer.workSec}s on / ${timer.restSec}s off`)}</div>
     <div class="iv-controls">
       ${st.completed ? `<button class="ghost" data-iv="reset" data-id="${o.id}">Reset</button>`
         : st.timerRunning ? `<button class="ghost" data-iv="pause" data-id="${o.id}">Pause</button>`
@@ -3895,7 +4246,7 @@ function ivTickDom(container, o) {
   panel.className = 'iv-timer-panel ' + info.phase;
   const c = panel.querySelector('.iv-count'); if (c) c.textContent = info.left;
   const ph = panel.querySelector('.iv-phase'); if (ph) { ph.className = 'iv-phase ' + info.phase; ph.textContent = IV_PHASE[info.phase]; }
-  const mv = panel.querySelector('.iv-move'); if (mv) mv.textContent = ivMove(o, info.round, info.phase);
+  const mv = panel.querySelector('.iv-move'); if (mv) mv.textContent = ivMoveText(o, info);
   const rd = panel.querySelector('.iv-round'); if (rd) rd.textContent = `Round ${Math.max(1, info.round)} of ${o.timer.rounds} · ${o.timer.workSec}s on / ${o.timer.restSec}s off`;
 }
 function ivAction(o, action) {
@@ -3961,37 +4312,8 @@ setInterval(() => {
   const ssState = state.sessions[ses.id];
   if (!ssState) return;
 
-  // Work timer (timed-hold exercises like Plank)
-  let workingKey = null, workingEntry = null;
-  for (const k in ssState.sets) {
-    if (ssState.sets[k].mode === 'working' && ssState.sets[k].workEndTs) {
-      workingKey = k; workingEntry = ssState.sets[k]; break;
-    }
-  }
-  if (workingEntry) {
-    if (Date.now() >= workingEntry.workEndTs) {
-      // Auto-complete the set, kick off rest
-      const [eIdxStr, sIdxStr] = workingKey.split('_');
-      const eIdx = parseInt(eIdxStr), sIdx = parseInt(sIdxStr);
-      const ex = ses.exercises[eIdx];
-      const s = ex.sets[sIdx];
-      workingEntry.mode = null;
-      workingEntry.workEndTs = null;
-      workingEntry.status = 'completed';
-      workingEntry.actual = null;
-      beep(660, 250);
-      startRestForEx(eIdx, ex, s);
-      saveState();
-      render();
-      return;
-    } else {
-      const workTime = document.querySelector('.work-time');
-      if (workTime) {
-        const remaining = Math.max(0, Math.ceil((workingEntry.workEndTs - Date.now()) / 1000));
-        workTime.textContent = remaining + 's';
-      }
-    }
-  }
+  // Work timer (timed sets — Plank, Side Plank, carries). holdAdvance() walks the clock through its phases.
+  if (holdAdvance()) return;
 
   if (!ssState.restEndTs) return;
   if (Date.now() >= ssState.restEndTs) {
@@ -4001,7 +4323,9 @@ setInterval(() => {
     // Music in the earphones drowns the beep, so buzz the phone too.
     beep(880, 400);
     try { if (navigator.vibrate) navigator.vibrate([300, 120, 300]); } catch (e) {}
-    render();
+    // Take the dock away WITHOUT redrawing the page. A full redraw here used to wipe whatever he
+    // had entered in the Actuals boxes, and cut off a note mid-dictation, every time a rest ended.
+    clearRestDock();
   } else {
     const secs = document.querySelector('.rd-secs');
     if (secs) {
